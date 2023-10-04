@@ -16,7 +16,7 @@ import CartScreen from "../screens/CartScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import ConfirmationScreen from "../screens/ConfirmationScreen";
 import OrderScreen from "../screens/OrderScreen";
-
+import EditAddressScreen from "../screens/EditAddressScreen";
 const StackNavigator = () => {
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
@@ -41,7 +41,7 @@ const StackNavigator = () => {
 
         <Tab.Screen
           name="Profile"
-          component={HomeScreen}
+          component={ProfileScreen}
           options={{
             tabBarLabel: "Profile",
             tabBarLabelStyle: { color: "#008E97" },
@@ -103,6 +103,11 @@ const StackNavigator = () => {
         <Stack.Screen
           name="Add"
           component={AddressScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="EditAddress"
+          component={EditAddressScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen

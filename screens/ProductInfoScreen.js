@@ -27,6 +27,8 @@ const ProductInfoScreen = () => {
     const addItemToCart = (item) => {
         setAddedToCart(true);
         dispatch(addToCart(item));
+        //update cart after waiting for a momment
+        
         setTimeout(() => {
           setAddedToCart(false);
         }, 30000);

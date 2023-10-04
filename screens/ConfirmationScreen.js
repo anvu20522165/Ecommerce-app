@@ -5,6 +5,7 @@ import { UserType } from "../UserContext";
 import { Entypo } from "@expo/vector-icons";
 import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
+
 import { cleanCart } from "../redux/CartReducer";
 import { useNavigation } from "@react-navigation/native";
 import RazorpayCheckout from "react-native-razorpay";
@@ -41,11 +42,12 @@ const ConfirmationScreen = () => {
   };
   const dispatch = useDispatch();
   const [selectedAddress, setSelectedAdress] = useState("");
+  const [status, setStatus] = useState("Pending");
   const [selectedDeliveryOption, setSelectedDeliveryOption] = useState("");
   const [selectedOption, setSelectedOption] = useState("");
   const handlePlaceOrder = async () => {
     try {
-      console.log("my option", selectedDeliveryOption)
+      //console.log("my option", selectedDeliveryOption)
       const orderData = {
         userId: userId,
         cartItems: cart,
@@ -53,8 +55,9 @@ const ConfirmationScreen = () => {
         shippingAddress: selectedAddress,
         paymentMethod: selectedOption,
         delivery: selectedDeliveryOption,
+        status: status,
       };
-      
+      console.log("my products in cart: ", cart);
       const response = await axios.post(
         "http://10.0.2.2:8000/orders",
         orderData
@@ -540,7 +543,7 @@ const ConfirmationScreen = () => {
                 Items
               </Text>
 
-              <Text style={{ color: "gray", fontSize: 16 }}>₹{total}</Text>
+              <Text style={{ color: "gray", fontSize: 16 }}>{total.toLocaleString('vi', {style : 'currency', currency : 'VND'})}</Text>
             </View>
 
             <View
@@ -555,7 +558,7 @@ const ConfirmationScreen = () => {
                 Delivery
               </Text>
 
-              <Text style={{ color: "gray", fontSize: 16 }}>₹0</Text>
+              <Text style={{ color: "gray", fontSize: 16 }}>0</Text>
             </View>
 
             <View
@@ -573,7 +576,7 @@ const ConfirmationScreen = () => {
               <Text
                 style={{ color: "#C60C30", fontSize: 17, fontWeight: "bold" }}
               >
-                ₹{total}
+                {total.toLocaleString('vi', {style : 'currency', currency : 'VND'})}
               </Text>
             </View>
           </View>

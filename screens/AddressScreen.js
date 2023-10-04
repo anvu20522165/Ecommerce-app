@@ -53,7 +53,8 @@ const AddressScreen = () => {
             setStreet("");
             setLandmark("");
             setPostalCode("");
-  
+        
+            console.log(response.data)
             setTimeout(() => {
               navigation.goBack();
             },500)

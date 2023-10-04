@@ -31,6 +31,16 @@ const userSchema = new mongoose.Schema({
       postalCode: String,
     },
   ],
+  cart: [
+    {
+      productid: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
+      },
+      quantity: Number,
+      price: Number,
+    }
+  ],
   orders: [
     {
       type: mongoose.Schema.Types.ObjectId,

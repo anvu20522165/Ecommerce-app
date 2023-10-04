@@ -18,6 +18,7 @@ const LoginScreen = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  
   const navigation = useNavigation();
   useEffect(() => {
     const checkLoginStatus = async () => {
@@ -52,6 +53,7 @@ const LoginScreen = () => {
         console.log(error);
       });
   };
+
   return (
     <SafeAreaView
       style={{ flex: 1, backgroundColor: "white", alignItems: "center", marginTop: 50 }}

@@ -199,36 +199,37 @@ const HomeScreen = () => {
   const [products, setProducts] = useState([]);
   const [deals, setDeals] = useState([]);
   const [offers, setOffers] = useState([]);
+  const [newProducts, setNewProducts] = useState([]);
   const navigation = useNavigation();
-  const [open, setOpen] = useState(false);
+  //const [open, setOpen] = useState(false);
   const [temp, setTemp] = useState(true);
   const [addresses, setAddresses] = useState([]);
-  const [category, setCategory] = useState("jewelery");
+  //const [category, setCategory] = useState("jewelery");
   const { userId, setUserId } = useContext(UserType);
   const [selectedAddress, setSelectedAdress] = useState("");
   console.log(selectedAddress)
-  const [items, setItems] = useState([
-    { label: "Men's clothing", value: "men's clothing" },
-    { label: "jewelery", value: "jewelery" },
-    { label: "women's clothing", value: "women's clothing" },
-  ]);
+  // const [items, setItems] = useState([
+  //   { label: "Men's clothing", value: "men's clothing" },
+  //   { label: "jewelery", value: "jewelery" },
+  //   { label: "women's clothing", value: "women's clothing" },
+  // ]);
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get("http://10.0.2.2:8000/products");
-        //const response = await axios.get("https://fakestoreapi.com/products");
-        setProducts(response.data);
-        console.log("all data", response.data);
-      } catch (error) {
-        console.log("error message", error);
-      }
-    };
+    // const fetchData = async () => {
+    //   try {
+    //     const response = await axios.get("http://10.0.2.2:8000/products");
+    //     //const response = await axios.get("https://fakestoreapi.com/products");
+    //     setProducts(response.data);
+    //     console.log("all data", response.data);
+    //   } catch (error) {
+    //     console.log("error message", error);
+    //   }
+    // };
     const fetchTrendingData = async () => {
       try {
         const response = await axios.get("http://10.0.2.2:8000/trendingproducts");
 
         setDeals(response.data);
-        console.log("trending data", response.data);
+        //console.log("trending data", response.data);
       } catch (error) {
         console.log("error message", error);
       }
@@ -239,19 +240,31 @@ const HomeScreen = () => {
         const response = await axios.get("http://10.0.2.2:8000/saleproducts");
  
         setOffers(response.data);
-        console.log("all data", response.data);
+        //console.log("all data", response.data);
       } catch (error) {
         console.log("error message", error);
       }
     };
 
-    fetchData();
+    const fetchNewData = async () => {
+      try {
+        const response = await axios.get("http://10.0.2.2:8000/newproducts");
+
+        setNewProducts(response.data);
+        //console.log("trending data", response.data);
+      } catch (error) {
+        console.log("error message", error);
+      }
+    };
+
+    //fetchData();
     fetchTrendingData();
     fetchOffers();
+    fetchNewData()
   }, []);
-  const onGenderOpen = useCallback(() => {
-    setTemp(false);
-  }, []);
+  // const onGenderOpen = useCallback(() => {
+  //   setTemp(false);
+  // }, []);
 
   const cart = useSelector((state) => state.cart.cart);
   const [modalVisible, setModalVisible] = useState(false);
@@ -482,13 +495,15 @@ const HomeScreen = () => {
               <Pressable
                 onPress={() =>
                   navigation.navigate("Info", {
-                    id: item.id,
                     title: item.title,
                     price: item?.price,
-                    carouselImages: item.carouselImages,
-                    color: item?.color,
-                    size: item?.size,
-                    oldPrice: item?.oldPrice,
+
+                    description: item?.description,
+                    category: item?.category,
+                    image: item?.image,
+                    offer: item?.offer,
+                    
+                    sold: item?.sold,
                     item: item,
                   })
                 }
@@ -529,7 +544,65 @@ const HomeScreen = () => {
             ))}
           </ScrollView>
 
-          <Text
+          <Text style={{ padding: 10, fontSize: 18, fontWeight: "bold" }}>
+            Brand New Products
+          </Text>
+
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {newProducts.map((item, index) => (
+              <Pressable
+                onPress={() =>
+                  navigation.navigate("Info", {
+                    title: item.title,
+                    price: item?.price,
+
+                    description: item?.description,
+                    category: item?.category,
+                    image: item?.image,
+                    offer: item?.offer,
+                    
+                    sold: item?.sold,
+                    item: item,
+                  })
+                }
+                style={{
+                  marginVertical: 10,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Image
+                  style={{ width: 150, height: 150, resizeMode: "contain" }}
+                  source={{ uri: item?.image }}
+                />
+
+                <View
+                  style={{
+                    backgroundColor: "#E31837",
+                    paddingVertical: 5,
+                    width: 130,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginTop: 10,
+                    borderRadius: 4,
+                  }}
+                >
+                  <Text
+                    style={{
+                      textAlign: "center",
+                      color: "white",
+                      fontSize: 13,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Upto {item?.offer}%
+                  </Text>
+                </View>
+              </Pressable>
+            ))}
+          </ScrollView>
+
+          {/* <Text
             style={{
               height: 1,
               borderColor: "#D0D0D0",
@@ -579,7 +652,7 @@ const HomeScreen = () => {
               .map((item, index) => (
                 <ProductItem item={item} key={index} />
               ))}
-          </View>
+          </View> */}
         </ScrollView>
       </SafeAreaView>
 

@@ -32,161 +32,222 @@ mongoose
     console.log("Error connecting to MongoDb", err);
   });
 
-  //endpoint to register in the app
+//endpoint to register in the app
 
-  const User = require("./models/user");
-  const Order = require("./models/order");
-  const Product = require("./models/product");
+const User = require("./models/user");
+const Order = require("./models/order");
+const Product = require("./models/product");
 
-  //sendVerificationEmail
-  const sendVerificationEmail = async (email, verificationToken) => {
-    // Create a Nodemailer transporter
-    const transporter = nodemailer.createTransport({
-      // Configure the email service or SMTP details here
-      service: "gmail",
-      auth: {
-        user: "nguyenphuocanvu@gmail.com",
-        pass: "bngjbwzkvfpnptrd",
-      },
+//sendVerificationEmail
+const sendVerificationEmail = async (email, verificationToken) => {
+  // Create a Nodemailer transporter
+  const transporter = nodemailer.createTransport({
+    // Configure the email service or SMTP details here
+    service: "gmail",
+    auth: {
+      user: "nguyenphuocanvu@gmail.com",
+      pass: "bngjbwzkvfpnptrd",
+    },
+  });
+
+  // Compose the email message
+  const mailOptions = {
+    from: "Shein.com",
+    to: email,
+    subject: "Email Verification",
+    text: `Please click the following link to verify your email: http://localhost:8000/verify/${verificationToken}`,
+  };
+
+  // Send the email
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log("Verification email sent successfully");
+  } catch (error) {
+    console.error("Error sending verification email:", error);
+  }
+};
+
+app.post("/register", async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    // Check if the email is already registered
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      console.log("Email already registered:", email); // Debugging statement
+      return res.status(400).json({ message: "Email already registered" });
+    }
+
+    // Create a new user
+    const newUser = new User({ name, email, password });
+
+    // Generate and store the verification token
+    newUser.verificationToken = crypto.randomBytes(20).toString("hex");
+
+    // Save the user to the database
+    await newUser.save();
+
+    // Debugging statement to verify data
+    console.log("New User Registered:", newUser);
+
+    // Send verification email to the user
+    // Use your preferred email service or library to send the email
+    sendVerificationEmail(newUser.email, newUser.verificationToken);
+
+    res.status(201).json({
+      message:
+        "Registration successful. Please check your email for verification.",
     });
-  
-    // Compose the email message
-    const mailOptions = {
-      from: "Shein.com",
-      to: email,
-      subject: "Email Verification",
-      text: `Please click the following link to verify your email: http://localhost:8000/verify/${verificationToken}`,
-    };
-  
-    // Send the email
-    try {
-      await transporter.sendMail(mailOptions);
-      console.log("Verification email sent successfully");
-    } catch (error) {
-      console.error("Error sending verification email:", error);
+
+  } catch (error) {
+    console.log("Error during registration:", error); // Debugging statement
+    res.status(500).json({ message: "Registration failed" });
+  }
+});
+
+
+//endpoint to verify email
+app.get("/verify/:token", async (req, res) => {
+  try {
+    const token = req.params.token;
+
+    //Find the user witht the given verification token
+    const user = await User.findOne({ verificationToken: token });
+    if (!user) {
+      return res.status(404).json({ message: "Invalid verification token" });
     }
-  };
 
-  app.post("/register", async (req, res) => {
-    try {
-      const { name, email, password } = req.body;
-  
-      // Check if the email is already registered
-      const existingUser = await User.findOne({ email });
-      if (existingUser) {
-        console.log("Email already registered:", email); // Debugging statement
-        return res.status(400).json({ message: "Email already registered" });
-      }
-  
-      // Create a new user
-      const newUser = new User({ name, email, password });
-  
-      // Generate and store the verification token
-      newUser.verificationToken = crypto.randomBytes(20).toString("hex");
-  
-      // Save the user to the database
-      await newUser.save();
-  
-      // Debugging statement to verify data
-      console.log("New User Registered:", newUser);
-  
-      // Send verification email to the user
-      // Use your preferred email service or library to send the email
-      sendVerificationEmail(newUser.email, newUser.verificationToken);
-  
-      res.status(201).json({
-        message:
-          "Registration successful. Please check your email for verification.",
-      });
-    } catch (error) {
-      console.log("Error during registration:", error); // Debugging statement
-      res.status(500).json({ message: "Registration failed" });
+    //Mark the user as verified
+    user.verified = true;
+    user.verificationToken = undefined;
+
+    await user.save();
+
+    res.status(200).json({ message: "Email verified successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Email Verificatioion Failed" });
+  }
+});
+
+
+
+//login
+const generateSecretKey = () => {
+  const secretKey = crypto.randomBytes(32).toString("hex");
+
+  return secretKey;
+};
+
+const secretKey = generateSecretKey();
+//enpoint to login
+app.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+
+    //check if the user exists
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(401).json({ message: "Invalid email or password" });
     }
-  });
-
-  //endpoint to verify email
-  app.get("/verify/:token", async (req, res) => {
-    try {
-      const token = req.params.token;
-  
-      //Find the user witht the given verification token
-      const user = await User.findOne({ verificationToken: token });
-      if (!user) {
-        return res.status(404).json({ message: "Invalid verification token" });
-      }
-  
-      //Mark the user as verified
-      user.verified = true;
-      user.verificationToken = undefined;
-  
-      await user.save();
-  
-      res.status(200).json({ message: "Email verified successfully" });
-    } catch (error) {
-      res.status(500).json({ message: "Email Verificatioion Failed" });
+    //check if the user has verified the account
+    if (user.verified === false) {
+      return res.status(401).json({ message: "not verified" });
     }
-  });
-
-
-
-  //login
-  const generateSecretKey = () => {
-    const secretKey = crypto.randomBytes(32).toString("hex");
-  
-    return secretKey;
-  };
-  
-  const secretKey = generateSecretKey();
-  //enpoint to login
-  app.post("/login", async (req, res) => {
-    try {
-      const { email, password } = req.body;
-  
-      //check if the user exists
-      const user = await User.findOne({ email });
-      if (!user) {
-        return res.status(401).json({ message: "Invalid email or password" });
-      }
-  
-      //check if the password is correct
-      if (user.password !== password) {
-        return res.status(401).json({ message: "Invalid password" });
-      }
-  
-      //generate a token
-      const token = jwt.sign({ userId: user._id }, secretKey);
-  
-      res.status(200).json({ token });
-    } catch (error) {
-      res.status(500).json({ message: "Login Failed" });
+    //check if the password is correct
+    if (user.password !== password) {
+      return res.status(401).json({ message: "Invalid password" });
     }
-  });
+
+    //generate a token
+    const token = jwt.sign({ userId: user._id }, secretKey);
+
+    res.status(200).json({ token });
+  } catch (error) {
+    res.status(500).json({ message: "Login Failed" });
+  }
+});
+
+//update cart by userid
 
 
-  //endpoint to store a new address
-  app.post("/addresses", async (req, res) => {
-    try {
-      const { userId, address } = req.body;
-  
-      //find the user by the Userid
-      const user = await User.findById(userId);
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
-  
-      //add the new address to the user's addresses array
-      user.addresses.push(address);
-  
-      //save the updated user in te backend
-      await user.save();
-  
-      res.status(200).json({ message: "Address created Successfully" });
-    } catch (error) {
-      res.status(500).json({ message: "Error addding address" });
+//endpoint to store a new address
+app.post("/addresses", async (req, res) => {
+  try {
+    const { userId, address } = req.body;
+
+    //find the user by the Userid
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
     }
-  });
 
-  //endpoint to get all the addresses of a particular user
+    //add the new address to the user's addresses array
+    user.addresses.push(address);
+
+    //save the updated user in te backend
+    await user.save();
+
+    res.status(200).json({ message: "Address created Successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error addding address" });
+  }
+});
+
+//https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice
+//delete address
+app.delete("/addresses/:userId/:addressId", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const addressId = req.params.addressId
+    //const {addressId} = req.body;
+    console.log({addressId})
+    //find the user by the Userid
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    //find index of this address in the array
+    const removeAddress = user.addresses.filter((item)=> item._id != addressId)
+    console.log(removeAddress)
+    user.addresses = removeAddress
+    //delete wanted address in the user's addresses array
+    //user.addresses.splice(address);
+
+    //save the updated user in the backend
+    await user.save();
+
+    res.status(200).json({ message: "Address created Successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error addding address" });
+  }
+});
+
+//get address by id
+app.get("/addresses/:userId/:addressId", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const addressId = req.params.addressId
+    //const {addressId} = req.body;
+    //console.log({addressId})
+    //find the user by the Userid
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    //find index of this address in the array
+    const findAddress = user.addresses.filter((item)=> item._id == addressId)
+    //console.log("address needs looking", findAddress)
+
+    //res.status(200).json({ message: "Address created Successfully" });
+    res.status(200).json({ findAddress });
+  } catch (error) {
+    res.status(500).json({ message: "Error addding address" });
+  }
+});
+//endpoint to get all the addresses of a particular user
 app.get("/addresses/:userId", async (req, res) => {
   try {
     const userId = req.params.userId;
@@ -223,7 +284,7 @@ app.get("/products", async (req, res) => {
 app.get("/trendingproducts", async (req, res) => {
   try {
     const sold = { sold: -1 };
-    const limit = 4;
+    const limit = 5;
     const product = await Product.find().sort(sold).limit(limit);
     if (!product) {
       throw "error";
@@ -233,7 +294,20 @@ app.get("/trendingproducts", async (req, res) => {
     return res.status(400).json({ error: error.message });
   }
 })
-
+//get top 5 new products
+app.get("/newproducts", async (req, res) => {
+  try {
+    const _id = { _id: -1 };
+    const limit = 5;
+    const product = await Product.find().sort(_id).limit(limit);
+    if (!product) {
+      throw "error";
+    }
+    return res.status(201).json(product);
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+})
 //get top 4 highest sale products
 app.get("/saleproducts", async (req, res) => {
   try {
@@ -271,13 +345,14 @@ app.post("/products", async (req, res) => {
   }
 });
 
-//update
+
 
 
 app.put("/products/:id", async (req, res) => {
   try {
     console.debug("Updating Product...");
-    const updatedProduct = await Product.findByIdAndUpdate({_id:req.params.id,
+    const updatedProduct = await Product.findByIdAndUpdate({
+      _id: req.params.id,
       new: true,
     });
     if (!updatedProduct) {
@@ -305,7 +380,6 @@ app.delete("/products/:id", async (req, res) => {
 });
 
 
-//cart
 //get all orders
 app.get("/orders", async (req, res) => {
   try {
@@ -321,7 +395,7 @@ app.get("/orders", async (req, res) => {
 //create an array of product objects from the cart Items
 app.post("/orders", async (req, res) => {
   try {
-    const { userId, cartItems, totalPrice, shippingAddress, paymentMethod, delivery } =
+    const { userId, cartItems, totalPrice, shippingAddress, paymentMethod, delivery, status } =
       req.body;
 
     const user = await User.findById(userId);
@@ -331,6 +405,7 @@ app.post("/orders", async (req, res) => {
 
     //create an array of product objects from the cart Items
     const products = cartItems.map((item) => ({
+      productid: item?._id,
       name: item?.title,
       quantity: item.quantity,
       price: item.price,
@@ -345,6 +420,7 @@ app.post("/orders", async (req, res) => {
       shippingAddress: shippingAddress,
       paymentMethod: paymentMethod,
       delivery: delivery,
+      status: status,
     });
 
     await order.save();
@@ -356,6 +432,40 @@ app.post("/orders", async (req, res) => {
   }
 });
 
+
+app.patch("/updateOrderStatus/:id", async (req, res) => {
+  try {
+    const _id = req.params.id;
+    const updatedOrder = await Order.findByIdAndUpdate({
+      _id,
+    }, req.body);
+    return res.status(201).json(updatedOrder);
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+});
+
+//get orders by ID
+app.get("/findOrder/:id", async (req, res) => {
+  try {
+    const order = await Order.find({ _id: req.params.id });
+    if (!order) res.status(404).send("Not found!");
+    res.send(order);
+  } catch (e) {
+    res.status(500).send(e);
+  }
+});
+//add a new product
+app.post("/products", async (req, res) => {
+  try {
+    console.debug("Adding a new product...");
+    const product = new Product({ ...req.body });
+    await product.save();
+    return res.status(201).json(product);
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+});
 //get the user profile
 app.get("/profile/:userId", async (req, res) => {
   try {
@@ -373,18 +483,41 @@ app.get("/profile/:userId", async (req, res) => {
   }
 });
 
-app.get("/orders/:userId",async(req,res) => {
-  try{
+app.get("/orders/:userId", async (req, res) => {
+  try {
     const userId = req.params.userId;
 
-    const orders = await Order.find({user:userId}).populate("user");
+    const orders = await Order.find({ user: userId }).populate("user");
 
-    if(!orders || orders.length === 0){
-      return res.status(404).json({message:"No orders found for this user"})
+    if (!orders || orders.length === 0) {
+      return res.status(404).json({ message: "No orders found for this user" })
     }
 
     res.status(200).json({ orders });
-  } catch(error){
-    res.status(500).json({ message: "Error"});
+  } catch (error) {
+    res.status(500).json({ message: "Error" });
   }
 })
+
+//add new product into cart
+app.post("/cart/:id", async (req, res) => {
+  try {
+    const {cart } = req.body;
+    //find the user by the Userid
+    const user = await User.findById({ _id: req.params.id });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    //add the new address to the user's addresses array
+    user.cart.push(cart);
+    user.cart.pop()
+    //save the updated user in te backend
+    await user.save();
+
+    res.status(200).json({ message: "Cart created Successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error addding cart" });
+  }
+});
+

@@ -35,6 +35,21 @@ import {
       dispatch(removeFromCart(item));
     };
     const navigation = useNavigation();
+
+
+    // useEffect(() => {
+    //   const assignCart = async () => {
+    //     try {
+    //       const response = await axios.post("http://10.0.2.2:8000/cart"); 
+    //       setCart(response.data);
+    //       //console.log("trending data", response.data);
+    //     } catch (error) {
+    //       console.log("error message", error);
+    //     }
+    //   };
+    //   assignCart();
+
+    // }, []);
     return (
       <ScrollView style={{ marginTop: 55, flex: 1, backgroundColor: "white" }}>
         <View

@@ -1,22 +1,23 @@
 import {
-    StyleSheet,
-    Text,
-    View,
-    ScrollView,
-    Pressable,
-    TextInput,
-  } from "react-native";
-  import React, { useEffect, useContext, useState, useCallback } from "react";
-  import { Feather, AntDesign } from "@expo/vector-icons";
-  import { MaterialIcons } from "@expo/vector-icons";
-  import { Entypo } from "@expo/vector-icons";
-  import { useFocusEffect, useNavigation } from "@react-navigation/native";
-  import axios from "axios";
-  import { UserType } from "../UserContext";
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  Pressable,
+  TextInput,
+} from "react-native";
+import React, { useEffect, useContext, useState, useCallback } from "react";
+import { Feather, AntDesign } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
+import { Entypo } from "@expo/vector-icons";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import axios from "axios";
+import { UserType } from "../UserContext";
 const AddAddressScreen = () => {
-    const navigation = useNavigation();
+  const navigation = useNavigation();
   const [addresses, setAddresses] = useState([]);
   const { userId, setUserId } = useContext(UserType);
+  const [addressesId, setAddressesId] = useState("");
   console.log("userId", userId);
   useEffect(() => {
     fetchAddresses();
@@ -33,6 +34,30 @@ const AddAddressScreen = () => {
       console.log("error", error);
     }
   };
+  const handleRemove = async (addressId) => {
+    try {
+      console.log(addressId)
+      const response = await axios.delete(
+        `http://10.0.2.2:8000/addresses/${userId}/${addressId}`, 
+      );
+      console.log("delete", response);
+      //const { addresses } = response.data;
+      //setAddresses(addresses);
+      fetchAddresses();
+    } catch (error) {
+      console.log("error", error);
+    }
+  }
+  const handelEdit = async (addressId) => {
+    try {
+      console.log(addressId)
+      
+      
+
+    } catch (error) {
+      console.log("error", error);
+    }
+  }
   //refresh the addresses when the component comes to the focus ie basically when we navigate back
   useFocusEffect(
     useCallback(() => {
@@ -41,9 +66,9 @@ const AddAddressScreen = () => {
   );
   console.log("addresses", addresses);
 
-    
-    return (
-        <ScrollView showsVerticalScrollIndicator={false} style={{ marginTop: 50 }}>
+
+  return (
+    <ScrollView showsVerticalScrollIndicator={false} style={{ marginTop: 50 }}>
       <View
         style={{
           backgroundColor: "#00CED1",
@@ -121,7 +146,7 @@ const AddAddressScreen = () => {
               </View>
 
               <Text style={{ fontSize: 15, color: "#181818" }}>
-                Số nhà: {item?.houseNo} 
+                Số nhà: {item?.houseNo}
               </Text>
               <Text style={{ fontSize: 15, color: "#181818" }}>
                 Landmark: {item?.landmark}
@@ -151,6 +176,19 @@ const AddAddressScreen = () => {
                 }}
               >
                 <Pressable
+                onPress={() =>
+                  navigation.navigate("EditAddress", {
+                    _id: item._id,
+                    name: item?.name,
+                    mobileNo: item?.mobileNo,
+                    houseNo: item?.houseNo,
+                    street: item?.street,
+                    landmark: item?.landmark,
+                    
+                    postalCode: item?.postalCode,
+                    item: item,
+                  })
+                }
                   style={{
                     backgroundColor: "#F5F5F5",
                     paddingHorizontal: 10,
@@ -164,6 +202,7 @@ const AddAddressScreen = () => {
                 </Pressable>
 
                 <Pressable
+                  onPress={() => handleRemove(item._id)}
                   style={{
                     backgroundColor: "#F5F5F5",
                     paddingHorizontal: 10,
@@ -194,7 +233,7 @@ const AddAddressScreen = () => {
         </Pressable>
       </View>
     </ScrollView>
-    )
+  )
 }
 
 export default AddAddressScreen

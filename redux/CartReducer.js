@@ -1,10 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+// export const CartAPI = createCartApi({
+
+// })
 export const CartSlice = createSlice({
   name: "cart",
   initialState: {
     cart: [],
   },
+  
   reducers: {
     addToCart: (state, action) => {
       const itemPresent = state.cart.find(
@@ -44,6 +48,11 @@ export const CartSlice = createSlice({
     },
     cleanCart:(state) => {
         state.cart = [];
+    },
+    initCart:(state, action) => {
+      for (product of action.payload.products) {  
+        state.cart.push(product)
+      }
     }
   },
 });
