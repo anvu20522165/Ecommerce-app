@@ -38,6 +38,9 @@ const User = require("./models/user");
 const Order = require("./models/order");
 const Product = require("./models/product");
 
+
+// ------------users methods
+
 //sendVerificationEmail
 const sendVerificationEmail = async (email, verificationToken) => {
   // Create a Nodemailer transporter
@@ -168,9 +171,6 @@ app.post("/login", async (req, res) => {
   }
 });
 
-//update cart by userid
-
-
 //endpoint to store a new address
 app.post("/addresses", async (req, res) => {
   try {
@@ -194,7 +194,7 @@ app.post("/addresses", async (req, res) => {
   }
 });
 
-//https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice
+
 //delete address
 app.delete("/addresses/:userId/:addressId", async (req, res) => {
   try {
@@ -264,10 +264,38 @@ app.get("/addresses/:userId", async (req, res) => {
   }
 });
 
+//get the user profile
+app.get("/profile/:userId", async (req, res) => {
+  try {
+    const userId = req.params.userId;
 
-// product methods
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({ user });
+  } catch (error) {
+    res.status(500).json({ message: "Error retrieving the user profile" });
+  }
+});
+
+
+// ------------product methods
 
 //get all products
+//add a new product
+app.post("/products", async (req, res) => {
+  try {
+    console.debug("Adding a new product...");
+    const product = new Product({ ...req.body });
+    await product.save();
+    return res.status(201).json(product);
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+});
 app.get("/products", async (req, res) => {
   try {
     const product = await Product.find();
@@ -345,9 +373,6 @@ app.post("/products", async (req, res) => {
   }
 });
 
-
-
-
 app.put("/products/:id", async (req, res) => {
   try {
     console.debug("Updating Product...");
@@ -380,6 +405,148 @@ app.delete("/products/:id", async (req, res) => {
 });
 
 
+// ------------cart methods
+
+//add new product into cart or increase quantity
+app.post("/cart", async (req, res) => {
+  try {
+    const { userId, cart } = req.body;
+    //find the user by the Userid
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    console.log(cart.productid)
+    //user.cart.push(cart);
+    const existingProduct = user.cart.find((item)=> item.productid.toString() === cart.productid)
+    //console.log(existingProduct)
+    if(existingProduct){
+      existingProduct.quantity++;
+      // await existingProduct.save();
+    }
+    else{
+      user.cart.push(cart);
+    }
+    //save the updated user in te backend
+    await user.save();
+
+    res.status(200).json({ message: "Product added to Cart Successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error addding into cart" });
+  }
+});
+
+
+//get user info including cart with specific products's detail preference
+app.get("/productsInCart/:userId", async (req, res) => {
+  try {
+
+    const userId = req.params.userId;
+    const user = await User.findById(userId).populate('cart.productid');
+
+    if (!user) {
+      throw "error";
+    }
+    return res.status(201).json(user.cart);
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+});
+// increase quantity of product in cart
+app.put("/cartIncreasedQuanity/:userId/:productid", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const productId = req.params.productid
+    //find the user by the Userid
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    console.log(productId)
+    //user.cart.push(cart);
+    const checkedProduct = user.cart.find((item)=> item.productid.toString() === productId)
+    //console.log(checkedProduct)
+    if(checkedProduct){
+      console.log(checkedProduct)
+      checkedProduct.quantity++;
+      // await existingProduct.save();
+    }
+    else{
+      console.log("Fail to find product")
+    }
+    //save the updated user in te backend
+    await user.save();
+
+    //res.status(200).json({ checkedProduct });
+    res.status(200).json({ message: "Product increase quantity from Cart Successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error deleting" });
+  }
+});
+//decrease 
+app.put("/cartDecreasedQuanity/:userId/:productid", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const productId = req.params.productid
+    //find the user by the Userid
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    console.log(productId)
+    //user.cart.push(cart);
+    const checkedProduct = user.cart.find((item)=> item.productid.toString() === productId)
+    //console.log(checkedProduct)
+    if(checkedProduct){
+      console.log(checkedProduct)
+      checkedProduct.quantity--;
+      // await existingProduct.save();
+    }
+    else{
+      console.log("Fail to find product")
+    }
+    //save the updated user in te backend
+    await user.save();
+
+    //res.status(200).json({ checkedProduct });
+    res.status(200).json({ message: "Product increase quantity from Cart Successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error deleting" });
+  }
+});
+//delete a product in cart 
+app.delete("/cart/:userId/:productid", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const productId = req.params.productid
+    //find the user by the Userid
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    console.log(productId)
+    //user.cart.push(cart);
+    const checkedProduct = user.cart.filter((item)=> item.productid.toString() != productId)
+    //console.log(checkedProduct)
+    if(checkedProduct){
+      //existingProduct.quantity++;
+      console.log("left products:",checkedProduct)
+      user.cart = checkedProduct
+    }
+    else{
+      console.log("Fail to find deleted product")
+    }
+    //save the updated user in te backend
+    await user.save();
+
+    res.status(200).json({ checkedProduct });
+    //res.status(200).json({ message: "Product deleted from Cart Successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error deleting" });
+  }
+});
+// ------------orders methods
+
 //get all orders
 app.get("/orders", async (req, res) => {
   try {
@@ -402,14 +569,14 @@ app.post("/orders", async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-
+    
     //create an array of product objects from the cart Items
     const products = cartItems.map((item) => ({
-      productid: item?._id,
-      name: item?.title,
+      productid: item?.productid._id,
+      name: item?.productid.title,
       quantity: item.quantity,
       price: item.price,
-      image: item?.image,
+      image: item?.productid.image,
     }));
     //const updateProduct = Product.findOne
     //create a new Order
@@ -422,9 +589,11 @@ app.post("/orders", async (req, res) => {
       delivery: delivery,
       status: status,
     });
-
+    
     await order.save();
-
+    //delete products in cart
+    user.cart.splice(0);
+    await user.save();
     res.status(200).json({ message: "Order created successfully!" });
   } catch (error) {
     console.log("error creating orders", error);
@@ -455,33 +624,8 @@ app.get("/findOrder/:id", async (req, res) => {
     res.status(500).send(e);
   }
 });
-//add a new product
-app.post("/products", async (req, res) => {
-  try {
-    console.debug("Adding a new product...");
-    const product = new Product({ ...req.body });
-    await product.save();
-    return res.status(201).json(product);
-  } catch (error) {
-    return res.status(400).json({ error: error.message });
-  }
-});
-//get the user profile
-app.get("/profile/:userId", async (req, res) => {
-  try {
-    const userId = req.params.userId;
 
-    const user = await User.findById(userId);
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    res.status(200).json({ user });
-  } catch (error) {
-    res.status(500).json({ message: "Error retrieving the user profile" });
-  }
-});
 
 app.get("/orders/:userId", async (req, res) => {
   try {
@@ -499,25 +643,5 @@ app.get("/orders/:userId", async (req, res) => {
   }
 })
 
-//add new product into cart
-app.post("/cart/:id", async (req, res) => {
-  try {
-    const {cart } = req.body;
-    //find the user by the Userid
-    const user = await User.findById({ _id: req.params.id });
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
 
-    //add the new address to the user's addresses array
-    user.cart.push(cart);
-    user.cart.pop()
-    //save the updated user in te backend
-    await user.save();
-
-    res.status(200).json({ message: "Cart created Successfully" });
-  } catch (error) {
-    res.status(500).json({ message: "Error addding cart" });
-  }
-});
 

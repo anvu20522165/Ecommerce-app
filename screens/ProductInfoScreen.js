@@ -7,35 +7,40 @@ import {
     TextInput,
     ImageBackground,
     Dimensions,
+    Alert,
 } from "react-native";
 
-import React, { useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { AntDesign, Feather } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../redux/CartReducer";
-import { useEffect } from "react";
+import { UserType } from "../UserContext";
+import axios from "axios";
 const ProductInfoScreen = () => {
+    const {userId,setUserId} = useContext(UserType)
     const route = useRoute();
     const { width } = Dimensions.get("window");
     const height = (width * 100) / 100;
     const [total, setTotal] = useState(false);
     const [addedToCart, setAddedToCart] = useState(false);
     const dispatch = useDispatch();
-    const addItemToCart = (item) => {
-        setAddedToCart(true);
-        dispatch(addToCart(item));
-        //update cart after waiting for a momment
-        
-        setTimeout(() => {
-          setAddedToCart(false);
-        }, 30000);
-      };
+    //cart reducer
+    // const addItemToCart = (item) => {
+    //     console.log("product id:", item._id);
+    //     setAddedToCart(true);
+    //     dispatch(addToCart(item));
+    //     //update cart after waiting for a momment
+    //     //addProductIntoCart(item)
+    //     setTimeout(() => {
+    //       setAddedToCart(false);
+    //     }, 30000);
+    //   };
       const cart = useSelector((state) => state.cart.cart);
-      console.log(cart);
-
+      //console.log(cart);
+      
       const caculateTotal = (x,y) => {
         setTotal(route.params.price-(route.params.price*route?.params?.offer/100))
         console.log(total);
@@ -43,6 +48,23 @@ const ProductInfoScreen = () => {
       useEffect(() => {
         caculateTotal()
       }, []);
+      //main cart in user
+      const addProductIntoCart = (item) => {
+        const cart = {
+            productid: item._id,
+            price: item.price,
+            quantity: 1
+        }
+        console.log("cart api:", cart)
+        axios.post("http://10.0.2.2:8000/cart",{userId,cart}).then((response) => {
+            Alert.alert("Success","Product added successfully"); 
+            console.log("my cart:",response.data)
+
+        }).catch((error) => {
+            Alert.alert("Error","Failed to add product")
+            console.log("error",error)
+        })
+      };
     return (
         <ScrollView
             style={{ marginTop: 55, flex: 1, backgroundColor: "white" }}
@@ -222,7 +244,7 @@ const ProductInfoScreen = () => {
             </Text>
 
             <Pressable
-        onPress={() => addItemToCart(route?.params?.item)}
+        onPress={() => addProductIntoCart(route?.params?.item)}
         style={{
           backgroundColor: "#FFC72C",
           padding: 10,

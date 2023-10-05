@@ -11,6 +11,19 @@ import { useNavigation } from "@react-navigation/native";
 import RazorpayCheckout from "react-native-razorpay";
 
 const ConfirmationScreen = () => {
+  const [cartApi, setCartApi] = useState([]);
+  const fetchCart = async () => {
+    try {
+      const response = await axios.get(
+        `http://10.0.2.2:8000/productsInCart/${userId}`
+      );
+    
+      setCartApi(response.data);
+      //console.log(response.data)
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
   const steps = [
     { title: "Address", content: "Address Form" },
     { title: "Delivery", content: "Delivery Options" },
@@ -26,6 +39,7 @@ const ConfirmationScreen = () => {
     ?.map((item) => item.price * item.quantity)
     .reduce((curr, prev) => curr + prev, 0);
   useEffect(() => {
+    fetchCart()
     fetchAddresses();
   }, []);
   const fetchAddresses = async () => {
@@ -66,7 +80,8 @@ const ConfirmationScreen = () => {
         navigation.navigate("Order");
         dispatch(cleanCart());
         console.log("order created successfully", response.data);
-        setCurrentStep(0)
+        console.log(JSON.stringify(response.data, undefined, 4));
+        //setCurrentStep(0)
       } else {
         console.log("error creating order", response.data);
       }
@@ -77,47 +92,47 @@ const ConfirmationScreen = () => {
     }
   };
   const pay = async () => {
-    try {
-      const options = {
-        description: "Adding To Wallet",
-        currency: "VND",
-        name: "Ecommerce",
-        key: "rzp_test_PMKkhGC2eXI8K4",
-        amount: total * 100,
-        prefill: {
-          email: "nguyenphuocanvu@gmail.com",
-          contact: "+84946843566",
-          name: "RazorPay Software",
-        },
-        theme: { color: "#F37254" },
-      };
+    // try {
+    //   const options = {
+    //     description: "Adding To Wallet",
+    //     currency: "VND",
+    //     name: "Ecommerce",
+    //     key: "rzp_test_PMKkhGC2eXI8K4",
+    //     amount: total * 100,
+    //     prefill: {
+    //       email: "nguyenphuocanvu@gmail.com",
+    //       contact: "+84946843566",
+    //       name: "RazorPay Software",
+    //     },
+    //     theme: { color: "#F37254" },
+    //   };
 
-      const data = await RazorpayCheckout.open(options);
+    //   const data = await RazorpayCheckout.open(options);
 
-      console.log(data)
+    //   console.log(data)
 
-      const orderData = {
-        userId: userId,
-        cartItems: cart,
-        totalPrice: total,
-        shippingAddress: selectedAddress,
-        paymentMethod: "card",
-      };
+    //   const orderData = {
+    //     userId: userId,
+    //     cartItems: cart,
+    //     totalPrice: total,
+    //     shippingAddress: selectedAddress,
+    //     paymentMethod: "card",
+    //   };
 
-      const response = await axios.post(
-        "http://10.0.2.2:8000/orders",
-        orderData
-      );
-      if (response.status === 200) {
-        navigation.navigate("Order");
-        dispatch(cleanCart());
-        console.log("order created successfully", response.data);
-      } else {
-        console.log("error creating order", response.data);
-      }
-    } catch (error) {
-      console.log("error", error);
-    }
+    //   const response = await axios.post(
+    //     "http://10.0.2.2:8000/orders",
+    //     orderData
+    //   );
+    //   if (response.status === 200) {
+    //     navigation.navigate("Order");
+    //     dispatch(cleanCart());
+    //     console.log("order created successfully", response.data);
+    //   } else {
+    //     console.log("error creating order", response.data);
+    //   }
+    // } catch (error) {
+    //   console.log("error", error);
+    // }
   };
   
 

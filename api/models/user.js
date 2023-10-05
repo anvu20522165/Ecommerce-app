@@ -41,12 +41,12 @@ const userSchema = new mongoose.Schema({
       price: Number,
     }
   ],
-  orders: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Order",
-    },
-  ],
+  // orders: [
+  //   {
+  //     type: mongoose.Schema.Types.ObjectId,
+  //     ref: "Order",
+  //   },
+  // ],
   createdAt: {
     type: Date,
     default: Date.now,

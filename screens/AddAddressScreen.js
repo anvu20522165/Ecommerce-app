@@ -48,16 +48,7 @@ const AddAddressScreen = () => {
       console.log("error", error);
     }
   }
-  const handelEdit = async (addressId) => {
-    try {
-      console.log(addressId)
-      
-      
 
-    } catch (error) {
-      console.log("error", error);
-    }
-  }
   //refresh the addresses when the component comes to the focus ie basically when we navigate back
   useFocusEffect(
     useCallback(() => {

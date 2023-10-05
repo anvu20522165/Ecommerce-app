@@ -17,7 +17,8 @@ export const CartSlice = createSlice({
       if (itemPresent) {
         itemPresent.quantity++;
       } else {
-        state.cart.push({ ...action.payload, quantity: 1 });
+        //state.cart.push({ ...action.payload, quantity: 1 });
+        state.cart.push({ ...action.payload});
       }
     },
     removeFromCart: (state, action) => {
@@ -50,7 +51,7 @@ export const CartSlice = createSlice({
         state.cart = [];
     },
     initCart:(state, action) => {
-      for (product of action.payload.products) {  
+      for (product of action.payload) {  
         state.cart.push(product)
       }
     }
@@ -58,6 +59,6 @@ export const CartSlice = createSlice({
 });
 
 
-export const {addToCart,removeFromCart,incementQuantity,decrementQuantity,cleanCart} = CartSlice.actions;
+export const {addToCart,removeFromCart,incementQuantity,decrementQuantity,cleanCart,initCart} = CartSlice.actions;
 
 export default CartSlice.reducer

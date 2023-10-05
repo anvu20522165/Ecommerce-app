@@ -6,50 +6,106 @@ import {
     Pressable,
     TextInput,
     Image,
+    Alert,
   } from "react-native";
-  import React from "react";
+  import React, { useEffect, useContext, useState, useCallback } from "react";
   import { Feather } from "@expo/vector-icons";
   import { AntDesign } from "@expo/vector-icons";
   import { useDispatch, useSelector } from "react-redux";
   import {
-    decrementQuantity,
-    incementQuantity,
-    removeFromCart,
+    addToCart,
+    cleanCart,
+    initCart
   } from "../redux/CartReducer";
-  import { useNavigation } from "@react-navigation/native";
-  
+  import { useFocusEffect, useNavigation } from "@react-navigation/native";
+  import { UserType } from "../UserContext";
+  import axios from "axios";
   const CartScreen = () => {
+    const [cartApi, setCartApi] = useState([]);
+    const { userId, setUserId } = useContext(UserType);
+
     const cart = useSelector((state) => state.cart.cart);
     console.log(JSON.stringify(cart, undefined, 2));
     const total = cart
       ?.map((item) => item.price * item.quantity)
       .reduce((curr, prev) => curr + prev, 0);
     const dispatch = useDispatch();
-    const increaseQuantity = (item) => {
-      dispatch(incementQuantity(item));
-    };
-    const decreaseQuantity = (item) => {
-      dispatch(decrementQuantity(item));
-    };
-    const deleteItem = (item) => {
-      dispatch(removeFromCart(item));
-    };
+
     const navigation = useNavigation();
 
+    useEffect(() => {
+      if (userId) {
+        fetchCart();
+      }
+    }, [userId]);
 
-    // useEffect(() => {
-    //   const assignCart = async () => {
-    //     try {
-    //       const response = await axios.post("http://10.0.2.2:8000/cart"); 
-    //       setCart(response.data);
-    //       //console.log("trending data", response.data);
-    //     } catch (error) {
-    //       console.log("error message", error);
-    //     }
-    //   };
-    //   assignCart();
+    const fetchCart = async () => {
+      try {
+        const response = await axios.get(
+          `http://10.0.2.2:8000/productsInCart/${userId}`
+        );
+      
+        setCartApi(response.data);
+        console.log(response.data)
+        dispatch(cleanCart())
+        dispatch(initCart(response.data))
+      } catch (error) {
+        console.log("error", error);
+      }
+    };
+    useFocusEffect(
+      useCallback(() => {
+        fetchCart();
+      }, [])
+    );
+    const increaseQuantity = async (productid) => {
+      try {
+        console.log(productid)
+        const response = await axios.put(
+          `http://10.0.2.2:8000/cartIncreasedQuanity/${userId}/${productid}`, 
+        );
+        console.log("increased quantity:", response);
+        //const { addresses } = response.data;
+        //setAddresses(addresses);
+        fetchCart();
+      } catch (error) {
+        console.log("error", error);
+      }
+    };
 
-    // }, []);
+    const decreaseQuantity = async (productid) => {
+      try {
+        console.log(productid)
+        const response = await axios.put(
+          `http://10.0.2.2:8000/cartDecreasedQuanity/${userId}/${productid}`, 
+        );
+        console.log("decreased quantity:", response);
+        //const { addresses } = response.data;
+        //setAddresses(addresses);
+        fetchCart();
+      } catch (error) {
+        console.log("error", error);
+      }
+    };
+
+    const handleRemove = async (productid) => {
+      try {
+        console.log(productid)
+        const response = await axios.delete(
+          `http://10.0.2.2:8000/cart/${userId}/${productid}`, 
+        );
+        console.log("delete:", response);
+        //const { addresses } = response.data;
+        //setAddresses(addresses);
+        fetchCart();
+      } catch (error) {
+        console.log("error", error);
+      }
+    }
+
+    const purchase = async () => {
+
+    }
     return (
       <ScrollView style={{ marginTop: 55, flex: 1, backgroundColor: "white" }}>
         <View
@@ -88,7 +144,7 @@ import {
           <Text style={{ fontSize: 18, fontWeight: "400" }}>Subtotal : </Text>
           <Text style={{ fontSize: 20, fontWeight: "bold" }}>{total}</Text>
         </View>
-        <Text style={{ marginHorizontal: 10 }}>EMI details Available</Text>
+        <Text style={{ marginHorizontal: 10 }}>EMI detail Available</Text>
   
         <Pressable
           onPress={() => navigation.navigate("Confirmation")}
@@ -102,7 +158,7 @@ import {
             marginTop: 10,
           }}
         >
-          <Text>Proceed to Buy ({cart.length}) items</Text>
+          <Text>Proceed to Buy ({cartApi.length}) items</Text>
         </Pressable>
   
         <Text
@@ -115,7 +171,7 @@ import {
         />
   
         <View style={{ marginHorizontal: 10 }}>
-          {cart?.map((item, index) => (
+          {cartApi?.map((item, index) => (
             <View
               style={{
                 backgroundColor: "white",
@@ -138,13 +194,13 @@ import {
                 <View>
                   <Image
                     style={{ width: 140, height: 140, resizeMode: "contain" }}
-                    source={{ uri: item?.image }}
+                    source={{ uri: item?.productid.image }}
                   />
                 </View>
   
                 <View>
                   <Text numberOfLines={3} style={{ width: 150, marginTop: 10 }}>
-                    {item?.title}
+                    {item?.productid.title}
                   </Text>
                   <Text
                     style={{ fontSize: 20, fontWeight: "bold", marginTop: 6 }}
@@ -182,7 +238,7 @@ import {
                 >
                   {item?.quantity > 1 ? (
                     <Pressable
-                      onPress={() => decreaseQuantity(item)}
+                      onPress={() => decreaseQuantity(item.productid._id)}
                       style={{
                         backgroundColor: "#D8D8D8",
                         padding: 7,
@@ -194,7 +250,7 @@ import {
                     </Pressable>
                   ) : (
                     <Pressable
-                      onPress={() => deleteItem(item)}
+                      onPress={() => handleRemove(item.productid._id)}
                       style={{
                         backgroundColor: "#D8D8D8",
                         padding: 7,
@@ -217,7 +273,7 @@ import {
                   </Pressable>
   
                   <Pressable
-                    onPress={() => increaseQuantity(item)}
+                    onPress={() => increaseQuantity(item.productid._id)}
                     style={{
                       backgroundColor: "#D8D8D8",
                       padding: 7,
@@ -229,7 +285,7 @@ import {
                   </Pressable>
                 </View>
                 <Pressable
-                  onPress={() => deleteItem(item)}
+                  onPress={() => handleRemove(item.productid._id)}
                   style={{
                     backgroundColor: "white",
                     paddingHorizontal: 8,
