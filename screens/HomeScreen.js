@@ -20,12 +20,12 @@ import axios from "axios";
 import ProductItem from "../components/ProductItem";
 import DropDownPicker from "react-native-dropdown-picker";
 import { useNavigation } from "@react-navigation/native";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { BottomModal, SlideAnimation, ModalContent } from "react-native-modals";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { UserType } from "../UserContext";
 import jwt_decode from "jwt-decode";
-
+import { addToCart, initCart } from "../redux/CartReducer";
 const HomeScreen = () => {
   const list = [
     {
@@ -207,6 +207,10 @@ const HomeScreen = () => {
   //const [category, setCategory] = useState("jewelery");
   const { userId, setUserId } = useContext(UserType);
   const [selectedAddress, setSelectedAdress] = useState("");
+  const cart = useSelector((state) => state.cart.cart);
+  const [cartApi, setCartApi] = useState([]);
+  const dispatch = useDispatch();
+  const [modalVisible, setModalVisible] = useState(false);
   console.log(selectedAddress)
   // const [items, setItems] = useState([
   //   { label: "Men's clothing", value: "men's clothing" },
@@ -256,18 +260,36 @@ const HomeScreen = () => {
         console.log("error message", error);
       }
     };
+    // const fetchCart = async () => {
+    //   try {
+    //     const response = await axios.get(
+    //       `http://10.0.2.2:8000/productsInCart/${userId}`
+    //     );
+      
+    //     response.data.map((item)=>dispatch(addToCart(item)))
+    //   } catch (error) {
+    //     console.log("errorr", error);
+    //   }
+    // };
+
+    
 
     //fetchData();
     fetchTrendingData();
     fetchOffers();
     fetchNewData()
+    // setTimeout(() => {
+    //   fetchCart();
+    // }, 1000);
+    
+    //addToTempCart()
+    
   }, []);
   // const onGenderOpen = useCallback(() => {
   //   setTemp(false);
   // }, []);
 
-  const cart = useSelector((state) => state.cart.cart);
-  const [modalVisible, setModalVisible] = useState(false);
+
   useEffect(() => {
     if (userId) {
       fetchAddresses();
@@ -285,6 +307,7 @@ const HomeScreen = () => {
       console.log("error", error);
     }
   };
+    //console.log("address", addresses);
   useEffect(() => {
     const fetchUser = async () => {
       const token = await AsyncStorage.getItem("authToken");
@@ -295,7 +318,7 @@ const HomeScreen = () => {
 
     fetchUser();
   }, []);
-  console.log("address", addresses);
+
   return (
     <>
       <SafeAreaView
@@ -553,6 +576,7 @@ const HomeScreen = () => {
               <Pressable
                 onPress={() =>
                   navigation.navigate("Info", {
+                    _id: item._id,
                     title: item.title,
                     price: item?.price,
 
@@ -595,7 +619,7 @@ const HomeScreen = () => {
                       fontWeight: "bold",
                     }}
                   >
-                    Upto {item?.offer}%
+                    Upto {item?.offer}% and {item?._id}
                   </Text>
                 </View>
               </Pressable>
