@@ -20,20 +20,20 @@ const LoginScreen = () => {
   const [password, setPassword] = useState("");
   
   const navigation = useNavigation();
-  useEffect(() => {
-    const checkLoginStatus = async () => {
-      try {
-        const token = await AsyncStorage.getItem("authToken");
+  // useEffect(() => {
+  //   const checkLoginStatus = async () => {
+  //     try {
+  //       const token = await AsyncStorage.getItem("authToken");
 
-        if (token) {
-          navigation.replace("Main");
-        }
-      } catch (err) {
-        console.log("error message", err);
-      }
-    };
-    checkLoginStatus();
-  }, []);
+  //       if (token) {
+  //         navigation.replace("Main");
+  //       }
+  //     } catch (err) {
+  //       console.log("error message", err);
+  //     }
+  //   };
+  //   checkLoginStatus();
+  // }, []);
   const handleLogin = () => {
     const user = {
       email: email,
