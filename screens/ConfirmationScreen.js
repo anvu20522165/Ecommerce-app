@@ -248,7 +248,7 @@ const ConfirmationScreen = () => {
                   </Text>
 
                   <Text style={{ fontSize: 15, color: "#181818" }}>
-                    India, Bangalore
+                    Vietnam
                   </Text>
 
                   <Text style={{ fontSize: 15, color: "#181818" }}>

@@ -142,7 +142,7 @@ import {
   
         <View style={{ padding: 10, flexDirection: "row", alignItems: "center" }}>
           <Text style={{ fontSize: 18, fontWeight: "400" }}>Subtotal : </Text>
-          <Text style={{ fontSize: 20, fontWeight: "bold" }}>{total}</Text>
+          <Text style={{ fontSize: 20, fontWeight: "bold" }}>{total.toLocaleString('vi', {style : 'currency', currency : 'VND'})}</Text>
         </View>
         <Text style={{ marginHorizontal: 10 }}>EMI detail Available</Text>
   
@@ -205,7 +205,7 @@ import {
                   <Text
                     style={{ fontSize: 20, fontWeight: "bold", marginTop: 6 }}
                   >
-                    {item?.price}
+                    {item?.price.toLocaleString('vi', {style : 'currency', currency : 'VND'})}
                   </Text>
                   <Image
                     style={{ width: 30, height: 30, resizeMode: "contain" }}

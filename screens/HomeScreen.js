@@ -292,6 +292,7 @@ const HomeScreen = () => {
 
   useEffect(() => {
     if (userId) {
+      console.log("user id:", userId)
       fetchAddresses();
     }
   }, [userId, modalVisible]);
@@ -301,7 +302,7 @@ const HomeScreen = () => {
         `http://10.0.2.2:8000/addresses/${userId}`
       );
       const { addresses } = response.data;
-
+      console.log(response.data)
       setAddresses(addresses);
     } catch (error) {
       console.log("error", error);
@@ -453,14 +454,6 @@ const HomeScreen = () => {
                     sold: item?.sold,
                     item: item,
 
-                    // id: item.id,
-                    // title: item.title,
-                    // price: item?.price,
-                    // carouselImages: item.carouselImages,
-                    // color: item?.color,
-                    // size: item?.size,
-                    // oldPrice: item?.oldPrice,
-                    // item: item,
                   })
                 }
                 style={{
@@ -619,7 +612,7 @@ const HomeScreen = () => {
                       fontWeight: "bold",
                     }}
                   >
-                    Upto {item?.offer}% and {item?._id}
+                    Upto {item?.offer}%
                   </Text>
                 </View>
               </Pressable>
