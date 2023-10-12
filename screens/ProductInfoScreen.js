@@ -52,7 +52,7 @@ const ProductInfoScreen = () => {
       const addProductIntoCart = (item) => {
         const cart = {
             productid: item._id,
-            price: item.price,
+            price: (item.price-item.price*item?.offer/100),
             quantity: 1
         }
         console.log("cart api:", cart)

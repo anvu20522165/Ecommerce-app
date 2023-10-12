@@ -5,6 +5,15 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  avatar: {
+    type: String,
+    required: false,
+    default: "https://th.bing.com/th/id/OIP.3IsXMskZyheEWqtE3Dr7JwHaGe?pid=ImgDet&rs=1"
+  },
+  phone: {
+    type: String,
+    required: true,
+  },
   email: {
     type: String,
     required: true,

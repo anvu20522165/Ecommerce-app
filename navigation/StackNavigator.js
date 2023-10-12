@@ -17,6 +17,8 @@ import ProfileScreen from "../screens/ProfileScreen";
 import ConfirmationScreen from "../screens/ConfirmationScreen";
 import OrderScreen from "../screens/OrderScreen";
 import EditAddressScreen from "../screens/EditAddressScreen";
+import PersonalDetailScreen from "../screens/profileLinks/PersonalDetailScreen";
+import MyOrders from "../screens/profileLinks/MyOrders";
 const StackNavigator = () => {
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
@@ -119,6 +121,16 @@ const StackNavigator = () => {
         <Stack.Screen
           name="Order"
           component={OrderScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="PersonalDetails"
+          component={PersonalDetailScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="MyOrders"
+          component={MyOrders}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

@@ -8,7 +8,7 @@ const OrderScreen = () => {
     useEffect(() => {
         setTimeout(() => {
           navigation.replace("Main");
-        }, 1300);
+        }, 1500);
       }, []);
   return (
     <SafeAreaView style={{ backgroundColor: "white", flex: 1 }}>
