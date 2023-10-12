@@ -10,12 +10,12 @@ import {
   Image,
 } from "react-native";
 import { Entypo } from "@expo/vector-icons";
-import { FontAwesome5, Ionicons } from "@expo/vector-icons";
+import { FontAwesome5, Ionicons, FontAwesome } from "@expo/vector-icons";
 
-import React, { useState, useEffect, useContext } from "react";
+import React, { useEffect, useContext, useState, useCallback } from "react";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { UserType } from '../UserContext';
 import axios from "axios";
 const ProfileScreen = () => {
@@ -25,7 +25,7 @@ const ProfileScreen = () => {
     //setAppUserConfig({ accessToken: null, accessTokenName: null });
     navigation.replace("Login");
   }
-  
+
   const { userId, setUserId } = useContext(UserType);
   const [user, setUser] = useState([]);
 
@@ -45,15 +45,21 @@ const ProfileScreen = () => {
     if (userId) {
       console.log("user id:", userId)
       fetchUser();
-      
+
     }
   }, [userId]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchUser();
+    }, [])
+  );
   return (
     <SafeAreaView>
 
       <View style={{ marginHorizontal: 20 }}>
         <Pressable>
-    
+
           <Pressable
             style={{
               borderWidth: 1,
@@ -79,18 +85,18 @@ const ProfileScreen = () => {
                 }}
               >
 
-                
+
                 <Image
-                  style={{ width: 60, height: 60, resizeMode: "contain",  borderRadius: 15 }}
+                  style={{ width: 60, height: 60, resizeMode: "contain", borderRadius: 15 }}
                   source={{ uri: user?.avatar }}
                 />
-                <View style={{  marginLeft: 15 }}>
-                <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-                  {user?.name}
-                </Text>
-                <Text style={{ fontSize: 14}}>
-                  {user?.email}
-                </Text>
+                <View style={{ marginLeft: 15 }}>
+                  <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+                    {user?.name}
+                  </Text>
+                  <Text style={{ fontSize: 14 }}>
+                    {user?.email}
+                  </Text>
                 </View>
               </View>
 
@@ -118,7 +124,7 @@ const ProfileScreen = () => {
 
 
             <View style={{ marginLeft: 6, marginVertical: 10 }}>
-            <Pressable
+              <Pressable
                 onPress={() =>
                   navigation.navigate("PersonalDetails", {
                     _id: user._id,
@@ -130,23 +136,24 @@ const ProfileScreen = () => {
                   })
                 }
               >
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 3,
-                  marginVertical: 10
-                }}
-              >
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 3,
+                    marginVertical: 10
+                  }}
+                >
 
-                <FontAwesome5 name="user-alt" size={24} style={{ marginHorizontal: 10 }} />
-                <Text style={{ fontSize: 15, fontWeight: "bold" }}>
-                  Personal Details
-                </Text>
+                  <FontAwesome5 name="user-alt" size={24} style={{ marginHorizontal: 10 }} />
+                  <Text style={{ fontSize: 15, fontWeight: "bold" }}>
+                    Personal Details
+                  </Text>
 
-              </View>
+                </View>
               </Pressable>
-
+              <Pressable
+              onPress={() => navigation.navigate("MyOrders")}>
               <View
                 style={{
                   flexDirection: "row",
@@ -162,7 +169,7 @@ const ProfileScreen = () => {
                 </Text>
 
               </View>
-
+              </Pressable>
               <View
                 style={{
                   flexDirection: "row",
@@ -178,23 +185,24 @@ const ProfileScreen = () => {
                 </Text>
 
               </View>
+              <Pressable
+              onPress={() => navigation.navigate("Address")}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 3,
+                    marginVertical: 10
+                  }}
+                >
 
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 3,
-                  marginVertical: 10
-                }}
-              >
+                  <FontAwesome name="truck" size={24} style={{ marginHorizontal: 10 }} />
+                  <Text style={{ fontSize: 15, fontWeight: "bold" }}>
+                    Shipping Address
+                  </Text>
 
-                <FontAwesome5 name="truck" size={24} style={{ marginHorizontal: 10 }} />
-                <Text style={{ fontSize: 15, fontWeight: "bold" }}>
-                  Shipping Address
-                </Text>
-
-              </View>
-
+                </View>
+              </Pressable>
               <View
                 style={{
                   flexDirection: "row",
@@ -249,29 +257,29 @@ const ProfileScreen = () => {
 
 
             <View style={{ marginLeft: 6, marginVertical: 10 }}>
-            <Pressable
-                  onPress={() => logOut()}
-                >
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 3,
-                  marginVertical: 10
-                }}
+              <Pressable
+                onPress={() => logOut()}
               >
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 3,
+                    marginVertical: 10
+                  }}
+                >
 
-                
+
                   <FontAwesome5 name="sign-out-alt" size={24} style={{ marginHorizontal: 10 }} />
                   <Text style={{ fontSize: 15, fontWeight: "bold" }}>Log out</Text>
-                
 
-              </View>
+
+                </View>
               </Pressable>
 
 
             </View>
-            
+
           </Pressable>
 
         </Pressable>

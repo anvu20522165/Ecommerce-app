@@ -37,7 +37,7 @@ const PersonalDetailScreen = () => {
       phone,
   }
   axios.put("http://10.0.2.2:8000/updateUser",{userId,updatedUser}).then((response) => {
-      console.log(response.data)
+      //console.log(response.data)
       Alert.alert("Success","User updated successfully");
   }).catch((error) => {
       Alert.alert("Error","Failed to update user")
