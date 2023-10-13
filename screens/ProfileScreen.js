@@ -219,6 +219,8 @@ const ProfileScreen = () => {
 
               </View>
 
+              <Pressable
+              onPress={() => navigation.navigate("MyOrdersTemp")}>
               <View
                 style={{
                   flexDirection: "row",
@@ -234,7 +236,7 @@ const ProfileScreen = () => {
                 </Text>
 
               </View>
-
+              </Pressable>
             </View>
           </Pressable>
 
