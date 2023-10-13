@@ -19,6 +19,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import ProductItem from "../../components/ProductItem";
 const MyOrders = () => {
     const { userId, setUserId } = useContext(UserType);
+    const navigation = useNavigation();
     const route = useRoute();
     const [open, setOpen] = useState(false);
     const [status, setStatus] = useState("Pending");
@@ -38,7 +39,7 @@ const MyOrders = () => {
                 //const { orderData } = response.data;
                 //setOrderData(orderData);
                 setOrderData(response.data);
-                console.log(response.data);
+                //console.log(response.data);
             } catch (error) {
                 console.log("error message", error);
             }
@@ -117,144 +118,111 @@ const MyOrders = () => {
 
             <ScrollView >
                 {orderData
-                .filter((item) => item.status === status)
-                ?.map((item, index) => (
-                    <Pressable key={index} style={{borderRadius: 5,
-                        borderColor: "#98E4FF",
-                        borderWidth: 0.6, marginTop: 20}}>
-                        <Pressable
-
-                            style={{
-                                margin: 10,
-                                justifyContent: "center",
-                                alignItems: "center",
-                            }}
-                        >
-
+                    .filter((item) => item.status === status)
+                    ?.map((item, index) => (
+                        <Pressable key={index} style={{
+                            paddingBottom: 17,
+                            marginVertical: 7,
+                            borderRadius: 10,
+                            marginTop: 20,
+                            borderWidth: 1,
+                            borderColor: "#D0D0D0",
+                            marginHorizontal: 6
+                        }}>
                             <Pressable
 
                                 style={{
-                                    backgroundColor: "#FFC72C",
-                                    padding: 10,
-                                    borderRadius: 5,
+                                    marginHorizontal: 5
 
-                                    marginHorizontal: 10,
-                                    marginTop: 10,
                                 }}
                             >
-                                <Text style={{ fontWeight: "bold", fontSize: 18 }}>Order {index + 1}</Text>
+
+                                <Pressable
+
+                                    style={{
+                                        //backgroundColor: "#FFC72C",
+                                        padding: 10,
+                                        borderRadius: 5,
+
+                                        marginHorizontal: 10,
+                                        marginTop: 5,
+                                    }}
+                                >
+                                    <Text style={{ fontWeight: "400", fontSize: 20 }}>{index + 1}</Text>
+                                    <Text style={{ fontWeight: "bold", fontSize: 20 }}>Order {item._id}</Text>
+                                </Pressable>
+
                             </Pressable>
 
-                        </Pressable>
-                        <Text style={{ marginHorizontal: 10, fontSize: 20, marginVertical: 10 }}>Your ({item.products.length}) products details: </Text>
-                        
-                        <View
-                            style={{
-                                flexDirection: "row",
-                                alignItems: "center",
-                                flexWrap: "wrap",
-                            }}
-                        >
-                            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                            {item?.products
 
-                                .map((product, index) => (
-                                    
-                                    <View
+                            <View style={{ padding: 10, flexDirection: "row" }}>
+                                <View>
+                                    <Pressable
+                                        onPress={() =>
+                                            navigation.navigate("MyOrdersDetails", {
+                                              _id: item._id,
+                                              shippingAddress: item.shippingAddress,
+                                              products: item.products,
+                                              paymentMethod: item.paymentMethod,
+                                              delivery: item.delivery,
+                                              status: item.status,
+                                              totalPrice: item.totalPrice,
+                                              item: item,
+                                            })
+                                          }
                                         style={{
-                                            backgroundColor: "#FFFAFA",
-                                            marginVertical: 10,
-                                            borderBottomColor: "#F0F0F0",
-                                            borderWidth: 2,
-                                            borderLeftWidth: 0,
-                                            borderTopWidth: 0,
-                                            borderRightWidth: 0,
-                                            marginHorizontal: 15,
+                                            backgroundColor: "#FFC72C",
+                                            //padding: 19,
+                                            borderRadius: 6,
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                            marginTop: 50,
+                                            height: 26,
+                                            width: 75,
+                                            marginLeft: 15
                                         }}
-                                        key={index}
                                     >
-                                        
-                                        <Pressable
-                                            style={{
-                                                marginVertical: 10,
-                                                flexDirection: "row",
-                                                justifyContent: "space-between",
-                                            }}
-                                        >
-                                            <View>
-                                                <Image
-                                                    style={{ width: 140, height: 140, resizeMode: "contain", marginRight: 10 }}
-                                                source={{ uri: product?.image }}
-                                                />
-                                            </View>
+                                        <Text style={{ fontWeight: "bold" }}>Details</Text>
+                                    </Pressable>
+                                </View>
+                                <View style={{ marginLeft: 50 }}>
+                                    <Text style={{ padding: 10, fontSize: 18, fontWeight: "400" }}>
+                                        Total price: {item.totalPrice.toLocaleString('vi', { style: 'currency', currency: 'VND' })}
+                                    </Text>
+                                    <Text
+                                        style={{
+                                            padding: 10,
+                                            fontSize: 14,
+                                            fontWeight: "400",
+                                            marginTop: 5,
+                                            //marginLeft: 50
+                                        }}
+                                    >
+                                        Date: {item.createdAt}
+                                    </Text>
+                                    <Text
+                                        style={{
+                                            padding: 10,
+                                            fontWeight: "500",
+                                            marginTop: 5,
+                                            fontSize: 15
+                                        }}
+                                    >
+                                        Status: {item.status}
+                                    </Text>
+                                </View>
 
-                                            <View>
-                                                <Text numberOfLines={3} style={{ width: 150, marginTop: 10, fontWeight: "bold",fontSize: 17, }}>
-                                                    {product.name}
-                                                </Text>
-                                                <Text
-                                                    style={{ fontSize: 15,  marginTop: 6 }}
-                                                >
-                                                    {product.price.toLocaleString('vi', { style: 'currency', currency: 'VND' })}
-                                                </Text>
-                                                <Text
-                                                    style={{ fontSize: 15,  marginTop: 6 }}
-                                                >
-                                                    Quantity: {product.quantity}
-                                                </Text>
-                                                <Image
-                                                    style={{ width: 30, height: 30, resizeMode: "contain" }}
-                                                    source={{
-                                                        uri: "https://assets.stickpng.com/thumbs/5f4924cc68ecc70004ae7065.png",
-                                                    }}
-                                                />
-                                                <Text style={{ color: "green" }}>In Stock</Text>
-
-                                            </View>
-                                        </Pressable>
-
-                                        <Pressable
-                                            style={{
-                                                marginTop: 15,
-                                                marginBottom: 10,
-                                                flexDirection: "row",
-                                                alignItems: "center",
-                                                gap: 10,
-                                            }}
-                                        >
-                                           
-                                            
-                                        </Pressable>
-
-                                        
-                                    </View>
-                                ))}
-                                </ScrollView>
-                        </View>
-                        <View style={{ padding: 10, flexDirection: "row" }}>
-                            <Text style={{ fontSize: 18, fontWeight: "400" }}>Subtotal : {item.totalPrice.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</Text>
-                        </View>
-                        <Text
-                            style={{
-                                padding: 10,
-                                fontSize: 12,
-                                fontWeight: "500",
-                                marginTop: 5,
-                                fontSize: 17
-                            }}
-                        >
-                            Status: {item.status}
-                        </Text>
+                            </View>
 
 
 
 
-                    </Pressable>
-                ))}
+                        </Pressable>
+                    ))}
             </ScrollView>
 
 
-           
+
         </ScrollView>
     )
 }
