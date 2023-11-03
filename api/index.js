@@ -41,6 +41,18 @@ const Product = require("./models/product");
 
 // ------------users methods
 
+//Get all users
+app.get("/users", async (req, res) => {
+  try {
+    const users = await User.find();
+    if (!users) {
+      throw "error";
+    }
+    return res.status(201).json(users);
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+});
 //sendVerificationEmail
 const sendVerificationEmail = async (email, verificationToken) => {
   // Create a Nodemailer transporter
