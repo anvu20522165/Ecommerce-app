@@ -21,6 +21,7 @@ import PersonalDetailScreen from "../screens/profileLinks/PersonalDetailScreen";
 import MyOrders from "../screens/profileLinks/MyOrders";
 import MyOrdersTemp from "../screens/profileLinks/MyOrdersTemp";
 import MyOrdersDetails from "../screens/profileLinks/MyOrdersDetails";
+import AdminDashboard from "../screens/admin/AdminDashboard";
 const StackNavigator = () => {
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
@@ -144,6 +145,11 @@ const StackNavigator = () => {
           name="MyOrdersDetails"
           component={MyOrdersDetails}
           options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="AdminDashboard"
+          component={AdminDashboard}
+          options={{ headerShown: true }}
         />
       </Stack.Navigator>
     </NavigationContainer>

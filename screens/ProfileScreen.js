@@ -56,7 +56,7 @@ const ProfileScreen = () => {
   );
   return (
     <SafeAreaView>
-
+      <ScrollView>
       <View style={{ marginHorizontal: 20 }}>
         <Pressable>
 
@@ -237,6 +237,24 @@ const ProfileScreen = () => {
 
               </View>
               </Pressable>
+              <Pressable
+              onPress={() => navigation.navigate("AdminDashboard")}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 3,
+                  marginVertical: 10
+                }}
+              >
+
+                <FontAwesome5 name="user-shield" size={24} style={{ marginHorizontal: 10 }} />
+                <Text style={{ fontSize: 15, fontWeight: "bold" }}>
+                  Admin
+                </Text>
+
+              </View>
+              </Pressable>
             </View>
           </Pressable>
 
@@ -286,7 +304,7 @@ const ProfileScreen = () => {
 
         </Pressable>
       </View>
-
+      </ScrollView>
     </SafeAreaView>
   )
 }

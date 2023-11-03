@@ -12,7 +12,7 @@ import {
   Image,
   KeyboardAvoidingView,
   TextInput,
-  Pressable,
+  Pressable, Alert
 } from "react-native";
 const LoginScreen = () => {
 

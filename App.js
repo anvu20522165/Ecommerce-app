@@ -10,7 +10,7 @@ export default function App() {
     <>
       <Provider store={store}>
         <UserContext>
-        <StackNavigator />
+        <StackNavigator/>
         <ModalPortal/>
         </UserContext>
       </Provider>
