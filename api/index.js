@@ -700,5 +700,6 @@ app.get("/orders/:userId", async (req, res) => {
   }
 })
 
+//categories methods
 
 

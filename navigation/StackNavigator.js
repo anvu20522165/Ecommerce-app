@@ -22,6 +22,10 @@ import MyOrders from "../screens/profileLinks/MyOrders";
 import MyOrdersTemp from "../screens/profileLinks/MyOrdersTemp";
 import MyOrdersDetails from "../screens/profileLinks/MyOrdersDetails";
 import AdminDashboard from "../screens/admin/AdminDashboard";
+import ViewProductsScreen from "../screens/admin/ViewProductsScreen";
+import ViewUsersScreen from "../screens/admin/ViewUsersScreen";
+import ViewOrdersScreen from "../screens/admin/ViewOrdersScreen";
+import AddProductsScreen from "../screens/admin/AddProductsScreen";
 const StackNavigator = () => {
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
@@ -151,6 +155,27 @@ const StackNavigator = () => {
           component={AdminDashboard}
           options={{ headerShown: true }}
         />
+        <Stack.Screen
+          name="ViewProductsScreen"
+          component={ViewProductsScreen}
+          options={{ headerShown: true }}
+        />
+        <Stack.Screen
+          name="ViewUsersScreen"
+          component={ViewUsersScreen}
+          options={{ headerShown: true }}
+        />
+        <Stack.Screen
+          name="ViewOrdersScreen"
+          component={ViewOrdersScreen}
+          options={{ headerShown: true }}
+        />
+        <Stack.Screen
+          name="AddProductsScreen"
+          component={AddProductsScreen}
+          options={{ headerShown: true }}
+        />
+
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -19,7 +19,8 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { UserType } from "../../UserContext";
 import axios from "axios";
 const AdminDashboard = () => {
-    const [usersCount, setUsersCount] = useState(0);
+  const navigation = useNavigation();
+  const [usersCount, setUsersCount] = useState(0);
   const [ordersCount, setOrdersCount] = useState(0);
   const [productsCount, setProductsCount] = useState(0);
 
@@ -27,21 +28,23 @@ const AdminDashboard = () => {
     const fetchCounts = async () => {
       try {
         // Lấy số lượng Users
-        const usersResponse = await axios.get('http://10.0.2.2:8000/users');
+        const usersResponse = await axios.get("http://10.0.2.2:8000/users");
         const usersCount = usersResponse.data.length;
         setUsersCount(usersCount);
 
         // Lấy số lượng Orders
-        const ordersResponse = await axios.get('http://10.0.2.2:8000/orders');
+        const ordersResponse = await axios.get("http://10.0.2.2:8000/orders");
         const ordersCount = ordersResponse.data.length;
         setOrdersCount(ordersCount);
 
         // Lấy số lượng Products
-        const productsResponse = await axios.get('http://10.0.2.2:8000/products');
+        const productsResponse = await axios.get(
+          "http://10.0.2.2:8000/products"
+        );
         const productsCount = productsResponse.data.length;
         setProductsCount(productsCount);
       } catch (error) {
-        console.error('Error:', error);
+        console.error("Error:", error);
       }
     };
 
@@ -50,7 +53,7 @@ const AdminDashboard = () => {
   return (
     <SafeAreaView>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.contentBody}>
+        <View style={styles.container}>
           <View style={styles.statisticsSection}>
             <Text style={styles.contentTitle}>Welcome Admin</Text>
             <View style={styles.statisticsContainer}>
@@ -122,28 +125,41 @@ const AdminDashboard = () => {
             <Text style={styles.contentTitle}>Actions</Text>
             <View style={styles.tasksBody}>
               <View style={styles.tasksList}>
-              <View style={styles.chooseTask}>
+                <View style={styles.chooseTask}>
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <FontAwesome5
                       name="user"
                       size={16}
                       color="blue"
-                      style={[styles.statisticsIcon, { marginRight: 15 }]}
+                      style={[
+                        styles.statisticsIcon,
+                        { marginRight: 15, marginLeft: 4 },
+                      ]}
                     />
-                    <Text style={{ fontWeight: "bold", fontSize: 18, color: 'blue' }}>
+                    <Text
+                      style={{
+                        fontWeight: "bold",
+                        fontSize: 18,
+                        color: "blue",
+                      }}
+                    >
                       Users
                     </Text>
                   </View>
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    <FontAwesome5
-                      name="eye"
-                      size={16}
-                      color="blue"
-                      style={[styles.statisticsIcon]}
-                    />
+                    <Pressable
+                      onPress={() => navigation.navigate("ViewUsersScreen")}
+                    >
+                      <FontAwesome5
+                        name="eye"
+                        size={16}
+                        color="blue"
+                        style={[styles.statisticsIcon]}
+                      />
+                    </Pressable>
                   </View>
                 </View>
-              <View style={styles.chooseTask}>
+                <View style={styles.chooseTask}>
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <FontAwesome5
                       name="shopping-cart"
@@ -151,12 +167,22 @@ const AdminDashboard = () => {
                       color="blue"
                       style={[styles.statisticsIcon, { marginRight: 15 }]}
                     />
-                    <Text style={{ fontWeight: "bold", fontSize: 18, color: 'blue' }}>
+                    <Text
+                      style={{
+                        fontWeight: "bold",
+                        fontSize: 18,
+                        color: "blue",
+                      }}
+                    >
                       Orders
                     </Text>
                   </View>
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    <FontAwesome5 name="eye" size={16} color="blue" />
+                    <Pressable
+                      onPress={() => navigation.navigate("ViewOrdersScreen")}
+                    >
+                      <FontAwesome5 name="eye" size={16} color="blue" />
+                    </Pressable>
                   </View>
                 </View>
                 <View style={styles.chooseTask}>
@@ -167,18 +193,32 @@ const AdminDashboard = () => {
                       color="blue"
                       style={[styles.statisticsIcon, { marginRight: 15 }]}
                     />
-                    <Text style={{ fontWeight: "bold", fontSize: 18, color: 'blue' }}>
+                    <Text
+                      style={{
+                        fontWeight: "bold",
+                        fontSize: 18,
+                        color: "blue",
+                      }}
+                    >
                       Products
                     </Text>
                   </View>
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <Pressable
+                      onPress={() => navigation.navigate("AddProductsScreen")}
+                    >
                     <FontAwesome5
                       name="plus"
                       size={16}
                       color="blue"
                       style={[styles.statisticsIcon, { marginRight: 15 }]}
                     />
-                    <FontAwesome5 name="eye" size={16} color="blue" />
+                    </Pressable>
+                    <Pressable
+                      onPress={() => navigation.navigate("ViewProductsScreen")}
+                    >
+                      <FontAwesome5 name="eye" size={16} color="blue" />
+                    </Pressable>
                   </View>
                 </View>
                 <View style={styles.chooseTask}>
@@ -189,7 +229,13 @@ const AdminDashboard = () => {
                       color="blue"
                       style={[styles.statisticsIcon, { marginRight: 15 }]}
                     />
-                    <Text style={{ fontWeight: "bold", fontSize: 18, color: 'blue' }}>
+                    <Text
+                      style={{
+                        fontWeight: "bold",
+                        fontSize: 18,
+                        color: "blue",
+                      }}
+                    >
                       Categories
                     </Text>
                   </View>
@@ -285,7 +331,7 @@ const styles = StyleSheet.create({
     marginBottom: 50,
   },
   chooseTask: {
-    marginTop:5,
+    marginTop: 5,
     paddingTop: 10,
     backgroundColor: "#fff",
     paddingHorizontal: 16,
