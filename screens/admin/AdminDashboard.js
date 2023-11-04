@@ -204,15 +204,15 @@ const AdminDashboard = () => {
                     </Text>
                   </View>
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <Pressable
+                    <Pressable
                       onPress={() => navigation.navigate("AddProductsScreen")}
                     >
-                    <FontAwesome5
-                      name="plus"
-                      size={16}
-                      color="blue"
-                      style={[styles.statisticsIcon, { marginRight: 15 }]}
-                    />
+                      <FontAwesome5
+                        name="plus"
+                        size={16}
+                        color="blue"
+                        style={[styles.statisticsIcon, { marginRight: 15 }]}
+                      />
                     </Pressable>
                     <Pressable
                       onPress={() => navigation.navigate("ViewProductsScreen")}
