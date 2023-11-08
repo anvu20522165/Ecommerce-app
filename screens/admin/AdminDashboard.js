@@ -23,6 +23,7 @@ const AdminDashboard = () => {
   const [usersCount, setUsersCount] = useState(0);
   const [ordersCount, setOrdersCount] = useState(0);
   const [productsCount, setProductsCount] = useState(0);
+  const [categoriesCount, setCategoriesCount] = useState(0);
 
   useEffect(() => {
     const fetchCounts = async () => {
@@ -43,6 +44,13 @@ const AdminDashboard = () => {
         );
         const productsCount = productsResponse.data.length;
         setProductsCount(productsCount);
+
+        // Lấy số lượng Categories
+        const categoriesResponse = await axios.get(
+          "http://10.0.2.2:8000/categories"
+        );
+        const categoriesCount = categoriesResponse.data.data.length;
+        setCategoriesCount(categoriesCount);
       } catch (error) {
         console.error("Error:", error);
       }
@@ -115,7 +123,7 @@ const AdminDashboard = () => {
                   style={styles.statisticsIcon}
                 />
                 <View style={styles.statisticsCounter}>
-                  <Text style={styles.statisticsValue}>6</Text>
+                  <Text style={styles.statisticsValue}>{categoriesCount}</Text>
                   <Text style={styles.statisticsTitle}>Categories</Text>
                 </View>
               </View>

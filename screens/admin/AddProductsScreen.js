@@ -81,7 +81,7 @@ export default function AddProductsScreen() {
               marginBottom: 20,
             }}
           >
-            <TextInput style={{padding:10}} placeholder="Add Product" />
+            <TextInput style={{padding:10}} placeholder="Add Product" value={title} onChangeText={setTitle} />
           </Pressable>
         </ScrollView>
       </SafeAreaView>

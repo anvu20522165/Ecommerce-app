@@ -37,6 +37,7 @@ mongoose
 const User = require("./models/user");
 const Order = require("./models/order");
 const Product = require("./models/product");
+const Category = require("./models/category");
 
 
 // ------------users methods
@@ -698,8 +699,73 @@ app.get("/orders/:userId", async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Error" });
   }
-})
+});
 
 //categories methods
+//get all categories
+app.get("/categories", async (req, res)=> {
+  try{
+    const categories = await Category.find();
+    if (!categories) {
+    throw "error";
+    }
+    res.status(200).json({message: "ok", data: categories});
+  } catch(error){
+    res.status(400).json({message: "Error"});
+  }
+});
+//create category
+app.post("/categories", async (req, res) => {
+  try{
+    const { name, description } = req.body;
+
+    //check if the category exists
+    const category = await Category.findOne({ name });
+    if (category) {
+      return res.status(400).json({ message: "Category already exists" });
+    }
+
+    // Create a new category
+    const newCategory = new Category({
+      name,
+      description,
+    });
+
+    // Save the category to the database
+    await newCategory.save();
+
+    res.status(200).json({ message: "Category created successfully" });
+  } catch(error){
+    res.status(400).json({message: "Error"});
+  }
+});
+//update categories
+app.put("/categories", async(req, res) => {
+  try{
+    const { categoryId, name, description } = req.body;
+    //find the category by the CategoryId
+    const category = await Category.findById(categoryId);
+    if (!category) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+    category.name = name;
+    category.description = description;
+    await category.save();
+    res.status(200).json(category);
+    // res.status(200).json({ message: "Category updated successfully" });
+  }catch(e){res.status(400).json({message: "Error"});}
+});
+//delete categories
+app.delete("/categories/:id", async(req, res) => {
+  try{
+    const deleteCategory = await Category.findOneAndDelete({
+      _id: req.params.id,
+    });
+    if (!deleteCategory) {
+      return res.status(404).json({ error: "Category not found." });
+    }
+    return res.status(200).json({ message: "Delete category successfully", data: deleteCategory });
+  }catch(e){res.status(400).json({message: "Error"});}
+});
 
 
