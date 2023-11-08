@@ -23,7 +23,12 @@ const ProfileScreen = () => {
   const navigation = useNavigation();
   const logOut = async () => {
     //setAppUserConfig({ accessToken: null, accessTokenName: null });
-    navigation.replace("Login");
+    AsyncStorage.removeItem("authToken")
+                .then(()=>{
+                  navigation.replace("Login");
+                })
+                .catch(error => console.log(error))
+    
   }
 
   const { userId, setUserId } = useContext(UserType);
