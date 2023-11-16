@@ -46,7 +46,7 @@ import {
         );
       
         setCartApi(response.data);
-        console.log(response.data)
+        //console.log(response.data)
         dispatch(cleanCart())
         dispatch(initCart(response.data))
       } catch (error) {
@@ -64,7 +64,7 @@ import {
         const response = await axios.put(
           `http://10.0.2.2:8000/cartIncreasedQuanity/${userId}/${productid}`, 
         );
-        console.log("increased quantity:", response);
+        //console.log("increased quantity:", response);
         //const { addresses } = response.data;
         //setAddresses(addresses);
         fetchCart();
@@ -79,7 +79,7 @@ import {
         const response = await axios.put(
           `http://10.0.2.2:8000/cartDecreasedQuanity/${userId}/${productid}`, 
         );
-        console.log("decreased quantity:", response);
+        //console.log("decreased quantity:", response);
         //const { addresses } = response.data;
         //setAddresses(addresses);
         fetchCart();
@@ -94,7 +94,7 @@ import {
         const response = await axios.delete(
           `http://10.0.2.2:8000/cart/${userId}/${productid}`, 
         );
-        console.log("delete:", response);
+        //console.log("delete:", response);
         //const { addresses } = response.data;
         //setAddresses(addresses);
         fetchCart();
