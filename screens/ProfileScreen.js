@@ -203,7 +203,7 @@ const ProfileScreen = () => {
 
                   <FontAwesome name="truck" size={24} style={{ marginHorizontal: 10 }} />
                   <Text style={{ fontSize: 15, fontWeight: "bold" }}>
-                    Shipping Address
+                    Shipping Addresses
                   </Text>
 
                 </View>
