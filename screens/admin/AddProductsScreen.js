@@ -81,7 +81,13 @@ export default function AddProductsScreen() {
               marginBottom: 20,
             }}
           >
-            <TextInput style={{padding:10}} placeholder="Add Product" value={title} onChangeText={setTitle} />
+            <TextInput style={{padding:10}} placeholder="Enter title of the product" value={title} onChangeText={(text)=>setTitle(text)} />
+            <TextInput style={{padding:10}} placeholder="Enter price of the product" value={price} onChangeText={(text)=>setPrice(text)} />
+            <TextInput style={{padding:10}} placeholder="Enter category of the product" value={category} onChangeText={(text)=>setCategory(text)} />
+            <TextInput style={{padding:10}} placeholder="Enter image of the product" value={image} onChangeText={(text)=>setImage(text)} />
+            <TextInput style={{padding:10}} placeholder="Enter offer of the product" value={offer} onChangeText={(text)=>setOffer(text)} />
+            <TextInput style={{padding:10}} placeholder="Enter sold of the product" value={sold} onChangeText={(text)=>setSold(text)} />
+            <TextInput style={{padding:10}} placeholder="Enter storage of the product" value={storage} onChangeText={(text)=>setStorage(text)} />
           </Pressable>
         </ScrollView>
       </SafeAreaView>
