@@ -619,7 +619,7 @@ app.get("/orders", async (req, res) => {
 //create an array of product objects from the cart Items
 app.post("/orders", async (req, res) => {
   try {
-    const { userId, cartItems, totalPrice, shippingAddress, paymentMethod, delivery, status } =
+    const { userId, cartItems, totalPrice, shippingAddress, paymentMethod, delivery, status, finalCost } =
       req.body;
 
     const user = await User.findById(userId);
@@ -635,6 +635,7 @@ app.post("/orders", async (req, res) => {
       price: item.price,
       image: item?.productid.image,
     }));
+
     //const updateProduct = Product.findOne
     //create a new Order
     const order = new Order({
@@ -645,6 +646,7 @@ app.post("/orders", async (req, res) => {
       paymentMethod: paymentMethod,
       delivery: delivery,
       status: status,
+      finalCost: finalCost,
     });
     
     await order.save();

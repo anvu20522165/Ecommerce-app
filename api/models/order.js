@@ -65,7 +65,19 @@ const orderSchema = new mongoose.Schema({
     required: true,
   },
   delivery: {
-    type: String,
+    option: 
+    {
+      type: String,
+      required: true,
+    },
+    fee: 
+    {
+      type: Number,
+      required: true,
+    }   
+  },
+  finalCost: {
+    type: Number,
     required: true,
   },
   status: {

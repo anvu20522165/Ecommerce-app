@@ -25,7 +25,6 @@ import {
     const { userId, setUserId } = useContext(UserType);
 
     const cart = useSelector((state) => state.cart.cart);
-    console.log(JSON.stringify(cart, undefined, 2));
     const total = cart
       ?.map((item) => item.price * item.quantity)
       .reduce((curr, prev) => curr + prev, 0);
