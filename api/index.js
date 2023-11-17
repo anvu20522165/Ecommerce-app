@@ -267,8 +267,8 @@ app.delete("/addresses/:userId/:addressId", async (req, res) => {
     }
 
     //find index of this address in the array
-    console.log(user.addresses.filter((item)=> item._id != addressId))
-    const removeAddress = user.addresses.filter((item)=> item._id != addressId)
+    console.log(user.addresses.filter((item)=> item?._id != addressId))
+    const removeAddress = user.addresses.filter((item)=> item?._id != addressId)
     //console.log(removeAddress)
     user.addresses = removeAddress
     //delete wanted address in the user's addresses array
@@ -297,7 +297,7 @@ app.get("/addresses/:userId/:addressId", async (req, res) => {
     }
 
     //find index of this address in the array
-    const findAddress = user.addresses.filter((item)=> item._id == addressId)
+    const findAddress = user.addresses.filter((item)=> item?._id == addressId)
     console.log("address needs looking", findAddress)
 
     //res.status(200).json({ message: "Address created Successfully" });
