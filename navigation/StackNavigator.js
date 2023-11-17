@@ -19,13 +19,13 @@ import OrderScreen from "../screens/OrderScreen";
 import EditAddressScreen from "../screens/EditAddressScreen";
 import PersonalDetailScreen from "../screens/profileLinks/PersonalDetailScreen";
 import MyOrders from "../screens/profileLinks/MyOrders";
-import MyOrdersTemp from "../screens/profileLinks/MyOrdersTemp";
 import MyOrdersDetails from "../screens/profileLinks/MyOrdersDetails";
 import AdminDashboard from "../screens/admin/AdminDashboard";
 import ViewProductsScreen from "../screens/admin/ViewProductsScreen";
 import ViewUsersScreen from "../screens/admin/ViewUsersScreen";
 import ViewOrdersScreen from "../screens/admin/ViewOrdersScreen";
 import AddProductsScreen from "../screens/admin/AddProductsScreen";
+import Products from "../screens/Products";
 const StackNavigator = () => {
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
@@ -47,18 +47,18 @@ const StackNavigator = () => {
               ),
           }}
         />
-
         <Tab.Screen
-          name="Profile"
-          component={ProfileScreen}
+          name="Products"
+          component={Products}
           options={{
-            tabBarLabel: "Profile",
+            tabBarLabel: "Products",
             tabBarLabelStyle: { color: "#008E97" },
+            headerShown: false,
             tabBarIcon: ({ focused }) =>
               focused ? (
-                <Ionicons name="person" size={24} color="#008E97" />
+                <Ionicons name="shirt-sharp" size={24} color="#008E97" />
               ) : (
-                <Ionicons name="person-outline" size={24} color="black" />
+                <Ionicons name="shirt-outline" size={24} color="black" />
               ),
           }}
         />
@@ -78,6 +78,23 @@ const StackNavigator = () => {
               ),
           }}
         />
+
+        <Tab.Screen
+          name="Profile"
+          component={ProfileScreen}
+          options={{
+            tabBarLabel: "Profile",
+            tabBarLabelStyle: { color: "#008E97" },
+            tabBarIcon: ({ focused }) =>
+              focused ? (
+                <Ionicons name="person" size={24} color="#008E97" />
+              ) : (
+                <Ionicons name="person-outline" size={24} color="black" />
+              ),
+          }}
+        />
+
+        
       </Tab.Navigator>
     );
   }
@@ -138,11 +155,6 @@ const StackNavigator = () => {
         <Stack.Screen
           name="MyOrders"
           component={MyOrders}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="MyOrdersTemp"
-          component={MyOrdersTemp}
           options={{ headerShown: false }}
         />
         <Stack.Screen

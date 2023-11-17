@@ -5,22 +5,20 @@ import {
     ScrollView,
     Pressable,
     TextInput,
-    Image,
-    Alert,
 } from "react-native";
+import { LogBox } from 'react-native';
 import React, { useEffect, useContext, useState, useCallback } from "react";
 import { Feather } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
-import { useDispatch, useSelector } from "react-redux";
 import DropDownPicker from "react-native-dropdown-picker";
 import { UserType } from '../../UserContext';
 import axios from "axios";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import ProductItem from "../../components/ProductItem";
+
 const MyOrders = () => {
     const { userId, setUserId } = useContext(UserType);
     const navigation = useNavigation();
-    const route = useRoute();
+
     const [open, setOpen] = useState(false);
     const [status, setStatus] = useState("Pending");
     const [items, setItems] = useState([
@@ -47,7 +45,8 @@ const MyOrders = () => {
         fetchOrders()
     }, []);
     useEffect(() => {
-        console.log(orderData);
+        //console.log(orderData);
+        LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
     })
     return (
         <ScrollView style={{ marginTop: 55, flex: 1, backgroundColor: "white" }}>
@@ -84,13 +83,24 @@ const MyOrders = () => {
 
                 <Feather name="mic" size={24} color="black" />
             </View>
-
+            <View
+                  style={{
+                    marginHorizontal: 10,
+                    marginTop: 20,
+                    width: "45%",
+                  }}
+                >     
+                  <Text style={{ fontSize: 25, fontWeight: "bold" }}>
+                    Your Orders
+                  </Text>
+                </View>
             <View
                 style={{
                     marginHorizontal: 10,
                     marginTop: 20,
                     width: "45%",
-                    marginBottom: open ? 50 : 15,
+                    marginBottom: 40,
+                    position: "relative",
                 }}
             >
                 <DropDownPicker
@@ -98,6 +108,7 @@ const MyOrders = () => {
                         borderColor: "#B7B7B7",
                         height: 30,
                         marginBottom: open ? 120 : 15,
+                        position: "absolute",              
                     }}
                     open={open}
                     value={status} //genderValue
@@ -107,8 +118,6 @@ const MyOrders = () => {
                     setItems={setItems}
                     placeholder="choose category"
                     placeholderStyle={styles.placeholderStyles}
-                    //onOpen={onGenderOpen}
-                    //onChangeValue={onChange}
                     zIndex={3000}
                     zIndexInverse={1000}
                 />
@@ -122,7 +131,7 @@ const MyOrders = () => {
                     ?.map((item, index) => (
                         <Pressable key={index} style={{
                             paddingBottom: 17,
-                            marginVertical: 7,
+                            marginVertical: 3,
                             borderRadius: 10,
                             marginTop: 20,
                             borderWidth: 1,
