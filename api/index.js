@@ -258,6 +258,7 @@ app.delete("/addresses/:userId/:addressId", async (req, res) => {
     const userId = req.params.userId;
     const addressId = req.params.addressId
     //const {addressId} = req.body;
+    console.log({userId})
     console.log({addressId})
     //find the user by the Userid
     const user = await User.findById(userId);
@@ -266,8 +267,9 @@ app.delete("/addresses/:userId/:addressId", async (req, res) => {
     }
 
     //find index of this address in the array
+    console.log(user.addresses.filter((item)=> item._id != addressId))
     const removeAddress = user.addresses.filter((item)=> item._id != addressId)
-    console.log(removeAddress)
+    //console.log(removeAddress)
     user.addresses = removeAddress
     //delete wanted address in the user's addresses array
     //user.addresses.splice(address);
@@ -275,9 +277,9 @@ app.delete("/addresses/:userId/:addressId", async (req, res) => {
     //save the updated user in the backend
     await user.save();
 
-    res.status(200).json({ message: "Address created Successfully" });
+    res.status(200).json({ message: "Address deleted Successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Error addding address" });
+    res.status(500).json({ message: "Error deleting address" });
   }
 });
 
@@ -287,7 +289,7 @@ app.get("/addresses/:userId/:addressId", async (req, res) => {
     const userId = req.params.userId;
     const addressId = req.params.addressId
     //const {addressId} = req.body;
-    //console.log({addressId})
+    console.log({addressId})
     //find the user by the Userid
     const user = await User.findById(userId);
     if (!user) {
@@ -296,12 +298,12 @@ app.get("/addresses/:userId/:addressId", async (req, res) => {
 
     //find index of this address in the array
     const findAddress = user.addresses.filter((item)=> item._id == addressId)
-    //console.log("address needs looking", findAddress)
+    console.log("address needs looking", findAddress)
 
     //res.status(200).json({ message: "Address created Successfully" });
     res.status(200).json({ findAddress });
   } catch (error) {
-    res.status(500).json({ message: "Error addding address" });
+    res.status(500).json({ message: "Error finding address" });
   }
 });
 //endpoint to get all the addresses of a particular user

@@ -5,6 +5,7 @@ import {
     ScrollView,
     Pressable,
     TextInput,
+    FlatList,
 } from "react-native";
 import { LogBox } from 'react-native';
 import React, { useEffect, useContext, useState, useCallback } from "react";
@@ -26,9 +27,6 @@ const MyOrders = () => {
         { label: "Shipping", value: "Shipping" },
         { label: "Delivered", value: "Delivered" },
     ]);
-    //   const onGenderOpen = useCallback(() => {
-    //     setCompanyOpen(false);
-    //   }, []);
     const [orderData, setOrderData] = useState([]);
     useEffect(() => {
         const fetchOrders = async () => {
@@ -44,13 +42,9 @@ const MyOrders = () => {
         };
         fetchOrders()
     }, []);
-    useEffect(() => {
-        //console.log(orderData);
-        LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
-    })
-    return (
-        <ScrollView style={{ marginTop: 55, flex: 1, backgroundColor: "white" }}>
 
+    return ( 
+<View style={{ marginTop: 55, flex: 1, backgroundColor: "white" }}>
             <View
                 style={{
                     backgroundColor: "#00CED1",
@@ -84,16 +78,16 @@ const MyOrders = () => {
                 <Feather name="mic" size={24} color="black" />
             </View>
             <View
-                  style={{
+                style={{
                     marginHorizontal: 10,
                     marginTop: 20,
                     width: "45%",
-                  }}
-                >     
-                  <Text style={{ fontSize: 25, fontWeight: "bold" }}>
+                }}
+            >
+                <Text style={{ fontSize: 25, fontWeight: "bold" }}>
                     Your Orders
-                  </Text>
-                </View>
+                </Text>
+            </View>
             <View
                 style={{
                     marginHorizontal: 10,
@@ -108,7 +102,7 @@ const MyOrders = () => {
                         borderColor: "#B7B7B7",
                         height: 30,
                         marginBottom: open ? 120 : 15,
-                        position: "absolute",              
+                        position: "absolute",
                     }}
                     open={open}
                     value={status} //genderValue
@@ -125,11 +119,11 @@ const MyOrders = () => {
 
 
 
-            <ScrollView >
-                {orderData
-                    .filter((item) => item.status === status)
-                    ?.map((item, index) => (
-                        <Pressable key={index} style={{
+            <FlatList
+                data={orderData.filter((item) => item.status === status)}
+                renderItem={({ item, index }) => {
+                    return (
+                        <Pressable style={{
                             paddingBottom: 17,
                             marginVertical: 3,
                             borderRadius: 10,
@@ -169,16 +163,16 @@ const MyOrders = () => {
                                     <Pressable
                                         onPress={() =>
                                             navigation.navigate("MyOrdersDetails", {
-                                              _id: item._id,
-                                              shippingAddress: item.shippingAddress,
-                                              products: item.products,
-                                              paymentMethod: item.paymentMethod,
-                                              delivery: item.delivery,
-                                              status: item.status,
-                                              totalPrice: item.totalPrice,
-                                              item: item,
+                                                _id: item._id,
+                                                shippingAddress: item.shippingAddress,
+                                                products: item.products,
+                                                paymentMethod: item.paymentMethod,
+                                                delivery: item.delivery,
+                                                status: item.status,
+                                                totalPrice: item.totalPrice,
+                                                item: item,
                                             })
-                                          }
+                                        }
                                         style={{
                                             backgroundColor: "#FFC72C",
                                             //padding: 19,
@@ -227,12 +221,15 @@ const MyOrders = () => {
 
 
                         </Pressable>
-                    ))}
-            </ScrollView>
+                    )
+                }}
+                keyExtractor={(item, index) => index.toString()}
+            //ItemSeparatorComponent={}
+            />
 
 
-
-        </ScrollView>
+</View>
+        
     )
 }
 
