@@ -60,7 +60,7 @@ import {
     );
     const increaseQuantity = async (productid) => {
       try {
-        console.log(productid)
+        //console.log(productid)
         const response = await axios.put(
           `http://10.0.2.2:8000/cartIncreasedQuanity/${userId}/${productid}`, 
         );
@@ -75,7 +75,7 @@ import {
 
     const decreaseQuantity = async (productid) => {
       try {
-        console.log(productid)
+        //console.log(productid)
         const response = await axios.put(
           `http://10.0.2.2:8000/cartDecreasedQuanity/${userId}/${productid}`, 
         );
@@ -90,7 +90,7 @@ import {
 
     const handleRemove = async (productid) => {
       try {
-        console.log(productid)
+        //console.log(productid)
         const response = await axios.delete(
           `http://10.0.2.2:8000/cart/${userId}/${productid}`, 
         );
@@ -103,9 +103,6 @@ import {
       }
     }
 
-    const purchase = async () => {
-
-    }
     return (
       <ScrollView style={{ marginTop: 55, flex: 1, backgroundColor: "white" }}>
         <View

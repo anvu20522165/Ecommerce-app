@@ -243,7 +243,7 @@ const ProfileScreen = () => {
                 </View>
               </Pressable>
               <Pressable
-                onPress={() => navigation.navigate("MyOrders")}>
+                onPress={() => navigation.navigate("AdminDashboard")}>
                 <View
                   style={{
                     flexDirection: "row",
@@ -255,28 +255,10 @@ const ProfileScreen = () => {
 
                   <MaterialIcons name="verified-user" size={24} style={{ marginHorizontal: 10 }} />
                   <Text style={{ fontSize: 15, fontWeight: "bold" }}>
-                    Admin
+                    Manager
                   </Text>
 
                 </View>
-              </Pressable>
-              <Pressable
-              onPress={() => navigation.navigate("AdminDashboard")}>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 3,
-                  marginVertical: 10
-                }}
-              >
-
-                <FontAwesome5 name="user-shield" size={24} style={{ marginHorizontal: 10 }} />
-                <Text style={{ fontSize: 15, fontWeight: "bold" }}>
-                  Admin
-                </Text>
-
-              </View>
               </Pressable>
             </View>
           </Pressable>
