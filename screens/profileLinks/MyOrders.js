@@ -15,7 +15,7 @@ import DropDownPicker from "react-native-dropdown-picker";
 import { UserType } from '../../UserContext';
 import axios from "axios";
 import { useNavigation, useRoute } from "@react-navigation/native";
-
+import moment from "moment";
 const MyOrders = () => {
     const { userId, setUserId } = useContext(UserType);
     const navigation = useNavigation();
@@ -152,7 +152,8 @@ const MyOrders = () => {
                                     }}
                                 >
                                     <Text style={{ fontWeight: "400", fontSize: 20 }}>{index + 1}</Text>
-                                    <Text style={{ fontWeight: "bold", fontSize: 20 }}>Order {item._id}</Text>
+                                    <Text style={{ fontWeight: "bold", fontSize: 19 }}>Order #{item._id}</Text>
+                                    
                                 </Pressable>
 
                             </Pressable>
@@ -170,7 +171,9 @@ const MyOrders = () => {
                                                 delivery: item.delivery,
                                                 status: item.status,
                                                 totalPrice: item.totalPrice,
+                                                createdAt: item.createdAt,
                                                 item: item,
+                                                
                                             })
                                         }
                                         style={{
@@ -201,7 +204,7 @@ const MyOrders = () => {
                                             //marginLeft: 50
                                         }}
                                     >
-                                        Date: {item.createdAt}
+                                        Date: {moment(item.createdAt).format("DD/MM/YY, h:mm A")}
                                     </Text>
                                     <Text
                                         style={{

@@ -18,6 +18,7 @@ import DropDownPicker from "react-native-dropdown-picker";
 import { UserType } from '../../UserContext';
 import axios from "axios";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import moment from "moment";
 
 import StepIndicator from 'react-native-step-indicator';
 const labels = ["Pending", "Shipping", "Delivered"];
@@ -28,6 +29,7 @@ const MyOrdersDetails = () => {
     const [products, setProducts] = useState(route.params.products);
     const [paymentMethod, setPaymentMethod] = useState(route.params.paymentMethod);
     const [delivery, setDelivery] = useState(route.params.delivery);
+    const [createdAt, setCreatedAt] = useState(route.params.createdAt);
     const [orderId, setOrderId] = useState(route.params._id);
     const [status, setStatus] = useState(route.params.status);
     const [totalPrice, setTotalPrice] = useState(route.params.totalPrice);
@@ -66,7 +68,7 @@ const MyOrdersDetails = () => {
 
     const customStyles = {
         stepIndicatorSize: 25,
-        currentStepIndicatorSize:30,
+        currentStepIndicatorSize: 30,
         separatorStrokeWidth: 2,
         currentStepStrokeWidth: 3,
         stepStrokeCurrentColor: '#fe7013',
@@ -86,7 +88,7 @@ const MyOrdersDetails = () => {
         labelColor: '#999999',
         labelSize: 13,
         currentStepLabelColor: '#fe7013'
-      }
+    }
     return (
         <ScrollView style={{ marginTop: 55, flex: 1, backgroundColor: "white" }}>
             <View style={{ marginTop: 5, marginBottom: 20, flex: 1, backgroundColor: "white", marginHorizontal: 20 }}>
@@ -95,8 +97,11 @@ const MyOrdersDetails = () => {
                     Order Details
                 </Text>
                 <Text style={{ fontSize: 15, fontWeight: "400" }}>
-                    View All Details
+                    View Details
                 </Text>
+                <Text style={{ fontSize: 15, fontWeight: "bold", marginVertical: 5 }}>
+                                Order #{orderId}
+                            </Text>
             </View>
 
             <Pressable>
@@ -176,21 +181,18 @@ const MyOrdersDetails = () => {
 
                     <View style={{ marginLeft: 6, marginVertical: 3 }}>
 
-                        <View
-                            style={{ flexDirection: "row", alignItems: "center", gap: 3 }}
+                        <Text
+                            style={{ fontSize: 15, color: "#181818", marginVertical: 5 }}
                         >
-                            <Text style={{ fontSize: 15, fontWeight: "bold", marginVertical: 5 }}>
-                                Order #{orderId}
-                            </Text>
-
-                        </View>
+                            Date: {moment(createdAt).format("DD/MM/YY, h:mm A")}
+                        </Text>
                         <Text style={{ fontSize: 15, color: "#181818", marginVertical: 5 }}>
-                            Delivery: {delivery}
+                            Delivery: {delivery.option} - {delivery.fee.toLocaleString('vi', { style: 'currency', currency: 'VND' })}
                         </Text>
                         <Text style={{ fontSize: 15, color: "#181818", marginVertical: 5 }}>
                             Order Status: {status}
                         </Text>
-                        <View style={{marginVertical:10,  width: 340}}>
+                        <View style={{ marginVertical: 10, width: 340 }}>
                             <StepIndicator
                                 customStyles={customStyles}
                                 currentPosition={currentPosition}
@@ -202,7 +204,7 @@ const MyOrdersDetails = () => {
                 </Pressable>
 
                 <Text style={{ fontSize: 20, fontWeight: "bold", marginHorizontal: 20 }}>
-                    Order Info
+                    Your Products
                 </Text>
                 <Pressable
                     style={{
@@ -294,9 +296,15 @@ const MyOrdersDetails = () => {
                     </View>
 
                 </Pressable>
-                <Text style={{ padding: 10, fontSize: 18, fontWeight: "400" }}>
-                    Total price: {totalPrice.toLocaleString('vi', { style: 'currency', currency: 'VND' })}
-                </Text>
+
+
+                <View>
+                    <Text style={{ padding: 10, fontSize: 18, fontWeight: "400" }}>
+                        Total price: {totalPrice.toLocaleString('vi', { style: 'currency', currency: 'VND' })}
+                    </Text>
+
+                </View>
+
 
             </Pressable>
         </ScrollView>
