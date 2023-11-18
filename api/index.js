@@ -668,8 +668,22 @@ app.patch("/updateOrderStatus/:id", async (req, res) => {
     const _id = req.params.id;
     const updatedOrder = await Order.findByIdAndUpdate({
       _id,
-    }, req.body);
+    }, req.body, {new: true},);
     return res.status(201).json(updatedOrder);
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+});
+
+app.put("/updateOrderStatus/:id", async (req, res) => {
+  try {
+    const _id = req.params.id;
+    const {status} = req.body;
+    const updatedOrder = await Order.findById(_id);
+    //return res.status(201).json(updatedOrder);
+    updatedOrder.status = status;
+    await updatedOrder.save();
+    res.status(200).json({ message: "order's status updated successfully" });
   } catch (error) {
     return res.status(400).json({ error: error.message });
   }
@@ -698,7 +712,6 @@ app.get("/orders/:userId", async (req, res) => {
     if (!orders || orders.length === 0) {
       return res.status(404).json({ message: "No orders found for this user" })
     }
-    
     res.status(200).json( orders );
   } catch (error) {
     res.status(500).json({ message: "Error" });
