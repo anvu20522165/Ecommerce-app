@@ -11,19 +11,8 @@ import { useNavigation } from "@react-navigation/native";
 import RazorpayCheckout from "react-native-razorpay";
 
 const ConfirmationScreen = () => {
-  const [cartApi, setCartApi] = useState([]);
-  const fetchCart = async () => {
-    try {
-      const response = await axios.get(
-        `http://10.0.2.2:8000/productsInCart/${userId}`
-      );
-    
-      setCartApi(response.data);
-      //console.log(response.data)
-    } catch (error) {
-      console.log("error", error);
-    }
-  };
+  
+ 
   const steps = [
     { title: "Address", content: "Address Form" },
     { title: "Delivery", content: "Delivery Options" },
@@ -38,8 +27,9 @@ const ConfirmationScreen = () => {
   const total = cart
     ?.map((item) => item.price * item.quantity)
     .reduce((curr, prev) => curr + prev, 0);
+  const [totalCost, setTotalCost] = useState();
+  const [selectedDeliveryOption, setSelectedDeliveryOption] = useState("");
   useEffect(() => {
-    fetchCart()
     fetchAddresses();
   }, []);
   const fetchAddresses = async () => {
@@ -55,12 +45,22 @@ const ConfirmationScreen = () => {
     }
   };
   const dispatch = useDispatch();
+
+  const handleAfterPayment = async () => { 
+    setCurrentStep(3);
+    setTotalCost((selectedDeliveryOption === "fast delivery") ? total+deliveryFee : total);
+  }
+
   const [selectedAddress, setSelectedAdress] = useState("");
   const [status, setStatus] = useState("Pending");
-  const [selectedDeliveryOption, setSelectedDeliveryOption] = useState("");
   const [selectedOption, setSelectedOption] = useState("");
+  const [deliveryFee, setDeliveryFee] = useState(50000);
   const handlePlaceOrder = async () => {
     try {
+      const delivery = {
+        option: selectedDeliveryOption,
+        fee: (selectedDeliveryOption === "fast delivery") ? deliveryFee : 0,
+      }
       //console.log("my option", selectedDeliveryOption)
       const orderData = {
         userId: userId,
@@ -68,10 +68,13 @@ const ConfirmationScreen = () => {
         totalPrice: total,
         shippingAddress: selectedAddress,
         paymentMethod: selectedOption,
-        delivery: selectedDeliveryOption,
+        delivery: delivery,
         status: status,
+        finalCost: totalCost,
       };
+
       console.log("my products in cart: ", cart);
+      console.log("my products in order: ", orderData);
       const response = await axios.post(
         "http://10.0.2.2:8000/orders",
         orderData
@@ -87,7 +90,7 @@ const ConfirmationScreen = () => {
       }
     } catch (error) {
       console.log("errror", error.response.data);
-    } finally{
+    } finally {
       setCurrentStep(0)
     }
   };
@@ -134,9 +137,9 @@ const ConfirmationScreen = () => {
     //   console.log("error", error);
     // }
   };
-  
 
-  
+
+
   return (
     <ScrollView style={{ marginTop: 55 }}>
       <View style={{ flex: 1, paddingHorizontal: 20, paddingTop: 40 }}>
@@ -397,7 +400,7 @@ const ConfirmationScreen = () => {
               <Text style={{ color: "green", fontWeight: "500" }}>
                 Fast Delivery
               </Text>{" "}
-              - 2 days estimated - Extra Fee 
+              - 2 days estimated - Extra Fee
             </Text>
           </View>
 
@@ -487,7 +490,7 @@ const ConfirmationScreen = () => {
             <Text>UPI / Credit or debit card</Text>
           </View>
           <Pressable
-            onPress={() => setCurrentStep(3)}
+            onPress={() => handleAfterPayment()}
             style={{
               backgroundColor: "#FFC72C",
               padding: 10,
@@ -558,7 +561,7 @@ const ConfirmationScreen = () => {
                 Items
               </Text>
 
-              <Text style={{ color: "gray", fontSize: 16 }}>{total.toLocaleString('vi', {style : 'currency', currency : 'VND'})}</Text>
+              <Text style={{ color: "gray", fontSize: 16 }}>{total.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</Text>
             </View>
 
             <View
@@ -569,11 +572,14 @@ const ConfirmationScreen = () => {
                 marginTop: 8,
               }}
             >
-              <Text style={{ fontSize: 16, fontWeight: "500", color: "gray" }}>
-                Delivery
-              </Text>
 
-              <Text style={{ color: "gray", fontSize: 16 }}>0</Text>
+              <Text style={{ fontSize: 16, fontWeight: "500", color: "gray" }}>
+                Delivery fee
+              </Text>
+              {selectedDeliveryOption==="fast delivery" ? 
+              (<Text style={{ color: "gray", fontSize: 16 }}>{deliveryFee.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</Text>) 
+              : 
+              (<Text style={{ color: "gray", fontSize: 16 }}>free</Text>)}
             </View>
 
             <View
@@ -591,7 +597,7 @@ const ConfirmationScreen = () => {
               <Text
                 style={{ color: "#C60C30", fontSize: 17, fontWeight: "bold" }}
               >
-                {total.toLocaleString('vi', {style : 'currency', currency : 'VND'})}
+                {totalCost.toLocaleString('vi', { style: 'currency', currency: 'VND' })}
               </Text>
             </View>
           </View>
@@ -608,7 +614,7 @@ const ConfirmationScreen = () => {
             <Text style={{ fontSize: 16, color: "gray" }}>Pay With</Text>
 
             <Text style={{ fontSize: 16, fontWeight: "600", marginTop: 7 }}>
-              Pay on delivery (Cash)
+              {selectedOption}
             </Text>
           </View>
 

@@ -15,14 +15,14 @@ import { FontAwesome5, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 import DropDownPicker from "react-native-dropdown-picker";
-import { UserType } from '../../UserContext';
+import { UserType } from "../../../UserContext";
 import axios from "axios";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import moment from "moment";
 
 import StepIndicator from 'react-native-step-indicator';
 const labels = ["Pending", "Shipping", "Delivered"];
-const MyOrdersDetails = () => {
+const ViewOrderDetailScreen = () => {
 
     const route = useRoute();
     const [shippingAddress, setShippingAddress] = useState(route.params.shippingAddress);
@@ -31,7 +31,8 @@ const MyOrdersDetails = () => {
     const [delivery, setDelivery] = useState(route.params.delivery);
     const [createdAt, setCreatedAt] = useState(route.params.createdAt);
     const [orderId, setOrderId] = useState(route.params._id);
-    const [status, setStatus] = useState(route.params.status);
+    const [curStatus, setCurStatus] = useState(route.params.status);
+    const [status, setStatus] = useState(curStatus);
     const [totalPrice, setTotalPrice] = useState(route.params.totalPrice);
     //   const onGenderOpen = useCallback(() => {
     //     setCompanyOpen(false);
@@ -40,7 +41,7 @@ const MyOrdersDetails = () => {
     const [currentPosition, setCurrentPosition] = useState(0);
     useEffect(() => {
         const checkStatus = () => {
-            switch (status) {
+            switch (curStatus) {
 
                 case 'Shipping':
                     setCurrentPosition(1);
@@ -61,10 +62,36 @@ const MyOrdersDetails = () => {
         checkStatus()
     }, []);
     useEffect(() => {
-        console.log(products);
-        console.log(shippingAddress);
-        console.log(paymentMethod);
+
     })
+
+    const handleUpdateStatus = async () => {
+        try {           
+            if (curStatus=="Shipping") {
+                const status = "Delivered";
+                const response = await axios.put(
+                    `http://10.0.2.2:8000/updateOrderStatus/${orderId}`, {status}
+                );
+                setCurrentPosition(2);
+                setCurStatus("Delivered");
+                Alert.alert("Order's status has been updated");
+            }
+            else if (curStatus=="Pending") {
+                const status = "Shipping";
+                const response = await axios.put(
+                    `http://10.0.2.2:8000/updateOrderStatus/${orderId}`, {status}
+                );
+                setCurrentPosition(1);
+                Alert.alert("Order's status has been updated");
+                setCurStatus("Shipping");
+                console.log(response.data)
+            }
+
+                
+        } catch (error) {
+            console.log("errror", error.response.data);
+        }
+    }
 
     const customStyles = {
         stepIndicatorSize: 25,
@@ -90,7 +117,7 @@ const MyOrdersDetails = () => {
         currentStepLabelColor: '#fe7013'
     }
     return (
-        <ScrollView style={{ marginTop: 55, flex: 1, backgroundColor: "white" }}>
+        <ScrollView style={{ flex: 1, backgroundColor: "white" }}>
             <View style={{ marginTop: 5, marginBottom: 20, flex: 1, backgroundColor: "white", marginHorizontal: 20 }}>
 
                 <Text style={{ fontSize: 24, fontWeight: "bold" }}>
@@ -100,8 +127,8 @@ const MyOrdersDetails = () => {
                     View Details
                 </Text>
                 <Text style={{ fontSize: 15, fontWeight: "bold", marginVertical: 5 }}>
-                                Order #{orderId}
-                            </Text>
+                    Order #{orderId}
+                </Text>
             </View>
 
             <Pressable>
@@ -190,7 +217,7 @@ const MyOrdersDetails = () => {
                             Delivery: {delivery.option} - {delivery.fee.toLocaleString('vi', { style: 'currency', currency: 'VND' })}
                         </Text>
                         <Text style={{ fontSize: 15, color: "#181818", marginVertical: 5 }}>
-                            Order Status: {status}
+                            Order Status: {curStatus}
                         </Text>
                         <View style={{ marginVertical: 10, width: 340 }}>
                             <StepIndicator
@@ -201,9 +228,20 @@ const MyOrdersDetails = () => {
                             />
                         </View>
                         <View>
-                            {status != "Delivered" ? (<Text style={{ fontSize: 15, color: "orange", marginVertical: 5, right: -80 }}>
-                                    Your order is comming soon
-                                </Text>) :
+                            {curStatus != "Delivered" ? (<Pressable
+                                onPress={() => handleUpdateStatus()}
+                                style={{
+                                    backgroundColor: "#FFC72C",
+                                    borderRadius: 6,
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    height: 26,
+                                    width: 75,
+                                    right: -130
+                                }}
+                            >
+                                <Text style={{ fontWeight: "bold" }}>Update</Text>
+                            </Pressable>) :
                                 (<Text style={{ fontSize: 15, color: "green", marginVertical: 5, right: -30 }}>
                                     This order has been successfully delivered
                                 </Text>)}
@@ -320,6 +358,6 @@ const MyOrdersDetails = () => {
     )
 }
 
-export default MyOrdersDetails
+export default ViewOrderDetailScreen
 
 const styles = StyleSheet.create({})

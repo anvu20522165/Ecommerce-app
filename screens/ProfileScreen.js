@@ -225,7 +225,7 @@ const ProfileScreen = () => {
               </View>
 
               <Pressable
-                onPress={() => navigation.navigate("MyOrders")}>
+                onPress={() => navigation.navigate("FlatlistTemp")}>
                 <View
                   style={{
                     flexDirection: "row",

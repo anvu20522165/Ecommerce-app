@@ -258,6 +258,7 @@ app.delete("/addresses/:userId/:addressId", async (req, res) => {
     const userId = req.params.userId;
     const addressId = req.params.addressId
     //const {addressId} = req.body;
+    console.log({userId})
     console.log({addressId})
     //find the user by the Userid
     const user = await User.findById(userId);
@@ -266,8 +267,9 @@ app.delete("/addresses/:userId/:addressId", async (req, res) => {
     }
 
     //find index of this address in the array
-    const removeAddress = user.addresses.filter((item)=> item._id != addressId)
-    console.log(removeAddress)
+    console.log(user.addresses.filter((item)=> item?._id != addressId))
+    const removeAddress = user.addresses.filter((item)=> item?._id != addressId)
+    //console.log(removeAddress)
     user.addresses = removeAddress
     //delete wanted address in the user's addresses array
     //user.addresses.splice(address);
@@ -275,9 +277,9 @@ app.delete("/addresses/:userId/:addressId", async (req, res) => {
     //save the updated user in the backend
     await user.save();
 
-    res.status(200).json({ message: "Address created Successfully" });
+    res.status(200).json({ message: "Address deleted Successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Error addding address" });
+    res.status(500).json({ message: "Error deleting address" });
   }
 });
 
@@ -287,7 +289,7 @@ app.get("/addresses/:userId/:addressId", async (req, res) => {
     const userId = req.params.userId;
     const addressId = req.params.addressId
     //const {addressId} = req.body;
-    //console.log({addressId})
+    console.log({addressId})
     //find the user by the Userid
     const user = await User.findById(userId);
     if (!user) {
@@ -295,13 +297,13 @@ app.get("/addresses/:userId/:addressId", async (req, res) => {
     }
 
     //find index of this address in the array
-    const findAddress = user.addresses.filter((item)=> item._id == addressId)
-    //console.log("address needs looking", findAddress)
+    const findAddress = user.addresses.filter((item)=> item?._id == addressId)
+    console.log("address needs looking", findAddress)
 
     //res.status(200).json({ message: "Address created Successfully" });
     res.status(200).json({ findAddress });
   } catch (error) {
-    res.status(500).json({ message: "Error addding address" });
+    res.status(500).json({ message: "Error finding address" });
   }
 });
 //endpoint to get all the addresses of a particular user
@@ -619,7 +621,7 @@ app.get("/orders", async (req, res) => {
 //create an array of product objects from the cart Items
 app.post("/orders", async (req, res) => {
   try {
-    const { userId, cartItems, totalPrice, shippingAddress, paymentMethod, delivery, status } =
+    const { userId, cartItems, totalPrice, shippingAddress, paymentMethod, delivery, status, finalCost } =
       req.body;
 
     const user = await User.findById(userId);
@@ -635,6 +637,7 @@ app.post("/orders", async (req, res) => {
       price: item.price,
       image: item?.productid.image,
     }));
+
     //const updateProduct = Product.findOne
     //create a new Order
     const order = new Order({
@@ -645,6 +648,7 @@ app.post("/orders", async (req, res) => {
       paymentMethod: paymentMethod,
       delivery: delivery,
       status: status,
+      finalCost: finalCost,
     });
     
     await order.save();
@@ -664,8 +668,22 @@ app.patch("/updateOrderStatus/:id", async (req, res) => {
     const _id = req.params.id;
     const updatedOrder = await Order.findByIdAndUpdate({
       _id,
-    }, req.body);
+    }, req.body, {new: true},);
     return res.status(201).json(updatedOrder);
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+});
+
+app.put("/updateOrderStatus/:id", async (req, res) => {
+  try {
+    const _id = req.params.id;
+    const {status} = req.body;
+    const updatedOrder = await Order.findById(_id);
+    //return res.status(201).json(updatedOrder);
+    updatedOrder.status = status;
+    await updatedOrder.save();
+    res.status(200).json({ message: "order's status updated successfully" });
   } catch (error) {
     return res.status(400).json({ error: error.message });
   }
@@ -694,7 +712,6 @@ app.get("/orders/:userId", async (req, res) => {
     if (!orders || orders.length === 0) {
       return res.status(404).json({ message: "No orders found for this user" })
     }
-    
     res.status(200).json( orders );
   } catch (error) {
     res.status(500).json({ message: "Error" });

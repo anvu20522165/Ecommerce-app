@@ -23,9 +23,11 @@ import MyOrdersDetails from "../screens/profileLinks/MyOrdersDetails";
 import AdminDashboard from "../screens/admin/AdminDashboard";
 import ViewProductsScreen from "../screens/admin/ViewProductsScreen";
 import ViewUsersScreen from "../screens/admin/ViewUsersScreen";
-import ViewOrdersScreen from "../screens/admin/ViewOrdersScreen";
+import ViewOrdersScreen from "../screens/admin/order/ViewOrdersScreen";
 import AddProductsScreen from "../screens/admin/AddProductsScreen";
 import Products from "../screens/Products";
+import FlatlistTemp from "../screens/profileLinks/FlatlistTemp";
+import ViewOrderDetailScreen from "../screens/admin/order/ViewOrderDetailScreen";
 const StackNavigator = () => {
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
@@ -185,6 +187,16 @@ const StackNavigator = () => {
         <Stack.Screen
           name="AddProductsScreen"
           component={AddProductsScreen}
+          options={{ headerShown: true }}
+        />
+        <Stack.Screen
+          name="FlatlistTemp"
+          component={FlatlistTemp}
+          options={{ headerShown: true }}
+        />
+        <Stack.Screen
+          name="ViewOrderDetailScreen"
+          component={ViewOrderDetailScreen}
           options={{ headerShown: true }}
         />
 
