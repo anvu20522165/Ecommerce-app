@@ -9,7 +9,7 @@ import {
   TextInput,
   Image,
 } from "react-native";
-import React, { useState, useEffect, useCallback, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Feather } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -17,15 +17,11 @@ import { Entypo } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { SliderBox } from "react-native-image-slider-box";
 import axios from "axios";
-import ProductItem from "../components/ProductItem";
-import DropDownPicker from "react-native-dropdown-picker";
 import { useNavigation } from "@react-navigation/native";
-import { useDispatch, useSelector } from "react-redux";
 import { BottomModal, SlideAnimation, ModalContent } from "react-native-modals";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { UserType } from "../UserContext";
 import jwt_decode from "jwt-decode";
-import { addToCart, initCart } from "../redux/CartReducer";
 const HomeScreen = () => {
   const list = [
     {
@@ -64,170 +60,21 @@ const HomeScreen = () => {
     },
   ];
   const images = [
-    "https://img.etimg.com/thumb/msid-93051525,width-1070,height-580,imgsize-2243475,overlay-economictimes/photo.jpg",
-    "https://images-eu.ssl-images-amazon.com/images/G/31/img22/Wireless/devjyoti/PD23/Launches/Updated_ingress1242x550_3.gif",
-    "https://images-eu.ssl-images-amazon.com/images/G/31/img23/Books/BB/JULY/1242x550_Header-BB-Jul23.jpg",
+    "https://i.pinimg.com/originals/60/b0/a4/60b0a4ee7e032a6281444a82705a665c.jpg",
+    "https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/85fb4e56509989.59b1565f7cc0e.jpg",
+    "https://i.pinimg.com/originals/6f/39/35/6f393516f4f2876c5ff1b8ddcf57c638.jpg",
   ];
-  
-  //   {
-  //     id: "20",
-  //     title: "OnePlus Nord CE 3 Lite 5G (Pastel Lime, 8GB RAM, 128GB Storage)",
-  //     oldPrice: 25000,
-  //     price: 19000,
-  //     image:
-  //       "https://images-eu.ssl-images-amazon.com/images/G/31/wireless_products/ssserene/weblab_wf/xcm_banners_2022_in_bau_wireless_dec_580x800_once3l_v2_580x800_in-en.jpg",
-  //     carouselImages: [
-  //       "https://m.media-amazon.com/images/I/61QRgOgBx0L._SX679_.jpg",
-  //       "https://m.media-amazon.com/images/I/61uaJPLIdML._SX679_.jpg",
-  //       "https://m.media-amazon.com/images/I/510YZx4v3wL._SX679_.jpg",
-  //       "https://m.media-amazon.com/images/I/61J6s1tkwpL._SX679_.jpg",
-  //     ],
-  //     color: "Stellar Green",
-  //     size: "6 GB RAM 128GB Storage",
-  //   },
-  //   {
-  //     id: "30",
-  //     title:
-  //       "Samsung Galaxy S20 FE 5G (Cloud Navy, 8GB RAM, 128GB Storage) with No Cost EMI & Additional Exchange Offers",
-  //     oldPrice: 74000,
-  //     price: 26000,
-  //     image:
-  //       "https://images-eu.ssl-images-amazon.com/images/G/31/img23/Wireless/Samsung/SamsungBAU/S20FE/GW/June23/BAU-27thJune/xcm_banners_2022_in_bau_wireless_dec_s20fe-rv51_580x800_in-en.jpg",
-  //     carouselImages: [
-  //       "https://m.media-amazon.com/images/I/81vDZyJQ-4L._SY879_.jpg",
-  //       "https://m.media-amazon.com/images/I/61vN1isnThL._SX679_.jpg",
-  //       "https://m.media-amazon.com/images/I/71yzyH-ohgL._SX679_.jpg",
-  //       "https://m.media-amazon.com/images/I/61vN1isnThL._SX679_.jpg",
-  //     ],
-  //     color: "Cloud Navy",
-  //     size: "8 GB RAM 128GB Storage",
-  //   },
-  //   {
-  //     id: "40",
-  //     title:
-  //       "Samsung Galaxy M14 5G (ICY Silver, 4GB, 128GB Storage) | 50MP Triple Cam | 6000 mAh Battery | 5nm Octa-Core Processor | Android 13 | Without Charger",
-  //     oldPrice: 16000,
-  //     price: 14000,
-  //     image:
-  //       "https://images-eu.ssl-images-amazon.com/images/G/31/img23/Wireless/Samsung/CatPage/Tiles/June/xcm_banners_m14_5g_rv1_580x800_in-en.jpg",
-  //     carouselImages: [
-  //       "https://m.media-amazon.com/images/I/817WWpaFo1L._SX679_.jpg",
-  //       "https://m.media-amazon.com/images/I/81KkF-GngHL._SX679_.jpg",
-  //       "https://m.media-amazon.com/images/I/61IrdBaOhbL._SX679_.jpg",
-  //     ],
-  //     color: "Icy Silver",
-  //     size: "6 GB RAM 64GB Storage",
-  //   },
-  //   {
-  //     id: "40",
-  //     title:
-  //       "realme narzo N55 (Prime Blue, 4GB+64GB) 33W Segment Fastest Charging | Super High-res 64MP Primary AI Camera",
-  //     oldPrice: 12999,
-  //     price: 10999,
-  //     image:
-  //       "https://images-eu.ssl-images-amazon.com/images/G/31/tiyesum/N55/June/xcm_banners_2022_in_bau_wireless_dec_580x800_v1-n55-marchv2-mayv3-v4_580x800_in-en.jpg",
-  //     carouselImages: [
-  //       "https://m.media-amazon.com/images/I/41Iyj5moShL._SX300_SY300_QL70_FMwebp_.jpg",
-  //       "https://m.media-amazon.com/images/I/61og60CnGlL._SX679_.jpg",
-  //       "https://m.media-amazon.com/images/I/61twx1OjYdL._SX679_.jpg",
-  //     ],
-  //   },
-  // ];
-  // const offers = [
-  //   {
-  //     id: "0",
-  //     title:
-  //       "Oppo Enco Air3 Pro True Wireless in Ear Earbuds with Industry First Composite Bamboo Fiber, 49dB ANC, 30H Playtime, 47ms Ultra Low Latency,Fast Charge,BT 5.3 (Green)",
-  //     offer: "72% off",
-  //     oldPrice: 7500,
-  //     price: 4500,
-  //     image:
-  //       "https://m.media-amazon.com/images/I/61a2y1FCAJL._AC_UL640_FMwebp_QL65_.jpg",
-  //     carouselImages: [
-  //       "https://m.media-amazon.com/images/I/61a2y1FCAJL._SX679_.jpg",
-  //       "https://m.media-amazon.com/images/I/71DOcYgHWFL._SX679_.jpg",
-  //       "https://m.media-amazon.com/images/I/71LhLZGHrlL._SX679_.jpg",
-  //       "https://m.media-amazon.com/images/I/61Rgefy4ndL._SX679_.jpg",
-  //     ],
-  //     color: "Green",
-  //     size: "Normal",
-  //   },
-  //   {
-  //     id: "1",
-  //     title:
-  //       "Fastrack Limitless FS1 Pro Smart Watch|1.96 Super AMOLED Arched Display with 410x502 Pixel Resolution|SingleSync BT Calling|NitroFast Charging|110+ Sports Modes|200+ Watchfaces|Upto 7 Days Battery",
-  //     offer: "40%",
-  //     oldPrice: 7955,
-  //     price: 3495,
-  //     image: "https://m.media-amazon.com/images/I/41mQKmbkVWL._AC_SY400_.jpg",
-  //     carouselImages: [
-  //       "https://m.media-amazon.com/images/I/71h2K2OQSIL._SX679_.jpg",
-  //       "https://m.media-amazon.com/images/I/71BlkyWYupL._SX679_.jpg",
-  //       "https://m.media-amazon.com/images/I/71c1tSIZxhL._SX679_.jpg",
-  //     ],
-  //     color: "black",
-  //     size: "Normal",
-  //   },
-  //   {
-  //     id: "2",
-  //     title: "Aishwariya System On Ear Wireless On Ear Bluetooth Headphones",
-  //     offer: "40%",
-  //     oldPrice: 7955,
-  //     price: 3495,
-  //     image: "https://m.media-amazon.com/images/I/41t7Wa+kxPL._AC_SY400_.jpg",
-  //     carouselImages: ["https://m.media-amazon.com/images/I/41t7Wa+kxPL.jpg"],
-  //     color: "black",
-  //     size: "Normal",
-  //   },
-  //   {
-  //     id: "3",
-  //     title:
-  //       "Fastrack Limitless FS1 Pro Smart Watch|1.96 Super AMOLED Arched Display with 410x502 Pixel Resolution|SingleSync BT Calling|NitroFast Charging|110+ Sports Modes|200+ Watchfaces|Upto 7 Days Battery",
-  //     offer: "40%",
-  //     oldPrice: 24999,
-  //     price: 19999,
-  //     image: "https://m.media-amazon.com/images/I/71k3gOik46L._AC_SY400_.jpg",
-  //     carouselImages: [
-  //       "https://m.media-amazon.com/images/I/41bLD50sZSL._SX300_SY300_QL70_FMwebp_.jpg",
-  //       "https://m.media-amazon.com/images/I/616pTr2KJEL._SX679_.jpg",
-  //       "https://m.media-amazon.com/images/I/71wSGO0CwQL._SX679_.jpg",
-  //     ],
-  //     color: "Norway Blue",
-  //     size: "8GB RAM, 128GB Storage",
-  //   },
-  // ];
-  const [products, setProducts] = useState([]);
   const [deals, setDeals] = useState([]);
   const [offers, setOffers] = useState([]);
   const [newProducts, setNewProducts] = useState([]);
   const navigation = useNavigation();
-  //const [open, setOpen] = useState(false);
-  const [temp, setTemp] = useState(true);
   const [addresses, setAddresses] = useState([]);
-  //const [category, setCategory] = useState("jewelery");
   const { userId, setUserId } = useContext(UserType);
   const [selectedAddress, setSelectedAdress] = useState("");
-  const cart = useSelector((state) => state.cart.cart);
-  const [cartApi, setCartApi] = useState([]);
-  const dispatch = useDispatch();
   const [modalVisible, setModalVisible] = useState(false);
   console.log(selectedAddress)
-  // const [items, setItems] = useState([
-  //   { label: "Men's clothing", value: "men's clothing" },
-  //   { label: "jewelery", value: "jewelery" },
-  //   { label: "women's clothing", value: "women's clothing" },
-  // ]);
+  const [moneySale, setMoneySale] = useState([]);
   useEffect(() => {
-    // const fetchData = async () => {
-    //   try {
-    //     const response = await axios.get("http://10.0.2.2:8000/products");
-    //     //const response = await axios.get("https://fakestoreapi.com/products");
-    //     setProducts(response.data);
-    //     console.log("all data", response.data);
-    //   } catch (error) {
-    //     console.log("error message", error);
-    //   }
-    // };
     const fetchTrendingData = async () => {
       try {
         const response = await axios.get("http://10.0.2.2:8000/trendingproducts");
@@ -242,9 +89,14 @@ const HomeScreen = () => {
     const fetchOffers = async () => {
       try {
         const response = await axios.get("http://10.0.2.2:8000/saleproducts");
- 
+
         setOffers(response.data);
-        //console.log("all data", response.data);
+        const arrayOfSaleMoney = [];
+        for (let index = 0; index < response.data.length; index++) {
+          const money = response.data[index].price-(response.data[index].price*response.data[index].offer/100);
+          arrayOfSaleMoney.push(money)          
+        }
+        setMoneySale(arrayOfSaleMoney)
       } catch (error) {
         console.log("error message", error);
       }
@@ -260,41 +112,19 @@ const HomeScreen = () => {
         console.log("error message", error);
       }
     };
-    // const fetchCart = async () => {
-    //   try {
-    //     const response = await axios.get(
-    //       `http://10.0.2.2:8000/productsInCart/${userId}`
-    //     );
-      
-    //     response.data.map((item)=>dispatch(addToCart(item)))
-    //   } catch (error) {
-    //     console.log("errorr", error);
-    //   }
-    // };
-
-    
-
-    //fetchData();
     fetchTrendingData();
     fetchOffers();
     fetchNewData()
-    // setTimeout(() => {
-    //   fetchCart();
-    // }, 1000);
-    
-    //addToTempCart()
-    
-  }, []);
-  // const onGenderOpen = useCallback(() => {
-  //   setTemp(false);
-  // }, []);
 
+
+  }, []);
 
   useEffect(() => {
     if (userId) {
       console.log("user id:", userId)
       fetchAddresses();
     }
+
   }, [userId, modalVisible]);
   const fetchAddresses = async () => {
     try {
@@ -308,7 +138,7 @@ const HomeScreen = () => {
       console.log("error", error);
     }
   };
-    //console.log("address", addresses);
+  //console.log("address", addresses);
   useEffect(() => {
     const fetchUser = async () => {
       const token = await AsyncStorage.getItem("authToken");
@@ -329,10 +159,7 @@ const HomeScreen = () => {
           backgroundColor: "white",
         }}
       >
-        {/* <Image
-                  style={{ width: 350, height: 350, resizeMode: "contain" }}
-                  source={{ uri: "https://cdn.discordapp.com/attachments/668817507766763529/1157752252514172948/received_1064120524753563.gif?ex=651a690e&is=6519178e&hm=8777ccb89e000d5f4f1fae3a5cdb75df51d5c2eee84d4f1096ad5f6771e0b6ab&" }}
-                /> */}
+
         <ScrollView>
           <View
             style={{
@@ -408,7 +235,7 @@ const HomeScreen = () => {
                   source={{ uri: item.image }}
                 />
 
-                
+
 
                 <Text
                   style={{
@@ -450,7 +277,7 @@ const HomeScreen = () => {
                     category: item?.category,
                     image: item?.image,
                     offer: item?.offer,
-                    
+
                     sold: item?.sold,
                     item: item,
 
@@ -458,37 +285,59 @@ const HomeScreen = () => {
                 }
                 style={{
                   marginVertical: 10,
+                  marginHorizontal: 10,
                   alignItems: "center",
                   justifyContent: "center",
                 }}
               >
                 <Image
-                  style={{ width: 150, height: 150, resizeMode: "contain" }}
+                  style={{ width: 100, height: 100, resizeMode: "contain" }}
                   source={{ uri: item?.image }}
                 />
-
-                <View
+                <Text
                   style={{
-                    backgroundColor: "#E31837",
-                    paddingVertical: 5,
-                    width: 130,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    marginTop: 10,
-                    borderRadius: 4,
+                    textAlign: "center",
+                    color: "black",
+                    fontSize: 11,
+                    fontWeight: "bold",
+                    marginTop: 5,
+                    width: 150
                   }}
                 >
-                  <Text
-                    style={{
-                      textAlign: "center",
-                      color: "white",
-                      fontSize: 13,
-                      fontWeight: "bold",
-                    }}
-                  >
-                     {item?.sold} sold
-                  </Text>
+                  {item?.title}
+                </Text>
+                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                  <View>
+                    <Text
+                      style={{
+                        textAlign: "center",
+                        color: "red",
+                        fontSize: 13,
+                        fontWeight: "bold",
+                        marginTop: 5,
+                        marginLeft: -70
+                      }}
+                    >
+                      {item?.price.toLocaleString('vi', { style: 'currency', currency: 'VND' })}
+                    </Text>
+                  </View>
+                  <View>
+                    <Text
+                      style={{
+                        textAlign: "center",
+                        color: "black",
+                        fontSize: 13,
+                        fontWeight: "bold",
+                        marginTop: 5,
+                        marginRight: -90
+                      }}
+                    >
+                      {item?.sold} sold
+                    </Text>
+                  </View>
                 </View>
+
+
               </Pressable>
             ))}
           </ScrollView>
@@ -511,6 +360,7 @@ const HomeScreen = () => {
               <Pressable
                 onPress={() =>
                   navigation.navigate("Info", {
+
                     title: item.title,
                     price: item?.price,
 
@@ -518,48 +368,78 @@ const HomeScreen = () => {
                     category: item?.category,
                     image: item?.image,
                     offer: item?.offer,
-                    
+
                     sold: item?.sold,
                     item: item,
+
                   })
                 }
                 style={{
                   marginVertical: 10,
+                  marginHorizontal: 15,
                   alignItems: "center",
                   justifyContent: "center",
                 }}
               >
-                <Image
-                  style={{ width: 150, height: 150, resizeMode: "contain" }}
-                  source={{ uri: item?.image }}
-                />
+                <View style={{
+                  position: "relative",
+                }}>
+                  <View style={{ backgroundColor: "red", borderRadius: 60, width: 30, height: 30, marginLeft: 95, marginTop: -10, alignItems: "center", position: "absolute" }}>
+                    <Text style={{ fontSize: 14, fontWeight: "bold", color: "white", marginTop: 4}}>
+                      {item?.offer}%
+                    </Text>
+                  </View>
+                    
+                    <Image
+                      style={{ width: 100, height: 100, resizeMode: "contain" }}
+                      source={{ uri: item?.image }}
+                    />
+                </View>
 
-                <View
+
+                <Text
                   style={{
-                    backgroundColor: "#E31837",
-                    paddingVertical: 5,
-                    width: 130,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    marginTop: 10,
-                    borderRadius: 4,
+                    textAlign: "center",
+                    color: "black",
+                    fontSize: 11,
+                    fontWeight: "bold",
+                    marginTop: 5,
+                    width: 150
                   }}
                 >
-                  <Text
-                    style={{
-                      textAlign: "center",
-                      color: "white",
-                      fontSize: 13,
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Upto {item?.offer}%
-                  </Text>
+                  {item?.title}
+                </Text>
+                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
+                  <View>
+                    <Text
+                      style={{
+                        textAlign: "center",
+                        color: "red",
+                        fontSize: 13,
+                        fontWeight: "bold",
+                        marginTop: 5,
+
+                      }}
+                    >
+                      {moneySale[index].toLocaleString('vi', { style: 'currency', currency: 'VND' })}
+                      
+                    </Text>
+                  </View>
+
                 </View>
+
+
               </Pressable>
             ))}
           </ScrollView>
-
+          <Text
+            style={{
+              height: 1,
+              borderColor: "#D0D0D0",
+              borderWidth: 2,
+              marginTop: 15,
+            }}
+          />
           <Text style={{ padding: 10, fontSize: 18, fontWeight: "bold" }}>
             Brand New Products
           </Text>
@@ -569,7 +449,7 @@ const HomeScreen = () => {
               <Pressable
                 onPress={() =>
                   navigation.navigate("Info", {
-                    _id: item._id,
+
                     title: item.title,
                     price: item?.price,
 
@@ -577,44 +457,67 @@ const HomeScreen = () => {
                     category: item?.category,
                     image: item?.image,
                     offer: item?.offer,
-                    
+
                     sold: item?.sold,
                     item: item,
+
                   })
                 }
                 style={{
                   marginVertical: 10,
+                  marginHorizontal: 10,
                   alignItems: "center",
                   justifyContent: "center",
                 }}
               >
                 <Image
-                  style={{ width: 150, height: 150, resizeMode: "contain" }}
+                  style={{ width: 100, height: 100, resizeMode: "contain" }}
                   source={{ uri: item?.image }}
                 />
-
-                <View
+                <Text
                   style={{
-                    backgroundColor: "#E31837",
-                    paddingVertical: 5,
-                    width: 130,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    marginTop: 10,
-                    borderRadius: 4,
+                    textAlign: "center",
+                    color: "black",
+                    fontSize: 11,
+                    fontWeight: "bold",
+                    marginTop: 5,
+                    width: 150
                   }}
                 >
-                  <Text
-                    style={{
-                      textAlign: "center",
-                      color: "white",
-                      fontSize: 13,
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Upto {item?.offer}%
-                  </Text>
+                  {item?.title}
+                </Text>
+                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                  <View>
+                    <Text
+                      style={{
+                        textAlign: "center",
+                        color: "red",
+                        fontSize: 13,
+                        fontWeight: "bold",
+                        marginTop: 5,
+                        marginLeft: -70
+                      }}
+                    >
+                      {item?.price.toLocaleString('vi', { style: 'currency', currency: 'VND' })}
+                    </Text>
+                  </View>
+                  <View>
+                    <Text
+                      style={{
+                        textAlign: "center",
+                        color: "black",
+                        fontSize: 13,
+                        fontWeight: "bold",
+                        marginTop: 5,
+                        marginRight: -90
+                      }}
+                    >
+                      {item?.sold} sold
+                    </Text>
+                  </View>
                 </View>
+
+
               </Pressable>
             ))}
           </ScrollView>
@@ -777,7 +680,7 @@ const HomeScreen = () => {
             </Pressable>
           </ScrollView>
 
-         
+
         </ModalContent>
       </BottomModal>
     </>
