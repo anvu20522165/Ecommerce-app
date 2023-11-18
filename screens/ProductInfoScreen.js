@@ -20,7 +20,7 @@ import { addToCart } from "../redux/CartReducer";
 import { UserType } from "../UserContext";
 import axios from "axios";
 const ProductInfoScreen = () => {
-    const {userId,setUserId} = useContext(UserType)
+    const { userId, setUserId } = useContext(UserType)
     const route = useRoute();
     const { width } = Dimensions.get("window");
     const height = (width * 100) / 100;
@@ -38,33 +38,33 @@ const ProductInfoScreen = () => {
     //       setAddedToCart(false);
     //     }, 30000);
     //   };
-      const cart = useSelector((state) => state.cart.cart);
-      //console.log(cart);
-      
-      const caculateTotal = (x,y) => {
-        setTotal(route.params.price-(route.params.price*route?.params?.offer/100))
+    const cart = useSelector((state) => state.cart.cart);
+    //console.log(cart);
+
+    const caculateTotal = (x, y) => {
+        setTotal(route.params.price - (route.params.price * route?.params?.offer / 100))
         console.log(total);
-      };
-      useEffect(() => {
+    };
+    useEffect(() => {
         caculateTotal()
-      }, []);
-      //main cart in user
-      const addProductIntoCart = (item) => {
+    }, []);
+    //main cart in user
+    const addProductIntoCart = (item) => {
         const cart = {
             productid: item._id,
-            price: (item.price-item.price*item?.offer/100),
+            price: (item.price - item.price * item?.offer / 100),
             quantity: 1
         }
         console.log("cart api:", cart)
-        axios.post("http://10.0.2.2:8000/cart",{userId,cart}).then((response) => {
-            Alert.alert("Success","Product added successfully"); 
-            console.log("my cart:",response.data)
+        axios.post("http://10.0.2.2:8000/cart", { userId, cart }).then((response) => {
+            Alert.alert("Success", "Product added successfully");
+            console.log("my cart:", response.data)
 
         }).catch((error) => {
-            Alert.alert("Error","Failed to add product")
-            console.log("error",error)
+            Alert.alert("Error", "Failed to add product")
+            console.log("error", error)
         })
-      };
+    };
     return (
         <ScrollView
             style={{ marginTop: 55, flex: 1, backgroundColor: "white" }}
@@ -98,185 +98,125 @@ const ProductInfoScreen = () => {
                     />
                     <TextInput placeholder="Search Amazon.in" />
                 </Pressable>
-<Pressable><Feather name="mic" size={24} color="black" /></Pressable>
-                
+                <Pressable><Feather name="mic" size={24} color="black" /></Pressable>
+
             </View>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                {/* {route.params.carouselImages.map((item, index) => (
-                    <ImageBackground
-                        style={{ width, height, marginTop: 25, resizeMode: "contain" }}
-                        source={{ uri: item }}
-                        key={index}
-                    >
-                        <View
-                            style={{
-                                padding: 20,
-                                flexDirection: "row",
-                                alignItems: "center",
-                                justifyContent: "space-between",
-                            }}
-                        >
-                            <View
-                                style={{
-                                    width: 40,
-                                    height: 40,
-                                    borderRadius: 20,
-                                    backgroundColor: "#C60C30",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    flexDirection: "row",
-                                }}
-                            >
-                                <Text
-                                    style={{
-                                        color: "white",
-                                        textAlign: "center",
-                                        fontWeight: "600",
-                                        fontSize: 12,
-                                    }}
-                                >
-                                    20% off
-                                </Text>
-                            </View>
-
-                            <View
-                                style={{
-                                    width: 40,
-                                    height: 40,
-                                    borderRadius: 20,
-                                    backgroundColor: "#E0E0E0",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    flexDirection: "row",
-                                }}
-                            >
-                                <MaterialCommunityIcons
-                                    name="share-variant"
-                                    size={24}
-                                    color="black"
-                                />
-                            </View>
-                        </View>
-
-                        <View
-                            style={{
-                                width: 40,
-                                height: 40,
-                                borderRadius: 20,
-                                backgroundColor: "#E0E0E0",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                flexDirection: "row",
-                                marginTop: "auto",
-                                marginLeft: 20,
-                                marginBottom: 20,
-                            }}
-                        >
-                            <AntDesign name="hearto" size={24} color="black" />
-                        </View>
-                    </ImageBackground>
-                ))} */}
                 <ImageBackground
-                        style={{ width, height: 300, marginTop: 25, resizeMode: "contain" }}
-                        source={{ uri: route?.params?.image }}
-                        //source={{ uri: "https://cdn.discordapp.com/attachments/668817507766763529/1157752252514172948/received_1064120524753563.gif?ex=651a690e&is=6519178e&hm=8777ccb89e000d5f4f1fae3a5cdb75df51d5c2eee84d4f1096ad5f6771e0b6ab&" }}
-                    >
-
-                    </ImageBackground>
-            </ScrollView>
-            <View style={{ padding: 10 }}>
-                <Text style={{ fontSize: 15, fontWeight: "500" }}>
-                    {route?.params?.title}
-                </Text>
-
-                <Text style={{ fontSize: 18, fontWeight: "600", marginTop: 6 }}>
-                   Price: {route?.params?.price.toLocaleString('vi', {style : 'currency', currency : 'VND'})}
-                </Text>
-                <Text style={{ fontSize: 18, fontWeight: "600", marginTop: 6 }}>
-                   Sale: {route?.params?.offer}% 
-                </Text>
-            </View>
-
-            <Text style={{ height: 1, borderColor: "#D0D0D0", borderWidth: 1 }} />
-
-            <View style={{padding: 10 }}>
-                <Text style={{ fontSize: 15, fontWeight:"bold"}} >Description: </Text>
-                <Text style={{ fontSize: 15}}>
-                    {route?.params?.description}
-                </Text>
-            </View>
-
-            <View style={{ flexDirection: "row", alignItems: "center", padding: 10 }}>
-                <Text>Category: </Text>
-                <Text style={{ fontSize: 15, fontWeight: "bold" }}>
-                    {route?.params?.category}
-                </Text>
-            </View>
-
-            <Text style={{ height: 1, borderColor: "#D0D0D0", borderWidth: 1 }} />
-
-            <View style={{ padding: 10 }}>
-                <Text style={{ fontSize: 15, fontWeight: "bold", marginVertical: 5 }}>
-                    Total : {total.toLocaleString('vi', {style : 'currency', currency : 'VND'})}
-                </Text>
-                <Text style={{ color: "#00CED1" }}>
-                    FREE delivery Tomorrow by 3 PM.Order within 10hrs 30 mins
-                </Text>
-
-                <View
-                    style={{
-                        flexDirection: "row",
-                        marginVertical: 5,
-                        alignItems: "center",
-                        gap: 5,
-                    }}
+                    style={{ width, height: 300, marginTop: 25, resizeMode: "contain" }}
+                    source={{ uri: route?.params?.image }}
+                //source={{ uri: "https://cdn.discordapp.com/attachments/668817507766763529/1157752252514172948/received_1064120524753563.gif?ex=651a690e&is=6519178e&hm=8777ccb89e000d5f4f1fae3a5cdb75df51d5c2eee84d4f1096ad5f6771e0b6ab&" }}
                 >
-                    <Ionicons name="location" size={24} color="black" />
 
-                    <Text style={{ fontSize: 15, fontWeight: "500" }}>
-                        Deliver To Sujan - Bangalore 560019
+                </ImageBackground>
+            </ScrollView>
+            <View style={{ padding: 5, marginHorizontal: 10, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+
+                <View style={{ width: 250 }}>
+                    <Text style={{ fontSize: 18, fontWeight: "500" }}>
+                        {route?.params?.title}
+                    </Text>
+                    <Text style={{ fontSize: 15, fontWeight: "normal", color: "grey" }}>
+                        {route?.params?.category}
+                    </Text>
+
+                </View>
+                <View>
+                    <Text style={{ color: "green", fontWeight: "500", fontSize: 14 }}>
+                        Available In Stock
                     </Text>
                 </View>
             </View>
 
-            <Text style={{ color: "green", marginHorizontal: 10, fontWeight: "500" }}>
-                IN Stock
-            </Text>
 
-            <Pressable
-        onPress={() => addProductIntoCart(route?.params?.item)}
-        style={{
-          backgroundColor: "#FFC72C",
-          padding: 10,
-          borderRadius: 20,
-          justifyContent: "center",
-          alignItems: "center",
-          marginHorizontal: 10,
-          marginVertical: 10,
-        }}
-      >
-        {addedToCart ? (
-          <View>
-            <Text>Added to Cart</Text>
-          </View>
-        ) : (
-          <Text>Add to Cart</Text>
-        )}
-      </Pressable>
 
-      <Pressable
-        style={{
-          backgroundColor: "#FFAC1C",
-          padding: 10,
-          borderRadius: 20,
-          justifyContent: "center",
-          alignItems: "center",
-          marginHorizontal: 10,
-          marginVertical: 10,
-        }}
-      >
-        <Text>Buy Now</Text>
-      </Pressable>
+
+
+            <Text style={{ height: 1, borderColor: "#D0D0D0", borderWidth: 1, marginHorizontal: 100 }} />
+
+            <View style={{ marginHorizontal: 11 }}>
+                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginHorizontal: 10 }}>
+                    <View style={{}}>
+                        <Text style={{ fontSize: 18, fontWeight: "normal", color: "grey", }}>
+                            Price
+                        </Text>
+                        <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+                            {route?.params?.price.toLocaleString('vi', { style: 'currency', currency: 'VND' })}
+                        </Text>
+                    </View>
+                    <View style={{ backgroundColor: "red", borderRadius: 60, width: 40, height: 40, alignItems: "center" }}>
+                        <Text style={{ fontSize: 18, fontWeight: "bold", color: "white", marginTop: 7 }}>
+                            {route?.params?.offer}%
+                        </Text>
+                    </View>
+                </View>
+
+                {/* <Text style={{ color: "#00CED1" }}>
+                    FREE delivery Tomorrow by 3 PM.Order within 10hrs 30 mins
+                </Text> */}
+
+
+            </View>
+
+
+
+
+            <View style={{ padding: 10, marginHorizontal: 11 }}>
+                <Text style={{ fontSize: 15, fontWeight: "bold" }} >Description: </Text>
+                <Text style={{ fontSize: 14, fontWeight: "normal", color: "grey" }}>
+                    {route?.params?.description}
+                </Text>
+            </View>
+            <Text style={{ height: 1, borderColor: "#D0D0D0", borderWidth: 1, marginHorizontal: 100 }} />
+
+            <View
+                style={{
+                    flexDirection: "row",
+                    marginVertical: 5,
+                    alignItems: "center",
+                    gap: 5, marginHorizontal: 10
+                }}
+            >
+                <Ionicons name="location" size={24} color="#00CED1" />
+
+                <Text style={{ fontSize: 15, fontWeight: "500", color: "#00CED1" }}>
+                    Deliver In Vietnam regions
+                </Text>
+            </View>
+
+            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginHorizontal: 14 }}>
+                <View>
+                    <Text style={{ fontSize: 18, fontWeight: "normal", color: "grey" }}>
+                    Total
+                    </Text>
+                    <Text style={{ fontSize: 18, fontWeight: "bold" }} >{total.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</Text>
+
+                </View>
+                <View>
+                    <Pressable
+                        onPress={() => addProductIntoCart(route?.params?.item)}
+                        style={{
+                            backgroundColor: "#FFC72C",
+                            padding: 10,
+                            borderRadius: 20,
+                            justifyContent: "center",
+                            alignItems: "center",
+                            marginHorizontal: 10,
+                            marginVertical: 10,
+                        }}
+                    >
+                        {addedToCart ? (
+                            <View>
+                                <Text>Added to Cart</Text>
+                            </View>
+                        ) : (
+                            <Text>Add to Cart</Text>
+                        )}
+                    </Pressable>
+
+                </View>
+            </View>
+
         </ScrollView>
     )
 }
