@@ -9,7 +9,7 @@ import {
   TextInput,
   Image,
 } from "react-native";
-import React, { useState, useEffect, useContext } from "react";
+import React, { useEffect, useContext, useState, useCallback } from "react";
 import { Feather } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -17,7 +17,7 @@ import { Entypo } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { SliderBox } from "react-native-image-slider-box";
 import axios from "axios";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { BottomModal, SlideAnimation, ModalContent } from "react-native-modals";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { UserType } from "../UserContext";
@@ -73,51 +73,67 @@ const HomeScreen = () => {
   const [selectedAddress, setSelectedAdress] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   console.log(selectedAddress)
-  const [moneySale, setMoneySale] = useState([]);
+  const [moneySale, setMoneySale] = useState();
+  const fetchTrendingData = async () => {
+    try {
+      const response = await axios.get("http://10.0.2.2:8000/trendingproducts");
+
+      setDeals(response.data);
+      //console.log("trending data", response.data);
+    } catch (error) {
+      console.log("error message", error);
+    }
+  };
+
+  const fetchOffers = async () => {
+    try {
+      const response = await axios.get("http://10.0.2.2:8000/saleproducts");
+
+      setOffers(response.data);
+      const arrayOfSaleMoney = [];
+      for (let index = 0; index < response.data.length; index++) {
+        const money = response.data[index].price-(response.data[index].price*response.data[index].offer/100);
+        arrayOfSaleMoney.push(money)          
+      }
+      setMoneySale(arrayOfSaleMoney)
+      // setTimeout(() => {
+      //   const arrayOfSaleMoney = [];
+      //   for (let index = 0; index < response.data.length; index++) {
+      //     const money = response.data[index].price - (response.data[index].price * response.data[index].offer / 100);
+      //     arrayOfSaleMoney.push(money)
+      //   }
+      //   setMoneySale(arrayOfSaleMoney)
+
+      // }, 4000);
+    } catch (error) {
+      console.log("error message", error);
+    }
+  };
+
+  const fetchNewData = async () => {
+    try {
+      const response = await axios.get("http://10.0.2.2:8000/newproducts");
+
+      setNewProducts(response.data);
+      //console.log("trending data", response.data);
+    } catch (error) {
+      console.log("error message", error);
+    }
+  };
   useEffect(() => {
-    const fetchTrendingData = async () => {
-      try {
-        const response = await axios.get("http://10.0.2.2:8000/trendingproducts");
-
-        setDeals(response.data);
-        //console.log("trending data", response.data);
-      } catch (error) {
-        console.log("error message", error);
-      }
-    };
-
-    const fetchOffers = async () => {
-      try {
-        const response = await axios.get("http://10.0.2.2:8000/saleproducts");
-
-        setOffers(response.data);
-        const arrayOfSaleMoney = [];
-        for (let index = 0; index < response.data.length; index++) {
-          const money = response.data[index].price-(response.data[index].price*response.data[index].offer/100);
-          arrayOfSaleMoney.push(money)          
-        }
-        setMoneySale(arrayOfSaleMoney)
-      } catch (error) {
-        console.log("error message", error);
-      }
-    };
-
-    const fetchNewData = async () => {
-      try {
-        const response = await axios.get("http://10.0.2.2:8000/newproducts");
-
-        setNewProducts(response.data);
-        //console.log("trending data", response.data);
-      } catch (error) {
-        console.log("error message", error);
-      }
-    };
+    
     fetchTrendingData();
     fetchOffers();
     fetchNewData()
 
 
   }, []);
+  
+  useFocusEffect(
+    useCallback(() => {
+      fetchNewData()
+    }, [])
+  );
 
   useEffect(() => {
     if (userId) {
@@ -139,16 +155,19 @@ const HomeScreen = () => {
     }
   };
   //console.log("address", addresses);
+  const fetchUser = async () => {
+    const token = await AsyncStorage.getItem("authToken");
+    const decodedToken = jwt_decode(token);
+    const userId = decodedToken.userId;
+    setUserId(userId);
+  };
   useEffect(() => {
-    const fetchUser = async () => {
-      const token = await AsyncStorage.getItem("authToken");
-      const decodedToken = jwt_decode(token);
-      const userId = decodedToken.userId;
-      setUserId(userId);
-    };
+    
 
     fetchUser();
   }, []);
+
+  
 
   return (
     <>
@@ -385,15 +404,15 @@ const HomeScreen = () => {
                   position: "relative",
                 }}>
                   <View style={{ backgroundColor: "red", borderRadius: 60, width: 30, height: 30, marginLeft: 95, marginTop: -10, alignItems: "center", position: "absolute" }}>
-                    <Text style={{ fontSize: 14, fontWeight: "bold", color: "white", marginTop: 4}}>
+                    <Text style={{ fontSize: 14, fontWeight: "bold", color: "white", marginTop: 4 }}>
                       {item?.offer}%
                     </Text>
                   </View>
-                    
-                    <Image
-                      style={{ width: 100, height: 100, resizeMode: "contain" }}
-                      source={{ uri: item?.image }}
-                    />
+
+                  <Image
+                    style={{ width: 100, height: 100, resizeMode: "contain" }}
+                    source={{ uri: item?.image }}
+                  />
                 </View>
 
 
@@ -421,8 +440,8 @@ const HomeScreen = () => {
 
                       }}
                     >
-                      {moneySale[index].toLocaleString('vi', { style: 'currency', currency: 'VND' })}
-                      
+                       {/* {moneySale[index].toLocaleString('vi', { style: 'currency', currency: 'VND' })}  */}
+
                     </Text>
                   </View>
 
@@ -522,57 +541,7 @@ const HomeScreen = () => {
             ))}
           </ScrollView>
 
-          {/* <Text
-            style={{
-              height: 1,
-              borderColor: "#D0D0D0",
-              borderWidth: 2,
-              marginTop: 15,
-            }}
-          />
 
-          <View
-            style={{
-              marginHorizontal: 10,
-              marginTop: 20,
-              width: "45%",
-              marginBottom: open ? 50 : 15,
-            }}
-          >
-            <DropDownPicker
-              style={{
-                borderColor: "#B7B7B7",
-                height: 30,
-                marginBottom: open ? 120 : 15,
-              }}
-              open={open}
-              value={category} //genderValue
-              items={items}
-              setOpen={setOpen}
-              setValue={setCategory}
-              setItems={setItems}
-              placeholder="choose category"
-              placeholderStyle={styles.placeholderStyles}
-              onOpen={onGenderOpen}
-              // onChangeValue={onChange}
-              zIndex={3000}
-              zIndexInverse={1000}
-            />
-          </View>
-
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              flexWrap: "wrap",
-            }}
-          >
-            {products
-              ?.filter((item) => item.category === category)
-              .map((item, index) => (
-                <ProductItem item={item} key={index} />
-              ))}
-          </View> */}
         </ScrollView>
       </SafeAreaView>
 
