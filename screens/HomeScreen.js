@@ -92,19 +92,10 @@ const HomeScreen = () => {
       setOffers(response.data);
       const arrayOfSaleMoney = [];
       for (let index = 0; index < response.data.length; index++) {
-        const money = response.data[index].price-(response.data[index].price*response.data[index].offer/100);
-        arrayOfSaleMoney.push(money)          
+        const money = response.data[index].price - (response.data[index].price * response.data[index].offer / 100);
+        arrayOfSaleMoney.push(money)
       }
       setMoneySale(arrayOfSaleMoney)
-      // setTimeout(() => {
-      //   const arrayOfSaleMoney = [];
-      //   for (let index = 0; index < response.data.length; index++) {
-      //     const money = response.data[index].price - (response.data[index].price * response.data[index].offer / 100);
-      //     arrayOfSaleMoney.push(money)
-      //   }
-      //   setMoneySale(arrayOfSaleMoney)
-
-      // }, 4000);
     } catch (error) {
       console.log("error message", error);
     }
@@ -121,14 +112,12 @@ const HomeScreen = () => {
     }
   };
   useEffect(() => {
-    
     fetchTrendingData();
     fetchOffers();
+    console.log("j")
     fetchNewData()
-
-
   }, []);
-  
+
   useFocusEffect(
     useCallback(() => {
       fetchNewData()
@@ -154,7 +143,6 @@ const HomeScreen = () => {
       console.log("error", error);
     }
   };
-  //console.log("address", addresses);
   const fetchUser = async () => {
     const token = await AsyncStorage.getItem("authToken");
     const decodedToken = jwt_decode(token);
@@ -162,13 +150,8 @@ const HomeScreen = () => {
     setUserId(userId);
   };
   useEffect(() => {
-    
-
     fetchUser();
   }, []);
-
-  
-
   return (
     <>
       <SafeAreaView
@@ -440,8 +423,7 @@ const HomeScreen = () => {
 
                       }}
                     >
-                       {/* {moneySale[index].toLocaleString('vi', { style: 'currency', currency: 'VND' })}  */}
-
+                      {(item?.price - item?.price*item?.offer/100).toLocaleString('vi', { style: 'currency', currency: 'VND' })}
                     </Text>
                   </View>
 
