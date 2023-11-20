@@ -27,20 +27,6 @@ const ProductInfoScreen = () => {
     const [total, setTotal] = useState(false);
     const [addedToCart, setAddedToCart] = useState(false);
     const dispatch = useDispatch();
-    //cart reducer
-    // const addItemToCart = (item) => {
-    //     console.log("product id:", item._id);
-    //     setAddedToCart(true);
-    //     dispatch(addToCart(item));
-    //     //update cart after waiting for a momment
-    //     //addProductIntoCart(item)
-    //     setTimeout(() => {
-    //       setAddedToCart(false);
-    //     }, 30000);
-    //   };
-    const cart = useSelector((state) => state.cart.cart);
-    //console.log(cart);
-
     const caculateTotal = (x, y) => {
         setTotal(route.params.price - (route.params.price * route?.params?.offer / 100))
         console.log(total);
@@ -187,7 +173,7 @@ const ProductInfoScreen = () => {
             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginHorizontal: 14 }}>
                 <View>
                     <Text style={{ fontSize: 18, fontWeight: "normal", color: "grey" }}>
-                    Total
+                        Total
                     </Text>
                     <Text style={{ fontSize: 18, fontWeight: "bold" }} >{total.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</Text>
 

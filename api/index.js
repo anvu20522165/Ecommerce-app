@@ -1,9 +1,10 @@
+
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
-
+const ObjectId = require('mongodb').ObjectId;
 const app = express();
 const port = 8000;
 const cors = require("cors");
@@ -133,7 +134,7 @@ app.get("/user/:userId", async (req, res) => {
     }
 
     //find index of this address in the array
-    
+
     //console.log("address needs looking", findAddress)
 
     //res.status(200).json({ message: "Address created Successfully" });
@@ -147,7 +148,7 @@ app.get("/user/:userId", async (req, res) => {
 app.put("/updateUser", async (req, res) => {
   try {
 
-    const { userId,updatedUser } = req.body;
+    const { userId, updatedUser } = req.body;
     //find the user by the Userid
     const user = await User.findById(userId);
     if (!user) {
@@ -258,8 +259,8 @@ app.delete("/addresses/:userId/:addressId", async (req, res) => {
     const userId = req.params.userId;
     const addressId = req.params.addressId
     //const {addressId} = req.body;
-    console.log({userId})
-    console.log({addressId})
+    console.log({ userId })
+    console.log({ addressId })
     //find the user by the Userid
     const user = await User.findById(userId);
     if (!user) {
@@ -267,8 +268,8 @@ app.delete("/addresses/:userId/:addressId", async (req, res) => {
     }
 
     //find index of this address in the array
-    console.log(user.addresses.filter((item)=> item?._id != addressId))
-    const removeAddress = user.addresses.filter((item)=> item?._id != addressId)
+    console.log(user.addresses.filter((item) => item?._id != addressId))
+    const removeAddress = user.addresses.filter((item) => item?._id != addressId)
     //console.log(removeAddress)
     user.addresses = removeAddress
     //delete wanted address in the user's addresses array
@@ -289,7 +290,7 @@ app.get("/addresses/:userId/:addressId", async (req, res) => {
     const userId = req.params.userId;
     const addressId = req.params.addressId
     //const {addressId} = req.body;
-    console.log({addressId})
+    console.log({ addressId })
     //find the user by the Userid
     const user = await User.findById(userId);
     if (!user) {
@@ -297,7 +298,7 @@ app.get("/addresses/:userId/:addressId", async (req, res) => {
     }
 
     //find index of this address in the array
-    const findAddress = user.addresses.filter((item)=> item?._id == addressId)
+    const findAddress = user.addresses.filter((item) => item?._id == addressId)
     console.log("address needs looking", findAddress)
 
     //res.status(200).json({ message: "Address created Successfully" });
@@ -477,13 +478,13 @@ app.post("/cart", async (req, res) => {
     }
     console.log(cart.productid)
     //user.cart.push(cart);
-    const existingProduct = user.cart.find((item)=> item.productid.toString() === cart.productid)
+    const existingProduct = user.cart.find((item) => item.productid.toString() === cart.productid)
     //console.log(existingProduct)
-    if(existingProduct){
+    if (existingProduct) {
       existingProduct.quantity++;
       // await existingProduct.save();
     }
-    else{
+    else {
       user.cart.push(cart);
     }
     //save the updated user in te backend
@@ -523,14 +524,14 @@ app.put("/cartIncreasedQuanity/:userId/:productid", async (req, res) => {
     }
     console.log(productId)
     //user.cart.push(cart);
-    const checkedProduct = user.cart.find((item)=> item.productid.toString() === productId)
+    const checkedProduct = user.cart.find((item) => item.productid.toString() === productId)
     //console.log(checkedProduct)
-    if(checkedProduct){
+    if (checkedProduct) {
       console.log(checkedProduct)
       checkedProduct.quantity++;
       // await existingProduct.save();
     }
-    else{
+    else {
       console.log("Fail to find product")
     }
     //save the updated user in te backend
@@ -554,14 +555,14 @@ app.put("/cartDecreasedQuanity/:userId/:productid", async (req, res) => {
     }
     console.log(productId)
     //user.cart.push(cart);
-    const checkedProduct = user.cart.find((item)=> item.productid.toString() === productId)
+    const checkedProduct = user.cart.find((item) => item.productid.toString() === productId)
     //console.log(checkedProduct)
-    if(checkedProduct){
+    if (checkedProduct) {
       console.log(checkedProduct)
       checkedProduct.quantity--;
       // await existingProduct.save();
     }
-    else{
+    else {
       console.log("Fail to find product")
     }
     //save the updated user in te backend
@@ -585,14 +586,14 @@ app.delete("/cart/:userId/:productid", async (req, res) => {
     }
     console.log(productId)
     //user.cart.push(cart);
-    const checkedProduct = user.cart.filter((item)=> item.productid.toString() != productId)
+    const checkedProduct = user.cart.filter((item) => item.productid.toString() != productId)
     //console.log(checkedProduct)
-    if(checkedProduct){
+    if (checkedProduct) {
       //existingProduct.quantity++;
-      console.log("left products:",checkedProduct)
+      console.log("left products:", checkedProduct)
       user.cart = checkedProduct
     }
-    else{
+    else {
       console.log("Fail to find deleted product")
     }
     //save the updated user in te backend
@@ -628,7 +629,7 @@ app.post("/orders", async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    
+
     //create an array of product objects from the cart Items
     const products = cartItems.map((item) => ({
       productid: item?.productid._id,
@@ -650,7 +651,7 @@ app.post("/orders", async (req, res) => {
       status: status,
       finalCost: finalCost,
     });
-    
+
     await order.save();
     //delete products in cart
     user.cart.splice(0);
@@ -662,26 +663,23 @@ app.post("/orders", async (req, res) => {
   }
 });
 
-
-app.patch("/updateOrderStatus/:id", async (req, res) => {
-  try {
-    const _id = req.params.id;
-    const updatedOrder = await Order.findByIdAndUpdate({
-      _id,
-    }, req.body, {new: true},);
-    return res.status(201).json(updatedOrder);
-  } catch (error) {
-    return res.status(400).json({ error: error.message });
-  }
-});
-
 app.put("/updateOrderStatus/:id", async (req, res) => {
   try {
     const _id = req.params.id;
-    const {status} = req.body;
+    const { status } = req.body;
     const updatedOrder = await Order.findById(_id);
     //return res.status(201).json(updatedOrder);
     updatedOrder.status = status;
+    
+    if (status == "Delivered") {
+      for (let index = 0; index < updatedOrder.products.length; index++) {
+        const updatedProduct = await Product.findById(updatedOrder.products[index].productid.toString());
+        console.log(updatedProduct)
+        updatedProduct.sold = updatedProduct.sold + 1;
+        console.log(updatedProduct)
+        await updatedProduct.save();
+      }
+    }
     await updatedOrder.save();
     res.status(200).json({ message: "order's status updated successfully" });
   } catch (error) {
@@ -712,7 +710,7 @@ app.get("/orders/:userId", async (req, res) => {
     if (!orders || orders.length === 0) {
       return res.status(404).json({ message: "No orders found for this user" })
     }
-    res.status(200).json( orders );
+    res.status(200).json(orders);
   } catch (error) {
     res.status(500).json({ message: "Error" });
   }
@@ -720,20 +718,20 @@ app.get("/orders/:userId", async (req, res) => {
 
 //categories methods
 //get all categories
-app.get("/categories", async (req, res)=> {
-  try{
+app.get("/categories", async (req, res) => {
+  try {
     const categories = await Category.find();
     if (!categories) {
-    throw "error";
+      throw "error";
     }
-    res.status(200).json({message: "ok", data: categories});
-  } catch(error){
-    res.status(400).json({message: "Error"});
+    res.status(200).json({ message: "ok", data: categories });
+  } catch (error) {
+    res.status(400).json({ message: "Error" });
   }
 });
 //create category
 app.post("/categories", async (req, res) => {
-  try{
+  try {
     const { name, description } = req.body;
 
     //check if the category exists
@@ -752,13 +750,13 @@ app.post("/categories", async (req, res) => {
     await newCategory.save();
 
     res.status(200).json({ message: "Category created successfully" });
-  } catch(error){
-    res.status(400).json({message: "Error"});
+  } catch (error) {
+    res.status(400).json({ message: "Error" });
   }
 });
 //update categories
-app.put("/categories", async(req, res) => {
-  try{
+app.put("/categories", async (req, res) => {
+  try {
     const { categoryId, name, description } = req.body;
     //find the category by the CategoryId
     const category = await Category.findById(categoryId);
@@ -770,11 +768,11 @@ app.put("/categories", async(req, res) => {
     await category.save();
     res.status(200).json(category);
     // res.status(200).json({ message: "Category updated successfully" });
-  }catch(e){res.status(400).json({message: "Error"});}
+  } catch (e) { res.status(400).json({ message: "Error" }); }
 });
 //delete categories
-app.delete("/categories/:id", async(req, res) => {
-  try{
+app.delete("/categories/:id", async (req, res) => {
+  try {
     const deleteCategory = await Category.findOneAndDelete({
       _id: req.params.id,
     });
@@ -782,7 +780,7 @@ app.delete("/categories/:id", async(req, res) => {
       return res.status(404).json({ error: "Category not found." });
     }
     return res.status(200).json({ message: "Delete category successfully", data: deleteCategory });
-  }catch(e){res.status(400).json({message: "Error"});}
+  } catch (e) { res.status(400).json({ message: "Error" }); }
 });
 
 
