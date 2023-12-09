@@ -28,6 +28,7 @@ import AddProductsScreen from "../screens/admin/AddProductsScreen";
 import Products from "../screens/Products";
 import FlatlistTemp from "../screens/profileLinks/FlatlistTemp";
 import ViewOrderDetailScreen from "../screens/admin/order/ViewOrderDetailScreen";
+import UpdateProductsScreen from "../screens/admin/UpdateProductsScreen";
 const StackNavigator = () => {
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
@@ -199,7 +200,11 @@ const StackNavigator = () => {
           component={ViewOrderDetailScreen}
           options={{ headerShown: true }}
         />
-
+        <Stack.Screen
+          name="UpdateProductsScreen"
+          component={UpdateProductsScreen}
+          option={{headerShown:true}}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

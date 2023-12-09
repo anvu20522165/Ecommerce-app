@@ -8,6 +8,7 @@ import {
     Pressable,
     TextInput,
     Image,
+    Alert
   } from "react-native";
   import { FontAwesome5, Ionicons, FontAwesome } from "@expo/vector-icons";
   import React, { useEffect, useContext, useState, useCallback } from "react";
@@ -22,15 +23,32 @@ export default function AddProductsScreen() {
     const [price, setPrice] = useState("");
     const [category, setCategory] = useState("");
     const [image, setImage] = useState("");
+    const [description, setDescription] = useState("");
     const [offer, setOffer] = useState(0);
     const [sold, setSold] = useState(0);
     const [storage, setStorage] = useState(0);
+    const [inputStates, setInputStates] = useState({});
+
+  const handleFocus = (inputId) => {
+    setInputStates((prevInputStates) => ({
+      ...prevInputStates,
+      [inputId]: true,
+    }));
+  };
+
+  const handleBlur = (inputId) => {
+    setInputStates((prevInputStates) => ({
+      ...prevInputStates,
+      [inputId]: false,
+    }));
+  };
     const handleAddProduct = () => {
         const product = {
           title: title,
           price: price,
           category: category,
           image: image,
+          description: description,
           offer: offer,
           sold: sold,
           storage: storage,
@@ -48,6 +66,7 @@ export default function AddProductsScreen() {
               setPrice("");
               setCategory("");
               setImage("");
+              setDescription("");
               setOffer(0);
               setSold(0);
               setStorage(0);
@@ -57,22 +76,81 @@ export default function AddProductsScreen() {
                 "Adding Product Error",
                 "An error occurred while adding a product"
               );
-              console.log("registration failed", error);
+              console.log("Adding product failed", error);
             });
         };
     return (
       <SafeAreaView style={styles.container}>
         <ScrollView>
           <Text style={styles.textTitle}>Add Products</Text>
-          <Pressable
+            <TextInput style={[styles.textInputDefault,inputStates['textInput1']? styles.textInputOnFocus:styles.textInputDefault]} 
+            placeholder="Enter title of the product" 
+            value={title} 
+            onChangeText={(text)=>setTitle(text)} 
+            onFocus={()=>handleFocus('textInput1')} 
+            onBlur={()=>handleBlur('textInput1')}/>
+
+            <TextInput style={[styles.textInputDefault,inputStates['textInput2']? styles.textInputOnFocus:styles.textInputDefault]} 
+            placeholder="Enter price of the product" 
+            value={price} 
+            onChangeText={(text)=>setPrice(text)}
+            onFocus={()=>handleFocus('textInput2')} 
+            onBlur={()=>handleBlur('textInput2')}/>
+
+            <TextInput style={[styles.textInputDefault,inputStates['textInput3']? styles.textInputOnFocus:styles.textInputDefault]} 
+            placeholder="Enter category of the product" 
+            value={category} 
+            onChangeText={(text)=>setCategory(text)} 
+            onFocus={()=>handleFocus('textInput3')} 
+            onBlur={()=>handleBlur('textInput3')}/>
+
+            <TextInput style={[styles.textInputDefault,inputStates['textInput4']? styles.textInputOnFocus:styles.textInputDefault]} 
+            placeholder="Enter description of the product" 
+            value={description} 
+            onChangeText={(text)=>setDescription(text)}
+            onFocus={()=>handleFocus('textInput4')} 
+            onBlur={()=>handleBlur('textInput4')}
+            multiline = {true}
+            numberOfLines={4}
+            />
+
+            <TextInput style={[styles.textInputDefault,inputStates['textInput5']? styles.textInputOnFocus:styles.textInputDefault]} 
+            placeholder="Enter image of the product" 
+            value={image} 
+            onChangeText={(text)=>setImage(text)} 
+            onFocus={()=>handleFocus('textInput5')} 
+            onBlur={()=>handleBlur('textInput5')}/>
+
+            <TextInput style={[styles.textInputDefault,inputStates['textInput6']? styles.textInputOnFocus:styles.textInputDefault]} 
+            placeholder="Enter offer of the product" 
+            value={offer} 
+            onChangeText={(text)=>setOffer(text)} 
+            onFocus={()=>handleFocus('textInput6')} 
+            onBlur={()=>handleBlur('textInput6')}/>
+
+            <TextInput style={[styles.textInputDefault,inputStates['textInput7']? styles.textInputOnFocus:styles.textInputDefault]} 
+            placeholder="Enter sold of the product" 
+            value={sold} 
+            onChangeText={(text)=>setSold(text)}
+            onFocus={()=>handleFocus('textInput7')} 
+            onBlur={()=>handleBlur('textInput7')} />
+
+            <TextInput style={[styles.textInputDefault,inputStates['textInput8']? styles.textInputOnFocus:styles.textInputDefault]} 
+            placeholder="Enter storage of the product" 
+            value={storage} 
+            onChangeText={(text)=>setStorage(text)} 
+            onFocus={()=>handleFocus('textInput8')} 
+            onBlur={()=>handleBlur('textInput8')}/>
+
+            <Pressable
             style={{
-              flexDirection: "row",
               alignItems: "center",
+              justifyContent: 'center',
               gap: 10,
-              backgroundColor: "white",
-              borderRadius: 5,
-              height: 38,
-              marginHorizontal: 15,
+              backgroundColor: "blue",
+              borderRadius: 10,
+              height: 60,
+              marginHorizontal: 50,
               shadowColor: "#000",
               shadowOffset: { width: 1, height: 1 },
               shadowOpacity: 0.5,
@@ -80,14 +158,9 @@ export default function AddProductsScreen() {
               elevation: 2,
               marginBottom: 20,
             }}
+            onPress={handleAddProduct}
           >
-            <TextInput style={{padding:10}} placeholder="Enter title of the product" value={title} onChangeText={(text)=>setTitle(text)} />
-            <TextInput style={{padding:10}} placeholder="Enter price of the product" value={price} onChangeText={(text)=>setPrice(text)} />
-            <TextInput style={{padding:10}} placeholder="Enter category of the product" value={category} onChangeText={(text)=>setCategory(text)} />
-            <TextInput style={{padding:10}} placeholder="Enter image of the product" value={image} onChangeText={(text)=>setImage(text)} />
-            <TextInput style={{padding:10}} placeholder="Enter offer of the product" value={offer} onChangeText={(text)=>setOffer(text)} />
-            <TextInput style={{padding:10}} placeholder="Enter sold of the product" value={sold} onChangeText={(text)=>setSold(text)} />
-            <TextInput style={{padding:10}} placeholder="Enter storage of the product" value={storage} onChangeText={(text)=>setStorage(text)} />
+            <Text style={{textAlign: 'center', fontSize: 18, fontWeight: 'bold', color: 'white'}}>Add product</Text>
           </Pressable>
         </ScrollView>
       </SafeAreaView>
@@ -104,9 +177,31 @@ export default function AddProductsScreen() {
       fontWeight: "bold",
       paddingHorizontal: 15,
       paddingTop: 15,
-      paddingBottom: 10,
+      paddingBottom: 30,
       textAlign: 'center',
     },
+    textInputDefault:{
+      backgroundColor: 'white',
+      padding: 10,
+      marginHorizontal: 30,
+      marginBottom: 25,
+      fontSize: 16,
+      //height: 50,
+      borderWidth: 1,
+      borderColor: 'grey',
+      borderRadius: 10,
+    },
+    textInputOnFocus:{
+      backgroundColor: 'white',
+      padding: 10,
+      marginHorizontal: 30,
+      marginBottom: 25,
+      fontSize: 16,
+      //height: 50,
+      borderWidth: 1,
+      borderColor: 'blue',
+    },
+
     description: {
       fontSize: 18,
       paddingHorizontal: 15,

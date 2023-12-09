@@ -436,10 +436,12 @@ app.post("/products", async (req, res) => {
 app.put("/products/:id", async (req, res) => {
   try {
     console.debug("Updating Product...");
-    const updatedProduct = await Product.findByIdAndUpdate({
-      _id: req.params.id,
-      new: true,
-    });
+    const updatedProduct = await Product.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {new: true}
+      
+    );
     if (!updatedProduct) {
       return res.status(404).json({ error: "Product not found." });
     }

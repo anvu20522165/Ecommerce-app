@@ -14,6 +14,7 @@ import React, { useEffect, useContext, useState, useCallback } from "react";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import { AntDesign } from "@expo/vector-icons";
+import UpdateProductsScreen from "./UpdateProductsScreen";
 
 export default function ViewProductsScreen() {
   const navigation = useNavigation();
@@ -89,6 +90,19 @@ export default function ViewProductsScreen() {
               </View>
             </View>
             <View style={{ flexDirection: "column", alignItems: "center" }}>
+              <Pressable
+                onPress={()=>navigation.navigate("UpdateProductsScreen",{
+                    title: item.title,
+                    price: item?.price,
+                    description: item?.description,
+                    category: item?.category,
+                    image: item?.image,
+                    offer: item?.offer,
+                    sold: item?.sold,
+                    storage: item?.storage,
+                    item: item,
+                })}
+              >
               <FontAwesome5
                 name="pen"
                 size={16}
@@ -100,12 +114,15 @@ export default function ViewProductsScreen() {
                   borderRadius: 5,
                 }}
               />
+              </Pressable>
+              <Pressable>
               <FontAwesome5
                 name="trash-alt"
                 size={16}
                 color="white"
                 style={{ backgroundColor: "blue", padding: 8, borderRadius: 5 }}
               />
+              </Pressable>
             </View>
           </View>
         ))}
