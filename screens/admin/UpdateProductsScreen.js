@@ -19,13 +19,13 @@ import axios from "axios";
 export default function UpdateProductsScreen(){
     const route = useRoute();
     const [title, setTitle] = useState(route.params.title);
-    const [price, setPrice] = useState(route.params.price);
+    const [price, setPrice] = useState(route.params.price.toString());
     const [category, setCategory] = useState(route.params.category);
     const [image, setImage] = useState(route.params.image);
     const [description, setDescription] = useState(route.params.description);
-    const [offer, setOffer] = useState(route.params.offer);
-    const [sold, setSold] = useState(route.params.sold);
-    const [storage, setStorage] = useState(route.params.storage);
+    const [offer, setOffer] = useState(route.params.offer.toString());
+    const [sold, setSold] = useState(route.params.sold.toString());
+    const [storage, setStorage] = useState(route.params.storage.toString());
     const [inputStates, setInputStates] = useState({});
     const [id,setId]=useState(route.params.item._id);
     const handleFocus = (inputId) => {
@@ -41,16 +41,16 @@ export default function UpdateProductsScreen(){
           [inputId]: false,
         }));
       };
-      const handleAddProduct = () => {
+      const handleUpdateProduct = () => {
         const product = {
           title: title,
-          price: price,
+          price: parseInt(price),
           category: category,
           image: image,
           description: description,
-          offer: offer,
-          sold: sold,
-          storage: storage,
+          offer: parseInt(offer),
+          sold: parseInt(sold),
+          storage: parseInt(storage),
         };
             axios
             .put(`http://10.0.2.2:8000/products/${id}`, product)
@@ -80,7 +80,7 @@ export default function UpdateProductsScreen(){
     return(
             <SafeAreaView style={styles.container}>
               <ScrollView>
-                <Text style={styles.textTitle}>Add Products</Text>
+                <Text style={styles.textTitle}>Update Products</Text>
                   <TextInput style={[styles.textInputDefault,inputStates['textInput1']? styles.textInputOnFocus:styles.textInputDefault]} 
                   placeholder="Enter title of the product" 
                   value={title} 
@@ -156,7 +156,7 @@ export default function UpdateProductsScreen(){
                     elevation: 2,
                     marginBottom: 20,
                   }}
-                  onPress={handleAddProduct}
+                  onPress={()=>handleUpdateProduct()}
                 >
                   <Text style={{textAlign: 'center', fontSize: 18, fontWeight: 'bold', color: 'white'}}>Update product</Text>
                 </Pressable>
