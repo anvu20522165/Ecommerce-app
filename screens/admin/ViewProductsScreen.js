@@ -19,18 +19,30 @@ import UpdateProductsScreen from "./UpdateProductsScreen";
 export default function ViewProductsScreen() {
   const navigation = useNavigation();
   const [products, setProducts] = useState([]);
+  const fetchProducts = async () => {
+    try {
+      const response = await axios.get("http://10.0.2.2:8000/products");
+      setProducts(response.data);
+      console.log("all data", response.data);
+    } catch (error) {
+      console.log("error message", error);
+    }
+  };
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get("http://10.0.2.2:8000/products");
-        setProducts(response.data);
-        console.log("all data", response.data);
-      } catch (error) {
-        console.log("error message", error);
-      }
-    };
     fetchProducts();
   }, []);
+  const handleDelete= async (id)=>{
+    try {
+      console.log(id)
+      const response = await axios.delete(
+        `http://10.0.2.2:8000/products/${id}`, 
+      );
+      console.log("delete: ", response);
+      fetchProducts();
+    } catch (error) {
+      console.log("error", error);
+    }
+  }
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
@@ -115,7 +127,9 @@ export default function ViewProductsScreen() {
                 }}
               />
               </Pressable>
-              <Pressable>
+              <Pressable
+                onPress={()=>handleDelete(item._id)}
+              >
               <FontAwesome5
                 name="trash-alt"
                 size={16}
