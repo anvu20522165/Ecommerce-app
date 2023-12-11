@@ -726,7 +726,8 @@ app.get("/categories", async (req, res) => {
     if (!categories) {
       throw "error";
     }
-    res.status(200).json({ message: "ok", data: categories });
+    res.status(200).json(categories); 
+    // message: "ok", 
   } catch (error) {
     res.status(400).json({ message: "Error" });
   }
@@ -757,11 +758,11 @@ app.post("/categories", async (req, res) => {
   }
 });
 //update categories
-app.put("/categories", async (req, res) => {
+app.put("/categories/:id", async (req, res) => {
   try {
-    const { categoryId, name, description } = req.body;
+    const { name, description } = req.body;
     //find the category by the CategoryId
-    const category = await Category.findById(categoryId);
+    const category = await Category.findById(req.params.id);
     if (!category) {
       return res.status(404).json({ message: "Category not found" });
     }
@@ -785,4 +786,72 @@ app.delete("/categories/:id", async (req, res) => {
   } catch (e) { res.status(400).json({ message: "Error" }); }
 });
 
+
+// favorites method
+// add favorites
+app.post("/favorites", async (req, res) => {
+  try {
+    const { userId, favorites } = req.body;
+    //find the user by the Userid
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    console.log(favorites.productid)
+      user.favorites.push(favorites);
+    //save the updated user in te backend
+    await user.save();
+
+    res.status(200).json({ message: "Product added to Favorites Successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error addding into favorites" });
+  }
+});
+
+//get user info including favorites with specific products's detail preference
+app.get("/favorites/:userId", async (req, res) => {
+  try {
+
+    const userId = req.params.userId;
+    const user = await User.findById(userId).populate('favorites.productid');
+
+    if (!user) {
+      throw "error";
+    }
+    return res.status(201).json(user.favorites);
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+});
+
+// delete product from favorites
+app.delete("/favorites/:userId/:productid", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const productId = req.params.productid;
+    //find the user by the Userid
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    console.log(productId)
+    //user.cart.push(cart);
+    const checkedProduct = user.favorites.filter((item) => item.productid.toString() != productId)
+    //console.log(checkedProduct)
+    if (checkedProduct) {
+      console.log("left products:", checkedProduct)
+      user.favorites = checkedProduct
+    }
+    else {
+      console.log("Fail to find deleted product")
+    }
+    //save the updated user in te backend
+    await user.save();
+
+    res.status(200).json({ checkedProduct });
+    //res.status(200).json({ message: "Product deleted from Cart Successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error deleting" });
+  }
+});
 

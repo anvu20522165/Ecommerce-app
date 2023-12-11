@@ -50,6 +50,15 @@ const userSchema = new mongoose.Schema({
       price: Number,
     }
   ],
+  favorites: [
+    {
+      productid: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
+      },
+      price: Number,
+    }
+  ],
   // orders: [
   //   {
   //     type: mongoose.Schema.Types.ObjectId,

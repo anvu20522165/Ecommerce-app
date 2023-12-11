@@ -10,30 +10,81 @@ import {
     Alert,
 } from "react-native";
 
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useCallback } from "react";
 import { AntDesign, Feather } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute, useFocusEffect,  } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../redux/CartReducer";
 import { UserType } from "../UserContext";
 import axios from "axios";
 const ProductInfoScreen = () => {
-    const { userId, setUserId } = useContext(UserType)
+    const { userId, setUserId } = useContext(UserType);
     const route = useRoute();
     const { width } = Dimensions.get("window");
     const height = (width * 100) / 100;
     const [total, setTotal] = useState(false);
     const [addedToCart, setAddedToCart] = useState(false);
+    const [addedToFavorites, setAddedToFavorites] = useState(false);
+    const [favorites, setFavorites] = useState([]);
     const dispatch = useDispatch();
-    const caculateTotal = (x, y) => {
+    const fetchFavorites = async () => {
+        try {
+          const response = await axios.get(
+            `http://10.0.2.2:8000/favorites/${userId}`
+          );
+          setFavorites(response.data);
+          //console.log(response.data)
+        } catch (error) {
+          console.log("error", error);
+        }
+      };
+    
+    useEffect(() => {
+      if (userId) {
+        fetchFavorites();
+      }
+    }, [userId]);
+
+    useFocusEffect(
+        useCallback(() => {
+          fetchFavorites();
+        }, [])
+      );
+
+      const caculateTotal = (x, y) => {
         setTotal(route.params.price - (route.params.price * route?.params?.offer / 100))
         console.log(total);
     };
+    const checkaddedToCart = () =>{
+        const isAddedToFavorites = favorites.some((favorite) => favorite._id === route.params.item._id);
+    if (isAddedToFavorites) {
+    setAddedToFavorites(true);
+    }
+    };
+
     useEffect(() => {
-        caculateTotal()
+        caculateTotal();
+        checkaddedToCart();
     }, []);
+
+    const addToFavorites = (item) => {
+        const favorite = {
+            productid: item._id,
+            price: (item.price - item.price * item?.offer / 100),
+        }
+        console.log("favorite:", favorites)
+        axios.post("http://10.0.2.2:8000/favorites", { userId, favorite }).then((response) => {
+            Alert.alert("Success", "Product added successfully");
+            console.log("my favorites:", response.data);
+            setAddedToFavorites(true);
+        }).catch((error) => {
+            Alert.alert("Error", "Failed to add product")
+            console.log("error", error)
+        })  
+    };
+    
     //main cart in user
     const addProductIntoCart = (item) => {
         const cart = {
@@ -178,7 +229,12 @@ const ProductInfoScreen = () => {
                     <Text style={{ fontSize: 18, fontWeight: "bold" }} >{total.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</Text>
 
                 </View>
-                <View>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <Pressable
+                        onPress={() => addToFavorites(route?.params?.item)}
+                    >
+                        <AntDesign name={addedToFavorites ? 'heart' : 'hearto'} size={32} color={addedToFavorites ? 'red' : 'black'} />
+                    </Pressable>
                     <Pressable
                         onPress={() => addProductIntoCart(route?.params?.item)}
                         style={{

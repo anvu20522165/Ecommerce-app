@@ -49,7 +49,7 @@ const AdminDashboard = () => {
         const categoriesResponse = await axios.get(
           "http://10.0.2.2:8000/categories"
         );
-        const categoriesCount = categoriesResponse.data.data.length;
+        const categoriesCount = categoriesResponse.data.length;
         setCategoriesCount(categoriesCount);
       } catch (error) {
         console.error("Error:", error);
@@ -248,13 +248,21 @@ const AdminDashboard = () => {
                     </Text>
                   </View>
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <Pressable
+                      onPress={()=>navigation.navigate("AddCategoriesScreen")}
+                    >
                     <FontAwesome5
                       name="plus"
                       size={16}
                       color="blue"
                       style={[styles.statisticsIcon, { marginRight: 15 }]}
                     />
+                    </Pressable>
+                    <Pressable
+                      onPress={()=>navigation.navigate("ViewCategoriesScreen")}
+                    >
                     <FontAwesome5 name="eye" size={16} color="blue" />
+                    </Pressable>
                   </View>
                 </View>
               </View>

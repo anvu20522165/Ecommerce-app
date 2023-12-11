@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { FontAwesome5, Ionicons, FontAwesome } from "@expo/vector-icons";
 import React, { useEffect, useContext, useState, useCallback } from "react";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation, } from "@react-navigation/native";
 import axios from "axios";
 import { AntDesign } from "@expo/vector-icons";
 import UpdateProductsScreen from "./UpdateProductsScreen";
@@ -43,6 +43,11 @@ export default function ViewProductsScreen() {
       console.log("error", error);
     }
   }
+  useFocusEffect(
+    useCallback(() => {
+      fetchProducts();
+    }, [])
+  );
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>

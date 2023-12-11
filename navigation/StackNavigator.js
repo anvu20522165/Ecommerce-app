@@ -29,6 +29,9 @@ import Products from "../screens/Products";
 import FlatlistTemp from "../screens/profileLinks/FlatlistTemp";
 import ViewOrderDetailScreen from "../screens/admin/order/ViewOrderDetailScreen";
 import UpdateProductsScreen from "../screens/admin/UpdateProductsScreen";
+import ViewCategoriesScreen from "../screens/admin/ViewCategoriesScreen";
+import AddCategoriesScreen from "../screens/admin/AddCategoriesScreen";
+import UpdateCategoriesScreen from "../screens/admin/UpdateCategoriesScreen";
 const StackNavigator = () => {
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
@@ -203,6 +206,21 @@ const StackNavigator = () => {
         <Stack.Screen
           name="UpdateProductsScreen"
           component={UpdateProductsScreen}
+          option={{headerShown:true}}
+        />
+        <Stack.Screen
+          name="ViewCategoriesScreen"
+          component={ViewCategoriesScreen}
+          option={{headerShown:true}}
+        />
+        <Stack.Screen
+          name="AddCategoriesScreen"
+          component={AddCategoriesScreen}
+          option={{headerShown:true}}
+        />
+        <Stack.Screen
+          name="UpdateCategoriesScreen"
+          component={UpdateCategoriesScreen}
           option={{headerShown:true}}
         />
       </Stack.Navigator>
