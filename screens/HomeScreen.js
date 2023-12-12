@@ -73,7 +73,6 @@ const HomeScreen = () => {
   const [selectedAddress, setSelectedAdress] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   console.log(selectedAddress)
-  const [moneySale, setMoneySale] = useState();
   const fetchTrendingData = async () => {
     try {
       const response = await axios.get("http://10.0.2.2:8000/trendingproducts");
@@ -90,12 +89,6 @@ const HomeScreen = () => {
       const response = await axios.get("http://10.0.2.2:8000/saleproducts");
 
       setOffers(response.data);
-      const arrayOfSaleMoney = [];
-      for (let index = 0; index < response.data.length; index++) {
-        const money = response.data[index].price - (response.data[index].price * response.data[index].offer / 100);
-        arrayOfSaleMoney.push(money)
-      }
-      setMoneySale(arrayOfSaleMoney)
     } catch (error) {
       console.log("error message", error);
     }
@@ -114,7 +107,6 @@ const HomeScreen = () => {
   useEffect(() => {
     fetchTrendingData();
     fetchOffers();
-    console.log("j")
     fetchNewData()
   }, []);
 
