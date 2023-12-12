@@ -78,7 +78,8 @@ export default function ViewProductsScreen() {
           />
           <TextInput placeholder="Find Product" />
         </Pressable>
-        {products.map((item, index) => (
+        {products.length > 0 ? (
+        products.map((item, index) => (
           <View style={styles.productListView} key={index}>
             <View style={{ flexDirection: "row" }}>
               <Image
@@ -144,7 +145,10 @@ export default function ViewProductsScreen() {
               </Pressable>
             </View>
           </View>
-        ))}
+        ))):
+        (
+          <Text style={styles.description}>No products found.</Text>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
