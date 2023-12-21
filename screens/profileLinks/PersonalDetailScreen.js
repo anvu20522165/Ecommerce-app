@@ -35,6 +35,7 @@ const PersonalDetailScreen = () => {
       name,
       avatar,
       phone,
+      password: "",
   }
   axios.put("http://10.0.2.2:8000/updateUser",{userId,updatedUser}).then((response) => {
       //console.log(response.data)
@@ -238,13 +239,14 @@ const PersonalDetailScreen = () => {
 
             <View style={{ marginLeft: 6, marginVertical: 3 }}>
 
-              <View
+              <Pressable
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
                   gap: 3,
                   marginVertical: 10
                 }}
+                onPress={()=>navigation.navigate("UpdatePassword")}
               >
 
                 <MaterialIcons name="security" size={24} style={{ marginHorizontal: 10 }} />
@@ -252,7 +254,7 @@ const PersonalDetailScreen = () => {
                   Change Password
                 </Text>
 
-              </View>
+              </Pressable>
 
               <View
                 style={{

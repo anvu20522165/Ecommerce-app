@@ -175,7 +175,8 @@ const ProfileScreen = () => {
 
                 </View>
               </Pressable>
-              <View
+              <Pressable
+                onPress={()=>navigation.navigate("Wishlist")}
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
@@ -189,7 +190,7 @@ const ProfileScreen = () => {
                   My Wishlist
                 </Text>
 
-              </View>
+              </Pressable>
               <Pressable
                 onPress={() => navigation.navigate("Address")}>
                 <View

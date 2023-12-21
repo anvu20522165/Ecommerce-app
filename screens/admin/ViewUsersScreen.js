@@ -30,6 +30,18 @@ export default function ViewUsersScreen() {
     };
     fetchUsers();
   }, []);
+  const handelEditUser = (userId, Locked) => {    
+    const updatedUser = {
+      isLocked: !Locked,
+  }
+  axios.put("http://10.0.2.2:8000/updateUser",{userId,updatedUser}).then((response) => {
+      console.log("isLocked: ",response.isLocked);
+      Alert.alert("Success","User updated successfully");
+  }).catch((error) => {
+      Alert.alert("Error","Failed to update user")
+      console.log("error",error)
+  })
+  }
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
@@ -60,9 +72,10 @@ export default function ViewUsersScreen() {
           />
           <TextInput placeholder="Find User" />
         </Pressable>
-        {users.map((item, index) => (
+        {users.length > 0 ? (
+        users.map((item, index) => (
           <View style={styles.productListView} key={index}>
-            <View style={{ flexDirection: "row" }}>
+           <View style={{flexDirection: "row", alignItems: "center"}}>
               <Image
                 style={{
                   width: 60,
@@ -73,7 +86,7 @@ export default function ViewUsersScreen() {
                 source={{ uri: item?.avatar }}
               />
               <View
-                style={{ flexDirection: "column", alignItems: "flex-start" }}
+                style={{ flexDirection: "column"}}
               >
                 <Text
                   style={{ fontSize: 16, fontWeight: "bold", marginBottom: 5 }}
@@ -86,9 +99,29 @@ export default function ViewUsersScreen() {
                   {item.email}
                 </Text>
               </View>
-            </View>
+              </View>
+              <Pressable
+                onPress={()=>handelEditUser(item.userId,item.isLocked)}
+              >
+              <FontAwesome5
+                name= {item.isLocked?"lock":"lock-open"}
+                size={16}
+                color="white"
+                style={{
+                  backgroundColor: "blue",
+                  padding: 8,
+                  borderRadius: 5,
+                  marginRight: 3,
+                }}
+              />
+              </Pressable>
+
+          
           </View>
-        ))}
+        ))):
+        (
+          <Text style={styles.description}>No users found.</Text>
+        )}
       </ScrollView>
     </SafeAreaView>
   );

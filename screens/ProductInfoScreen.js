@@ -29,23 +29,26 @@ const ProductInfoScreen = () => {
     const [addedToFavorites, setAddedToFavorites] = useState(false);
     const [favorites, setFavorites] = useState([]);
     const dispatch = useDispatch();
-    const fetchFavorites = async () => {
-        try {
-          const response = await axios.get(
-            `http://10.0.2.2:8000/favorites/${userId}`
-          );
-          setFavorites(response.data);
-          //console.log(response.data)
-        } catch (error) {
-          console.log("error", error);
-        }
+    const fetchFavorites = () => {
+        axios
+          .get(`http://10.0.2.2:8000/favorites/${userId}`)
+          .then((response) => {
+            setFavorites(response.data);
+            console.log(response.data);
+      
+            const isAddedToFavorites = response.data.some(
+              (favorite) => favorite.productid._id === route.params.item._id
+            );
+            if (isAddedToFavorites) {
+                console.log(isAddedToFavorites);
+              setAddedToFavorites(true);
+            }
+          })
+          .catch((error) => {
+            console.log("error", error);
+          });
       };
     
-    useEffect(() => {
-      if (userId) {
-        fetchFavorites();
-      }
-    }, [userId]);
 
     useFocusEffect(
         useCallback(() => {
@@ -57,32 +60,40 @@ const ProductInfoScreen = () => {
         setTotal(route.params.price - (route.params.price * route?.params?.offer / 100))
         console.log(total);
     };
-    const checkaddedToCart = () =>{
-        const isAddedToFavorites = favorites.some((favorite) => favorite._id === route.params.item._id);
-    if (isAddedToFavorites) {
-    setAddedToFavorites(true);
-    }
-    };
 
     useEffect(() => {
         caculateTotal();
-        checkaddedToCart();
+        // fetchFavorites();
+        //checkAddedToFavorites();
     }, []);
 
     const addToFavorites = (item) => {
+        if (addedToFavorites) {
+            // Xóa product khỏi favorites
+            axios
+              .delete(`http://10.0.2.2:8000/favorites/${userId}/${item._id}`)
+              .then((response) => {
+                Alert.alert("Success", "Product removed from favorites");
+                console.log("my favorites:", response.data);
+                setAddedToFavorites(false);
+              })
+              .catch((error) => {
+                Alert.alert("Error", "Failed to remove product from favorites");
+                console.log("error", error);
+              });
+          } else {
         const favorite = {
             productid: item._id,
             price: (item.price - item.price * item?.offer / 100),
         }
-        console.log("favorite:", favorites)
         axios.post("http://10.0.2.2:8000/favorites", { userId, favorite }).then((response) => {
             Alert.alert("Success", "Product added successfully");
             console.log("my favorites:", response.data);
             setAddedToFavorites(true);
         }).catch((error) => {
-            Alert.alert("Error", "Failed to add product")
-            console.log("error", error)
-        })  
+            Alert.alert("Error", "Failed to add product to favorites");
+            console.log("error", error);
+        })  }
     };
     
     //main cart in user

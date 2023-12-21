@@ -9,12 +9,13 @@ import {
     SafeAreaView
 } from "react-native";
 
-import React, { useEffect, useState, } from "react";
+import React, { useEffect, useState,  useCallback} from "react";
 import { AntDesign, Feather } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute, useFocusEffect } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import axios from "axios";
+import DropDownPicker from "react-native-dropdown-picker";
 
 export default function UpdateProductsScreen(){
     const route = useRoute();
@@ -28,6 +29,32 @@ export default function UpdateProductsScreen(){
     const [storage, setStorage] = useState(route.params.storage.toString());
     const [inputStates, setInputStates] = useState({});
     const [id,setId]=useState(route.params.item._id);
+    const [open, setOpen] = useState(false);
+    const [items, setItems] = useState([]);
+
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get("http://10.0.2.2:8000/categories");
+        const newItems = response.data.map(category => ({
+          label: category.name,
+          value: category.name,
+        }));
+        setItems(newItems);
+        //setCategory(newItems[0].value);
+        console.log("all data", response.data);
+      } catch (error) {
+        console.log("error message", error);
+      }
+    };
+    useEffect(() => {
+      fetchCategories();
+    }, []);
+    useFocusEffect(
+      useCallback(() => {
+        fetchCategories();
+      }, [])
+    );
+
     const handleFocus = (inputId) => {
         setInputStates((prevInputStates) => ({
           ...prevInputStates,
@@ -95,13 +122,31 @@ export default function UpdateProductsScreen(){
                   onFocus={()=>handleFocus('textInput2')} 
                   onBlur={()=>handleBlur('textInput2')}/>
       
-                  <TextInput style={[styles.textInputDefault,inputStates['textInput3']? styles.textInputOnFocus:styles.textInputDefault]} 
+                  {/* <TextInput style={[styles.textInputDefault,inputStates['textInput3']? styles.textInputOnFocus:styles.textInputDefault]} 
                   placeholder="Enter category of the product" 
                   value={category} 
                   onChangeText={(text)=>setCategory(text)} 
                   onFocus={()=>handleFocus('textInput3')} 
-                  onBlur={()=>handleBlur('textInput3')}/>
-      
+                  onBlur={()=>handleBlur('textInput3')}/> */}
+
+<DropDownPicker
+          style={{marginBottom:25, borderColor: "grey", borderRadius: 10, }}
+          textStyle={{
+            fontSize: 16
+          }}
+          containerStyle={{width: '86%', marginLeft: 30}}
+          open={open}
+          value={category} //genderValue
+          items={items}
+          setOpen={setOpen}
+          setValue={setCategory}
+          setItems={setItems}
+          placeholder="Choose category"
+          placeholderStyle={styles.placeholderStyles}
+          zIndex={3000}
+          zIndexInverse={1000}
+        />
+
                   <TextInput style={[styles.textInputDefault,inputStates['textInput4']? styles.textInputOnFocus:styles.textInputDefault]} 
                   placeholder="Enter description of the product" 
                   value={description} 

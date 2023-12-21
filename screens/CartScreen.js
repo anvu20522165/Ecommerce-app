@@ -103,7 +103,7 @@ import {
     }
 
     return (
-      <ScrollView style={{ marginTop: 55, flex: 1, backgroundColor: "white" }}>
+      <ScrollView style={{  flex: 1, backgroundColor: "white" }}>
         <View
           style={{
             backgroundColor: "#00CED1",

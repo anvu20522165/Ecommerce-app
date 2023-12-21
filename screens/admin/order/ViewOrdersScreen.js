@@ -47,6 +47,10 @@ export default function ViewOrdersScreen() {
       fetchOrders();
     }, [])
   );
+  let filteredOrders = orders.filter((item) => item.status === status);
+  useEffect(() => {
+    filteredOrders = orders.filter((item) => item.status === status);
+  }, [orders, status]);
   return (
     <SafeAreaView style={styles.container}>
 
@@ -98,12 +102,15 @@ export default function ViewOrdersScreen() {
           setOpen={setOpen}
           setValue={setStatus}
           setItems={setItems}
-          placeholder="choose category"
+          placeholder="Choose category"
           placeholderStyle={styles.placeholderStyles}
           zIndex={3000}
           zIndexInverse={1000}
         />
       </View>
+      {filteredOrders.length === 0 ? (
+      <Text style={styles.noOrdersText}>No orders found</Text>
+    ) : (
       <FlatList
         data={orders.filter((item) => item.status === status)}
         renderItem={({ item, index }) => {
@@ -163,7 +170,7 @@ export default function ViewOrdersScreen() {
             </View>
           )
         }}
-      />
+      />)}
 
     </SafeAreaView>
   );

@@ -44,6 +44,10 @@ const LoginScreen = () => {
       .post("http://10.0.2.2:8000/login", user)
       .then((response) => {
         console.log(response);
+        if(isLocked){
+          Alert.alert("Login Error", "Account is locked");
+          return;
+        }
         const token = response.data.token;
         AsyncStorage.setItem("authToken", token);
         navigation.replace("Main");

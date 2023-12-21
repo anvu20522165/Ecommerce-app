@@ -59,6 +59,10 @@ const userSchema = new mongoose.Schema({
       price: Number,
     }
   ],
+  isLocked: {
+    type: Boolean,
+    default: false,
+  },
   // orders: [
   //   {
   //     type: mongoose.Schema.Types.ObjectId,

@@ -32,6 +32,8 @@ import UpdateProductsScreen from "../screens/admin/UpdateProductsScreen";
 import ViewCategoriesScreen from "../screens/admin/ViewCategoriesScreen";
 import AddCategoriesScreen from "../screens/admin/AddCategoriesScreen";
 import UpdateCategoriesScreen from "../screens/admin/UpdateCategoriesScreen";
+import UpdatePassword from "../screens/profileLinks/UpdatePassword";
+import MyFavorites from "../screens/profileLinks/MyFavorites";
 const StackNavigator = () => {
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
@@ -221,6 +223,16 @@ const StackNavigator = () => {
         <Stack.Screen
           name="UpdateCategoriesScreen"
           component={UpdateCategoriesScreen}
+          option={{headerShown:true}}
+        />
+        <Stack.Screen
+          name="UpdatePassword"
+          component={UpdatePassword}
+          option={{headerShown:true}}
+        />
+        <Stack.Screen
+          name="Wishlist"
+          component={MyFavorites}
           option={{headerShown:true}}
         />
       </Stack.Navigator>

@@ -155,9 +155,14 @@ app.put("/updateUser", async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
     console.log(updatedUser);
+    if(updatedUser.name !="" && updatedUser.name !== null)
     user.name = updatedUser.name;
+    if(updatedUser.avatar !="" && updatedUser.avatar !== null)
     user.avatar = updatedUser.avatar;
+    if(updatedUser.phone !="" && updatedUser.phone !== null)
     user.phone = updatedUser.phone;
+    if(updatedUser.password !="" && updatedUser.password !== null)
+    user.password = updatedUser.password;
     await user.save();
     //res.status(200).json({ message: "Address created Successfully" });
     res.status(200).json(user);
@@ -421,6 +426,18 @@ app.get("/products/:id", async (req, res) => {
     res.status(500).send(e);
   }
 });
+//get products by category
+app.get("/products/category/:category", async (req, res) => {
+  try {
+    const category = req.params.category;
+    const products = await Product.find({category: category});
+
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 //add a new product
 app.post("/products", async (req, res) => {
   try {
@@ -791,18 +808,23 @@ app.delete("/categories/:id", async (req, res) => {
 // add favorites
 app.post("/favorites", async (req, res) => {
   try {
-    const { userId, favorites } = req.body;
+    const { userId, favorite } = req.body;
     //find the user by the Userid
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    console.log(favorites.productid)
-      user.favorites.push(favorites);
-    //save the updated user in te backend
+    const existingProduct = user.favorites.find((item) => item.productid.toString() === favorite.productid)
+    if(existingProduct){
+      res.status(201).json({message: "Product has already in favorites"});
+    }
+    else{
+    console.log(favorite.productid);  
+    user.favorites.push(favorite);
+    //save the updated user in the backend
     await user.save();
 
-    res.status(200).json({ message: "Product added to Favorites Successfully" });
+    res.status(200).json({ message: "Product added to Favorites Successfully" });}
   } catch (error) {
     res.status(500).json({ message: "Error addding into favorites" });
   }
