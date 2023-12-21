@@ -163,6 +163,8 @@ app.put("/updateUser", async (req, res) => {
     user.phone = updatedUser.phone;
     if(updatedUser.password !="" && updatedUser.password !== null)
     user.password = updatedUser.password;
+    if(updatedUser.isLocked !="" && updatedUser.isLocked !== null)
+    user.isLocked = updatedUser.isLocked;
     await user.save();
     //res.status(200).json({ message: "Address created Successfully" });
     res.status(200).json(user);

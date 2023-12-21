@@ -64,7 +64,7 @@ const AddressScreen = () => {
         })
     }
     return (
-        <ScrollView style={{ marginTop: 50 }}>
+        <ScrollView style={{ marginTop: 0 }}>
             <View style={{ height: 50, backgroundColor: "#00CED1", justifyContent: 'center', alignItems: 'center' }}>
                 <Text style={{ color: "white", fontSize: 20, fontWeight: 'bold' }}>Add a new address</Text>
             </View>

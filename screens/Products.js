@@ -12,9 +12,11 @@ import {
   Dimensions,
   ScrollView,
   Pressable,
-  StatusBar
+  StatusBar,
+  TextInput
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { AntDesign, Feather } from "@expo/vector-icons";
 import axios from "axios";
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5.js';
 
@@ -84,7 +86,38 @@ export default function Products(){
     return (
         <SafeAreaView style={styles.container}>
           <StatusBar barStyle="light-content"/>
-            <ScrollView>
+          <View
+            style={{
+              backgroundColor: "#00CED1",
+              padding: 10,
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >
+            <Pressable
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginHorizontal: 7,
+                gap: 10,
+                backgroundColor: "white",
+                borderRadius: 3,
+                height: 38,
+                flex: 1,
+              }}
+            >
+              <AntDesign
+                style={{ paddingLeft: 10 }}
+                name="search1"
+                size={22}
+                color="black"
+              />
+              <TextInput placeholder="Search Amazon.in" />
+            </Pressable>
+
+            <Feather name="mic" size={24} color="black" />
+          </View>
+            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
             <ScrollView horizontal={true} style={styles.exception} showsHorizontalScrollIndicator={false}>
             <Pressable
             onPress={()=>handleCategorySelect('')}>
@@ -151,7 +184,7 @@ export default function Products(){
                 })
               }
               
-              >  
+              >
               <Image
                 style={styles.imageThumbnail}
                 source={{ uri: item.image }}
@@ -159,7 +192,7 @@ export default function Products(){
               />
                
               <View style={{alignItems: "flex-start", marginTop: 10, }}>
-              <Text style={styles.itemTitle}>{item.title.length > 38
+             <Text style={styles.itemTitle}>{item.title.length > 38
                     ? item.title.slice(0, 38)
                     : item.title}</Text>
                <View style={{width:"100%"}}>  
@@ -168,6 +201,7 @@ export default function Products(){
                     flexDirection:"row",
                     alignItems: "center",
                     justifyContent: "space-between",
+                    paddingHorizontal: 5,
                 }}
               >
 
@@ -201,7 +235,7 @@ const styles = StyleSheet.create({
         marginVertical: 15,
         alignItems: 'center',
     //justifyContent: 'center',
-    marginRight: 20,
+        marginRight: 20,
     
     
     },
@@ -215,19 +249,24 @@ const styles = StyleSheet.create({
     }, 
     exception:{
         flexDirection: 'row',
+        backgroundColor: "white",
+        height: 130,
     },
     imageThumbnail: {
         //justifyContent: "center",
         // alignItems: "center",
         height: 200,
-        borderColor: "black",
-        borderWidth: 1
+        width:200,
+        //width: '100%',
+        // borderColor: "black",
+        // borderWidth: 1
         // flex:1,
         //aspectRatio: 1,
       },
       itemTitle: {
         fontSize: 18,
         height: 70,
+        paddingHorizontal:5,
       },
       itemPrice: {
         fontSize: 18,

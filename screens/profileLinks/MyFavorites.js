@@ -89,7 +89,7 @@ export default function MyFavorites() {
                     alignItems: "center",
                     justifyContent: "space-between",
                     //backgroundColor: "blue",
-                    
+                    paddingHorizontal:5
                   }}
                 >
                   <Text style={[styles.itemPrice, { color: "black" }]}>
@@ -145,13 +145,14 @@ const styles = StyleSheet.create({
     //justifyContent: "center",
     // alignItems: "center",
     height: 200,
+    width: 200,
     // flex:1,
     //aspectRatio: 1,
   },
   itemTitle: {
     fontSize: 18,
     height: 70,
-    
+    paddingHorizontal: 5
   },
   itemPrice: {
     fontSize: 18,

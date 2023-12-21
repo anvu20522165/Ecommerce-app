@@ -30,6 +30,15 @@ const PersonalDetailScreen = () => {
   //   //setAppUserConfig({ accessToken: null, accessTokenName: null });
   //   navigation.replace("Login");
   // }
+  const logOut = async () => {
+    //setAppUserConfig({ accessToken: null, accessTokenName: null });
+    AsyncStorage.removeItem("authToken")
+      .then(() => {
+        navigation.replace("Login");
+      })
+      .catch(error => console.log(error))
+
+  }
   const handelEditUser = () => {    
     const updatedUser = {
       name,

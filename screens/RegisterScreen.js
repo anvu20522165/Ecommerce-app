@@ -49,7 +49,7 @@ const RegisterScreen = () => {
       };
     return(
         <SafeAreaView
-      style={{ flex: 1, backgroundColor: "white", alignItems: "center",marginTop:50 }}
+      style={{ flex: 1, backgroundColor: "white", alignItems: "center",marginTop:0 }}
     >
       <View>
         <Image
@@ -70,7 +70,7 @@ const RegisterScreen = () => {
               color: "#041E42",
             }}
           >
-            Make a brand new Account
+            Make a brand new account
           </Text>
         </View>
 

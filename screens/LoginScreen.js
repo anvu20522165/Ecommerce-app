@@ -43,8 +43,8 @@ const LoginScreen = () => {
     axios
       .post("http://10.0.2.2:8000/login", user)
       .then((response) => {
-        console.log(response);
-        if(isLocked){
+        console.log(response.data);
+        if(response.data.isLocked){
           Alert.alert("Login Error", "Account is locked");
           return;
         }
@@ -60,7 +60,7 @@ const LoginScreen = () => {
 
   return (
     <SafeAreaView
-      style={{ flex: 1, backgroundColor: "white", alignItems: "center", marginTop: 50 }}
+      style={{ flex: 1, backgroundColor: "white", alignItems: "center",}}
     >
       <View>
         <Image
@@ -81,7 +81,7 @@ const LoginScreen = () => {
               color: "#041E42",
             }}
           >
-            Login In to your Account
+            Login in to your account
           </Text>
         </View>
 

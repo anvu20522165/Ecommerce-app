@@ -8,6 +8,7 @@ import {
   Pressable,
   TextInput,
   Image,
+  StatusBar
 } from "react-native";
 import React, { useEffect, useContext, useState, useCallback } from "react";
 import { Feather } from "@expo/vector-icons";
@@ -153,7 +154,7 @@ const HomeScreen = () => {
           backgroundColor: "white",
         }}
       >
-
+        <StatusBar barStyle="light-content"/>
         <ScrollView>
           <View
             style={{

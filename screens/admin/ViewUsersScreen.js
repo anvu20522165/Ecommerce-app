@@ -8,6 +8,7 @@ import {
   Pressable,
   TextInput,
   Image,
+  Alert,
 } from "react-native";
 import { FontAwesome5, Ionicons, FontAwesome } from "@expo/vector-icons";
 import React, { useEffect, useContext, useState, useCallback } from "react";
@@ -35,7 +36,7 @@ export default function ViewUsersScreen() {
       isLocked: !Locked,
   }
   axios.put("http://10.0.2.2:8000/updateUser",{userId,updatedUser}).then((response) => {
-      console.log("isLocked: ",response.isLocked);
+      console.log("isLocked: ", response.data);
       Alert.alert("Success","User updated successfully");
   }).catch((error) => {
       Alert.alert("Error","Failed to update user")
