@@ -19,30 +19,35 @@ import { AntDesign } from "@expo/vector-icons";
 export default function ViewUsersScreen() {
   const navigation = useNavigation();
   const [users, setUsers] = useState([]);
+  const fetchUsers = async () => {
+    try {
+      const usersResponse = await axios.get("http://10.0.2.2:8000/users");
+      setUsers(usersResponse.data);
+      console.log("all data", usersResponse.data);
+    } catch (error) {
+      console.log("error message", error);
+    }
+  };
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const usersResponse = await axios.get("http://10.0.2.2:8000/users");
-        setUsers(usersResponse.data);
-        console.log("all data", usersResponse.data);
-      } catch (error) {
-        console.log("error message", error);
-      }
-    };
     fetchUsers();
   }, []);
   const handelEditUser = (userId, Locked) => {    
     const updatedUser = {
+      password: "",
+      name: "",
+      avatar: "",
+      phone: "",
       isLocked: !Locked,
   }
   axios.put("http://10.0.2.2:8000/updateUser",{userId,updatedUser}).then((response) => {
       console.log("isLocked: ", response.data);
       Alert.alert("Success","User updated successfully");
+      fetchUsers();
   }).catch((error) => {
       Alert.alert("Error","Failed to update user")
       console.log("error",error)
   })
-  }
+  };
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
@@ -102,7 +107,7 @@ export default function ViewUsersScreen() {
               </View>
               </View>
               <Pressable
-                onPress={()=>handelEditUser(item.userId,item.isLocked)}
+                onPress={()=>handelEditUser(item._id,item.isLocked)}
               >
               <FontAwesome5
                 name= {item.isLocked?"lock":"lock-open"}

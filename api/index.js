@@ -163,7 +163,7 @@ app.put("/updateUser", async (req, res) => {
     user.phone = updatedUser.phone;
     if(updatedUser.password !="" && updatedUser.password !== null)
     user.password = updatedUser.password;
-    if(updatedUser.isLocked !="" && updatedUser.isLocked !== null)
+    if(updatedUser.isLocked !== undefined && updatedUser.isLocked !== null)
     user.isLocked = updatedUser.isLocked;
     await user.save();
     //res.status(200).json({ message: "Address created Successfully" });
@@ -225,6 +225,9 @@ app.post("/login", async (req, res) => {
     //check if the password is correct
     if (user.password !== password) {
       return res.status(401).json({ message: "Invalid password" });
+    }
+    if (user.isLocked === true) {
+      return res.status(401).json({ message: "Account is locked"});
     }
 
     //generate a token

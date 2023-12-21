@@ -44,16 +44,18 @@ const LoginScreen = () => {
       .post("http://10.0.2.2:8000/login", user)
       .then((response) => {
         console.log(response.data);
-        if(response.data.isLocked){
-          Alert.alert("Login Error", "Account is locked");
-          return;
-        }
+        // if(response.data.isLocked){
+        //   Alert.alert("Login Error", "Account is locked");
+        //   return;
+        // }
         const token = response.data.token;
         AsyncStorage.setItem("authToken", token);
         navigation.replace("Main");
       })
       .catch((error) => {
-        Alert.alert("Login Error", "Invalid Email");
+        //Alert.alert("Login Error", "Invalid Email");
+        const errorMessage = error.response.data.message;
+        Alert.alert("Login Error", errorMessage);
         console.log(error);
       });
   };
