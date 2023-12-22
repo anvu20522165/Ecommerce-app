@@ -215,7 +215,7 @@ const HomeScreen = () => {
             <MaterialIcons name="keyboard-arrow-down" size={24} color="black" />
           </Pressable>
 
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {/* <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {list.map((item, index) => (
               <Pressable
                 key={index}
@@ -244,7 +244,7 @@ const HomeScreen = () => {
                 </Text>
               </Pressable>
             ))}
-          </ScrollView>
+          </ScrollView> */}
 
           <SliderBox
             images={images}
