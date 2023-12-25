@@ -188,9 +188,18 @@ const ProductInfoScreen = () => {
                         <Text style={{ fontSize: 18, fontWeight: "normal", color: "grey", }}>
                             Price
                         </Text>
-                        <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-                            {route?.params?.price.toLocaleString('vi', { style: 'currency', currency: 'VND' })}
-                        </Text>
+                        {route?.params?.offer != 0 ? (
+                            <Text style={{ fontSize: 18, fontWeight: "bold", textDecorationLine: 'line-through', textDecorationStyle: 'solid', color:'#555555' }}>
+                            {route?.params?.price.toLocaleString('vi', { style: 'currency', currency: 'VND' })} 
+                           
+                            </Text>
+                            ) : (
+                            <Text style={{ fontSize: 18, fontWeight: "bold"}}>
+                            {route?.params?.price.toLocaleString('vi', { style: 'currency', currency: 'VND' })} 
+                     
+                            </Text>
+                        )}
+                        
                     </View>
                     <View style={{ backgroundColor: "red", borderRadius: 60, width: 40, height: 40, alignItems: "center" }}>
                         <Text style={{ fontSize: 18, fontWeight: "bold", color: "white", marginTop: 7 }}>

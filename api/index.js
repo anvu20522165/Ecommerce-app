@@ -155,16 +155,16 @@ app.put("/updateUser", async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
     console.log(updatedUser);
-    if(updatedUser.name !="" && updatedUser.name !== null)
-    user.name = updatedUser.name;
-    if(updatedUser.avatar !="" && updatedUser.avatar !== null)
-    user.avatar = updatedUser.avatar;
-    if(updatedUser.phone !="" && updatedUser.phone !== null)
-    user.phone = updatedUser.phone;
-    if(updatedUser.password !="" && updatedUser.password !== null)
-    user.password = updatedUser.password;
-    if(updatedUser.isLocked !== undefined && updatedUser.isLocked !== null)
-    user.isLocked = updatedUser.isLocked;
+    if (updatedUser.name != "" && updatedUser.name !== null)
+      user.name = updatedUser.name;
+    if (updatedUser.avatar != "" && updatedUser.avatar !== null)
+      user.avatar = updatedUser.avatar;
+    if (updatedUser.phone != "" && updatedUser.phone !== null)
+      user.phone = updatedUser.phone;
+    if (updatedUser.password != "" && updatedUser.password !== null)
+      user.password = updatedUser.password;
+    if (updatedUser.isLocked !== undefined && updatedUser.isLocked !== null)
+      user.isLocked = updatedUser.isLocked;
     await user.save();
     //res.status(200).json({ message: "Address created Successfully" });
     res.status(200).json(user);
@@ -227,7 +227,7 @@ app.post("/login", async (req, res) => {
       return res.status(401).json({ message: "Invalid password" });
     }
     if (user.isLocked === true) {
-      return res.status(401).json({ message: "Account is locked"});
+      return res.status(401).json({ message: "Account is locked" });
     }
 
     //generate a token
@@ -435,7 +435,7 @@ app.get("/products/:id", async (req, res) => {
 app.get("/products/category/:category", async (req, res) => {
   try {
     const category = req.params.category;
-    const products = await Product.find({category: category});
+    const products = await Product.find({ category: category });
 
     res.json(products);
   } catch (err) {
@@ -461,8 +461,8 @@ app.put("/products/:id", async (req, res) => {
     const updatedProduct = await Product.findByIdAndUpdate(
       req.params.id,
       req.body,
-      {new: true}
-      
+      { new: true }
+
     );
     if (!updatedProduct) {
       return res.status(404).json({ error: "Product not found." });
@@ -598,6 +598,70 @@ app.put("/cartDecreasedQuanity/:userId/:productid", async (req, res) => {
     res.status(500).json({ message: "Error deleting" });
   }
 });
+
+//update isChecked of single product in cart
+app.put("/cart/checkedProduct/:userId/:productid", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const productId = req.params.productid
+    //find the user by the Userid
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    console.log(productId)
+    //user.cart.push(cart);
+    const checkedProduct = user.cart.find((item) => item.productid.toString() === productId)
+    //console.log(checkedProduct)
+    if (checkedProduct) {
+
+      checkedProduct.isChecked = !checkedProduct.isChecked;
+      // await existingProduct.save();
+    }
+    else {
+      console.log("Fail to find product")
+    }
+    //save the updated user in te backend
+    console.log(checkedProduct)
+    await user.save();
+
+    //res.status(200).json({ checkedProduct });
+    res.status(200).json({ message: "Product increase quantity from Cart Successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error deleting" });
+  }
+});
+
+app.put("/cart/checkedAll/:userId", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    const { stringChecked } = req.body;
+    console.log(stringChecked)
+    //find the user by the Userid
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const checkedProduct = user.cart.filter((item) => item.isChecked === true)
+    console.log(checkedProduct.length)
+    if (checkedProduct.length != user.cart.length && stringChecked == "false") {
+      const final = user.cart.map((item) => item.isChecked = true)
+      console.log(final)
+      await user.save();
+    }
+    else {
+      const final = user.cart.map((item) => item.isChecked = false)
+      console.log(final)
+      await user.save();
+    }
+    res.status(200).json({ message: "Product increase quantity from Cart Successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error updating" });
+  }
+});
+
 //delete a product in cart 
 app.delete("/cart/:userId/:productid", async (req, res) => {
   try {
@@ -624,6 +688,26 @@ app.delete("/cart/:userId/:productid", async (req, res) => {
     await user.save();
 
     res.status(200).json({ checkedProduct });
+    //res.status(200).json({ message: "Product deleted from Cart Successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error deleting" });
+  }
+});
+
+// delete all checked in cart
+app.delete("/cart/:userId", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    //find the user by the Userid
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    // user.cart.splice(0);
+    const checkedProduct = user.cart.filter((item) => item.isChecked == false)
+    user.cart = checkedProduct;
+    await user.save();
+    res.status(200).json({ message: "Emptied cart successfully!" });
     //res.status(200).json({ message: "Product deleted from Cart Successfully" });
   } catch (error) {
     res.status(500).json({ message: "Error deleting" });
@@ -694,7 +778,7 @@ app.put("/updateOrderStatus/:id", async (req, res) => {
     const updatedOrder = await Order.findById(_id);
     //return res.status(201).json(updatedOrder);
     updatedOrder.status = status;
-    
+
     if (status == "Delivered") {
       for (let index = 0; index < updatedOrder.products.length; index++) {
         const updatedProduct = await Product.findById(updatedOrder.products[index].productid.toString());
@@ -748,7 +832,7 @@ app.get("/categories", async (req, res) => {
     if (!categories) {
       throw "error";
     }
-    res.status(200).json(categories); 
+    res.status(200).json(categories);
     // message: "ok", 
   } catch (error) {
     res.status(400).json({ message: "Error" });
@@ -820,16 +904,17 @@ app.post("/favorites", async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
     const existingProduct = user.favorites.find((item) => item.productid.toString() === favorite.productid)
-    if(existingProduct){
-      res.status(201).json({message: "Product has already in favorites"});
+    if (existingProduct) {
+      res.status(201).json({ message: "Product has already in favorites" });
     }
-    else{
-    console.log(favorite.productid);  
-    user.favorites.push(favorite);
-    //save the updated user in the backend
-    await user.save();
+    else {
+      console.log(favorite.productid);
+      user.favorites.push(favorite);
+      //save the updated user in the backend
+      await user.save();
 
-    res.status(200).json({ message: "Product added to Favorites Successfully" });}
+      res.status(200).json({ message: "Product added to Favorites Successfully" });
+    }
   } catch (error) {
     res.status(500).json({ message: "Error addding into favorites" });
   }

@@ -72,17 +72,17 @@ const AddressScreen = () => {
             <Text style={{ fontSize: 15, fontWeight: "bold" }}>
                         Your location
                     </Text>
-                <TextInput
-                    placeholderTextColor={"black"}
-                    placeholder="Vietnam"
+                <Text
+
                     style={{
                         padding: 10,
                         borderColor: "#D0D0D0",
                         borderWidth: 1,
                         marginTop: 10,
                         borderRadius: 5,
-                    }}
-                />
+                        fontSize:15
+                    }}>Vietnam - as default</Text>
+                
                 <View style={{ marginVertical: 10 }}>
                     <Text style={{ fontSize: 15, fontWeight: "bold" }}>
                         Full name (First and last name)
@@ -123,7 +123,7 @@ const AddressScreen = () => {
 
                     <View style={{ marginVertical: 10 }}>
                         <Text style={{ fontSize: 15, fontWeight: "bold" }}>
-                            Flat,House No,Building,Company
+                            Province, District, Ward
                         </Text>
 
                         <TextInput
@@ -143,7 +143,7 @@ const AddressScreen = () => {
 
                     <View>
                         <Text style={{ fontSize: 15, fontWeight: "bold" }}>
-                            Area,Street,sector,village
+                            HouseNo, Street
                         </Text>
                         <TextInput
                             value={street}

@@ -94,51 +94,6 @@ const ConfirmationScreen = () => {
       setCurrentStep(0)
     }
   };
-  const pay = async () => {
-    // try {
-    //   const options = {
-    //     description: "Adding To Wallet",
-    //     currency: "VND",
-    //     name: "Ecommerce",
-    //     key: "rzp_test_PMKkhGC2eXI8K4",
-    //     amount: total * 100,
-    //     prefill: {
-    //       email: "nguyenphuocanvu@gmail.com",
-    //       contact: "+84946843566",
-    //       name: "RazorPay Software",
-    //     },
-    //     theme: { color: "#F37254" },
-    //   };
-
-    //   const data = await RazorpayCheckout.open(options);
-
-    //   console.log(data)
-
-    //   const orderData = {
-    //     userId: userId,
-    //     cartItems: cart,
-    //     totalPrice: total,
-    //     shippingAddress: selectedAddress,
-    //     paymentMethod: "card",
-    //   };
-
-    //   const response = await axios.post(
-    //     "http://10.0.2.2:8000/orders",
-    //     orderData
-    //   );
-    //   if (response.status === 200) {
-    //     navigation.navigate("Order");
-    //     dispatch(cleanCart());
-    //     console.log("order created successfully", response.data);
-    //   } else {
-    //     console.log("error creating order", response.data);
-    //   }
-    // } catch (error) {
-    //   console.log("error", error);
-    // }
-  };
-
-
 
   return (
     <ScrollView style={{ marginTop: 55 }}>
@@ -452,43 +407,7 @@ const ConfirmationScreen = () => {
             <Text>Cash on Delivery</Text>
           </View>
 
-          <View
-            style={{
-              backgroundColor: "white",
-              padding: 8,
-              borderColor: "#D0D0D0",
-              borderWidth: 1,
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 7,
-              marginTop: 12,
-            }}
-          >
-            {selectedOption === "card" ? (
-              <FontAwesome5 name="dot-circle" size={20} color="#008397" />
-            ) : (
-              <Entypo
-                onPress={() => {
-                  setSelectedOption("card");
-                  Alert.alert("UPI/Debit card", "Pay Online", [
-                    {
-                      text: "Cancel",
-                      onPress: () => console.log("Cancel is pressed"),
-                    },
-                    {
-                      text: "OK",
-                      onPress: () => pay(),
-                    },
-                  ]);
-                }}
-                name="circle"
-                size={20}
-                color="gray"
-              />
-            )}
-
-            <Text>UPI / Credit or debit card</Text>
-          </View>
+          
           <Pressable
             onPress={() => handleAfterPayment()}
             style={{

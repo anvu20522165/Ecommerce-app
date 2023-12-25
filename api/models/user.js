@@ -48,6 +48,10 @@ const userSchema = new mongoose.Schema({
       },
       quantity: Number,
       price: Number,
+      isChecked: {
+        type: Boolean,
+        default: false,
+      }
     }
   ],
   favorites: [

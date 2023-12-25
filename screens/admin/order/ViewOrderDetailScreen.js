@@ -69,8 +69,9 @@ const ViewOrderDetailScreen = () => {
         try {           
             if (curStatus=="Shipping") {
                 const status = "Delivered";
+                const check = "con cac";
                 const response = await axios.put(
-                    `http://10.0.2.2:8000/updateOrderStatus/${orderId}`, {status}
+                    `http://10.0.2.2:8000/updateOrderStatus/${orderId}`, {check}
                 );
                 setCurrentPosition(2);
                 setCurStatus("Delivered");

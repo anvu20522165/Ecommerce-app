@@ -27,38 +27,40 @@ const HomeScreen = () => {
   const list = [
     {
       id: "0",
-      image: "https://m.media-amazon.com/images/I/41EcYoIZhIL._AC_SY400_.jpg",
-      name: "Home",
-    },
-    {
-      id: "1",
       image:
         "https://m.media-amazon.com/images/G/31/img20/Events/Jup21dealsgrid/blockbuster.jpg",
       name: "Deals",
     },
     {
+      id: "1",
+      image: "https://th.bing.com/th/id/OIP.5U_tIKHGTL_Vk5GrCtrXCQHaLH?w=740&h=1110&rs=1&pid=ImgDetMain",
+      name: "Men",
+    },
+    {
+      id: "2",
+      image: "https://m.media-amazon.com/images/I/51dZ19miAbL._AC_SY350_.jpg",
+      name: "Women",
+    },
+    
+    {
       id: "3",
       image:
-        "https://images-eu.ssl-images-amazon.com/images/I/31dXEvtxidL._AC_SX368_.jpg",
-      name: "Electronics",
+        "https://th.bing.com/th/id/R.253593ed780f11373723109b80feac44?rik=a7KnhjnhhjDF8Q&riu=http%3a%2f%2fww1.prweb.com%2fprfiles%2f2012%2f10%2f31%2f10079702%2femily_qtrbnd_5.jpg&ehk=TKW64JUxLcMUzj9%2fTLQLsU%2ftMvpWU%2b7dNs%2bjmzG7e8c%3d&risl=&pid=ImgRaw&r=0",
+      name: "Jewelery",
     },
     {
       id: "4",
       image:
-        "https://m.media-amazon.com/images/G/31/img20/Events/Jup21dealsgrid/All_Icons_Template_1_icons_01.jpg",
-      name: "Mobiles",
+        "https://th.bing.com/th/id/OIP.oQ9gioHYyztzuhHEVAu9OQHaHa?rs=1&pid=ImgDetMain",
+      name: "Accessory",
     },
     {
       id: "5",
       image:
-        "https://m.media-amazon.com/images/G/31/img20/Events/Jup21dealsgrid/music.jpg",
-      name: "Music",
+        "https://i5.walmartimages.com/asr/618a647e-36db-47da-85d9-d449f283271b.734ddc164b4b2d29f9eb3d6ba8085450.jpeg",
+      name: "Shoes",
     },
-    {
-      id: "6",
-      image: "https://m.media-amazon.com/images/I/51dZ19miAbL._AC_SY350_.jpg",
-      name: "Fashion",
-    },
+    
   ];
   const images = [
     "https://i.pinimg.com/originals/60/b0/a4/60b0a4ee7e032a6281444a82705a665c.jpg",
@@ -165,6 +167,7 @@ const HomeScreen = () => {
             }}
           >
             <Pressable
+            onPress={() => navigation.navigate("Products")}
               style={{
                 flexDirection: "row",
                 alignItems: "center",
@@ -182,10 +185,10 @@ const HomeScreen = () => {
                 size={22}
                 color="black"
               />
-              <TextInput placeholder="Search Amazon.in" />
+              <Text style={{color:'#555555'}}>Search in Shein</Text>
             </Pressable>
 
-            <Feather name="mic" size={24} color="black" />
+            {/* <Feather name="mic" size={24} color="black" /> */}
           </View>
 
           <Pressable
@@ -207,7 +210,7 @@ const HomeScreen = () => {
                 </Text>
               ) : (
                 <Text style={{ fontSize: 13, fontWeight: "500" }}>
-                  Add a Address
+                  Select a Address
                 </Text>
               )}
             </Pressable>
@@ -215,7 +218,19 @@ const HomeScreen = () => {
             <MaterialIcons name="keyboard-arrow-down" size={24} color="black" />
           </Pressable>
 
-          {/* <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+
+
+          <SliderBox
+            images={images}
+            autoPlay
+            circleLoop
+            dotColor={"#13274F"}
+            inactiveDotColor="#90A4AE"
+            ImageComponentStyle={{ width: "100%" }}
+          />
+
+
+    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {list.map((item, index) => (
               <Pressable
                 key={index}
@@ -226,7 +241,7 @@ const HomeScreen = () => {
                 }}
               >
                 <Image
-                  style={{ width: 50, height: 50, resizeMode: "contain" }}
+                  style={{ width: 65, height: 65, resizeMode: "contain" }}
                   source={{ uri: item.image }}
                 />
 
@@ -244,17 +259,7 @@ const HomeScreen = () => {
                 </Text>
               </Pressable>
             ))}
-          </ScrollView> */}
-
-          <SliderBox
-            images={images}
-            autoPlay
-            circleLoop
-            dotColor={"#13274F"}
-            inactiveDotColor="#90A4AE"
-            ImageComponentStyle={{ width: "100%" }}
-          />
-
+          </ScrollView>
           <Text style={{ padding: 10, fontSize: 18, fontWeight: "bold" }}>
             Most Sold Products
           </Text>
@@ -280,20 +285,20 @@ const HomeScreen = () => {
                 }
                 style={{
                   marginVertical: 10,
-                  marginHorizontal: 10,
+                  marginHorizontal: 15,
                   alignItems: "center",
                   justifyContent: "center",
                 }}
               >
                 <Image
-                  style={{ width: 100, height: 100, resizeMode: "contain" }}
+                  style={{ width: 120, height: 120, resizeMode: "contain" }}
                   source={{ uri: item?.image }}
                 />
                 <Text
                   style={{
                     textAlign: "center",
                     color: "black",
-                    fontSize: 11,
+                    fontSize: 12,
                     fontWeight: "bold",
                     marginTop: 5,
                     width: 150
@@ -379,14 +384,14 @@ const HomeScreen = () => {
                 <View style={{
                   position: "relative",
                 }}>
-                  <View style={{ backgroundColor: "red", borderRadius: 60, width: 30, height: 30, marginLeft: 95, marginTop: -10, alignItems: "center", position: "absolute" }}>
+                  <View style={{ backgroundColor: "red", borderRadius: 60, width: 30, height: 30, marginLeft: 95, marginTop: -10, alignItems: "center", position: "absolute", resizeMode: "contain" }}>
                     <Text style={{ fontSize: 14, fontWeight: "bold", color: "white", marginTop: 4 }}>
                       {item?.offer}%
                     </Text>
                   </View>
 
                   <Image
-                    style={{ width: 100, height: 100, resizeMode: "contain" }}
+                    style={{ width: 100, height: 100, resizeMode: "contain", }}
                     source={{ uri: item?.image }}
                   />
                 </View>
@@ -396,7 +401,7 @@ const HomeScreen = () => {
                   style={{
                     textAlign: "center",
                     color: "black",
-                    fontSize: 11,
+                    fontSize: 12,
                     fontWeight: "bold",
                     marginTop: 5,
                     width: 150
@@ -459,20 +464,20 @@ const HomeScreen = () => {
                 }
                 style={{
                   marginVertical: 10,
-                  marginHorizontal: 10,
+                  marginHorizontal: 15,
                   alignItems: "center",
                   justifyContent: "center",
                 }}
               >
                 <Image
-                  style={{ width: 100, height: 100, resizeMode: "contain" }}
+                  style={{ width: 120, height: 120, resizeMode: "contain" }}
                   source={{ uri: item?.image }}
                 />
                 <Text
                   style={{
                     textAlign: "center",
                     color: "black",
-                    fontSize: 11,
+                    fontSize: 12,
                     fontWeight: "bold",
                     marginTop: 5,
                     width: 150
