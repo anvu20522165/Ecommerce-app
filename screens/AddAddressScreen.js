@@ -206,18 +206,7 @@ const AddAddressScreen = () => {
                   <Text>Remove</Text>
                 </Pressable>
 
-                <Pressable
-                  style={{
-                    backgroundColor: "#F5F5F5",
-                    paddingHorizontal: 10,
-                    paddingVertical: 6,
-                    borderRadius: 5,
-                    borderWidth: 0.9,
-                    borderColor: "#D0D0D0",
-                  }}
-                >
-                  <Text>Set as Default</Text>
-                </Pressable>
+
               </View>
             </Pressable>
           ))}
