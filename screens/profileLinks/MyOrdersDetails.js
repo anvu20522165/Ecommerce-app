@@ -21,7 +21,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import moment from "moment";
 
 import StepIndicator from 'react-native-step-indicator';
-const labels = ["Pending", "Shipping", "Delivered"];
+const labels = ["Pending", "Shipping", "Delivered", "Confirmation"];
 const MyOrdersDetails = () => {
 
     const route = useRoute();
@@ -52,6 +52,10 @@ const MyOrdersDetails = () => {
 
                 case 'Delivered':
                     setCurrentPosition(2);
+                    break;
+
+                case 'Confirmation':
+                    setCurrentPosition(3);
                     break;
 
                 default:
@@ -87,7 +91,7 @@ const MyOrdersDetails = () => {
         stepIndicatorLabelUnFinishedColor: '#aaaaaa',
         labelColor: '#999999',
         labelSize: 13,
-        currentStepLabelColor: '#fe7013'
+        currentStepLabelColor: '#fe7013',
     }
     return (
         <ScrollView style={{ marginTop: 55, flex: 1, backgroundColor: "white" }}>
@@ -100,8 +104,8 @@ const MyOrdersDetails = () => {
                     View Details
                 </Text>
                 <Text style={{ fontSize: 15, fontWeight: "bold", marginVertical: 5 }}>
-                                Order #{orderId}
-                            </Text>
+                    Order #{orderId}
+                </Text>
             </View>
 
             <Pressable>
@@ -192,19 +196,19 @@ const MyOrdersDetails = () => {
                         <Text style={{ fontSize: 15, color: "#181818", marginVertical: 5 }}>
                             Order Status: {status}
                         </Text>
-                        <View style={{ marginVertical: 10, width: 340 }}>
+                        <View style={{ marginVertical: 10, width: 340, marginLeft: 15 }}>
                             <StepIndicator
                                 customStyles={customStyles}
                                 currentPosition={currentPosition}
                                 labels={labels}
-                                stepCount={3}
+                                stepCount={4}
                             />
                         </View>
                         <View>
-                            {status != "Delivered" ? (<Text style={{ fontSize: 15, color: "orange", marginVertical: 5, right: -80 }}>
-                                    Your order is comming soon
-                                </Text>) :
-                                (<Text style={{ fontSize: 15, color: "green", marginVertical: 5, right: -30 }}>
+                            {status != "Delivered" ? (<Text style={{ fontSize: 15, color: "orange", marginVertical: 5, right: -95 }}>
+                                Your order is comming soon
+                            </Text>) :
+                                (<Text style={{ fontSize: 15, color: "green", marginVertical: 5, right: -45 }}>
                                     This order has been successfully delivered
                                 </Text>)}
 

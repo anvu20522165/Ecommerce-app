@@ -39,6 +39,8 @@ const User = require("./models/user");
 const Order = require("./models/order");
 const Product = require("./models/product");
 const Category = require("./models/category");
+const Feedback = require("./models/feedback");
+const Notification = require("./models/notification");
 
 
 // ------------users methods
@@ -488,6 +490,75 @@ app.delete("/products/:id", async (req, res) => {
   }
 });
 
+//feedack
+ 
+//create a feedback
+app.post("/feedback", async (req, res) => {
+  try {
+    const { userId, productId, comment, rate } = req.body;
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    const feedback = new Feedback({
+      userid: userId,
+      productid: productId,
+      rate: rate,
+      comment: comment
+    });
+      
+    console.log(feedback)
+    await feedback.save();
+    return res.json(feedback); 
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+});
+
+app.get("/feedback", async (req, res) => {
+  try {
+    const feedback = await Feedback.find().populate('productid');
+    if (!feedback) {
+      throw "error";
+    }
+    return res.status(201).json(feedback);
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+});
+
+//notification
+app.get("/notification", async (req, res) => {
+  try {
+    const notification = await Notification.find().populate('orderid');
+    if (!notification) {
+      throw "error";
+    }
+    return res.status(201).json(notification);
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+});
+app.post("/notification", async (req, res) => {
+  try {
+    const { orderId } = req.body;
+    const order = await Order.findById(orderId);
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    const notification = new Notification({
+      orderid: orderId,
+    });
+      
+    console.log(notification)
+    await notification.save();
+    return res.json(notification); 
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+});
 
 // ------------cart methods
 
@@ -644,8 +715,6 @@ app.put("/cart/checkedAll/:userId", async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const checkedProduct = user.cart.filter((item) => item.isChecked === true)
-    console.log(checkedProduct.length)
     if (stringChecked == "false") {
       const final = user.cart.map((item) => item.isChecked = true)
       console.log("true all checked:", final)
@@ -653,7 +722,7 @@ app.put("/cart/checkedAll/:userId", async (req, res) => {
     }
     else {
       const final = user.cart.map((item) => item.isChecked = false)
-      console.log("false all checked:",final)
+      console.log("false all checked:", final)
       await user.save();
     }
     res.status(200).json({ message: "Product increase quantity from Cart Successfully" });
@@ -782,9 +851,9 @@ app.put("/updateOrderStatus/:id", async (req, res) => {
     if (status == "Delivered") {
       for (let index = 0; index < updatedOrder.products.length; index++) {
         const updatedProduct = await Product.findById(updatedOrder.products[index].productid.toString());
-        console.log(updatedProduct)
+        console.log("before update:", updatedProduct)
         updatedProduct.sold = updatedProduct.sold + 1;
-        console.log(updatedProduct)
+        console.log("after update:", updatedProduct)
         await updatedProduct.save();
       }
     }
@@ -966,4 +1035,6 @@ app.delete("/favorites/:userId/:productid", async (req, res) => {
     res.status(500).json({ message: "Error deleting" });
   }
 });
+
+
 

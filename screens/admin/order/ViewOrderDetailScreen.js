@@ -21,7 +21,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import moment from "moment";
 
 import StepIndicator from 'react-native-step-indicator';
-const labels = ["Pending", "Shipping", "Delivered"];
+const labels = ["Pending", "Shipping", "Delivered", "Confirmation"];
 const ViewOrderDetailScreen = () => {
 
     const route = useRoute();
@@ -55,6 +55,10 @@ const ViewOrderDetailScreen = () => {
                     setCurrentPosition(2);
                     break;
 
+                case 'Confirmation':
+                    setCurrentPosition(3);
+                    break;
+
                 default:
                     Alert.alert("param");
             }
@@ -69,9 +73,8 @@ const ViewOrderDetailScreen = () => {
         try {           
             if (curStatus=="Shipping") {
                 const status = "Delivered";
-                const check = "con cac";
                 const response = await axios.put(
-                    `http://10.0.2.2:8000/updateOrderStatus/${orderId}`, {check}
+                    `http://10.0.2.2:8000/updateOrderStatus/${orderId}`, {status}
                 );
                 setCurrentPosition(2);
                 setCurStatus("Delivered");
@@ -220,12 +223,12 @@ const ViewOrderDetailScreen = () => {
                         <Text style={{ fontSize: 15, color: "#181818", marginVertical: 5 }}>
                             Order Status: {curStatus}
                         </Text>
-                        <View style={{ marginVertical: 10, width: 340 }}>
+                        <View style={{ marginVertical: 10, width: 340, marginLeft: 15  }}>
                             <StepIndicator
                                 customStyles={customStyles}
                                 currentPosition={currentPosition}
                                 labels={labels}
-                                stepCount={3}
+                                stepCount={4}
                             />
                         </View>
                         <View>
@@ -238,7 +241,7 @@ const ViewOrderDetailScreen = () => {
                                     alignItems: "center",
                                     height: 26,
                                     width: 75,
-                                    right: -130
+                                    right: -150
                                 }}
                             >
                                 <Text style={{ fontWeight: "bold" }}>Update</Text>
