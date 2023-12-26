@@ -646,14 +646,14 @@ app.put("/cart/checkedAll/:userId", async (req, res) => {
 
     const checkedProduct = user.cart.filter((item) => item.isChecked === true)
     console.log(checkedProduct.length)
-    if (checkedProduct.length != user.cart.length && stringChecked == "false") {
+    if (stringChecked == "false") {
       const final = user.cart.map((item) => item.isChecked = true)
-      console.log(final)
+      console.log("true all checked:", final)
       await user.save();
     }
     else {
       const final = user.cart.map((item) => item.isChecked = false)
-      console.log(final)
+      console.log("false all checked:",final)
       await user.save();
     }
     res.status(200).json({ message: "Product increase quantity from Cart Successfully" });
