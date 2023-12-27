@@ -32,7 +32,6 @@ const ViewOrderDetailScreen = () => {
     const [createdAt, setCreatedAt] = useState(route.params.createdAt);
     const [orderId, setOrderId] = useState(route.params._id);
     const [curStatus, setCurStatus] = useState(route.params.status);
-    const [status, setStatus] = useState(curStatus);
     const [totalPrice, setTotalPrice] = useState(route.params.totalPrice);
     //   const onGenderOpen = useCallback(() => {
     //     setCompanyOpen(false);
@@ -70,28 +69,28 @@ const ViewOrderDetailScreen = () => {
     })
 
     const handleUpdateStatus = async () => {
-        try {           
-            if (curStatus=="Shipping") {
+        try {
+            if (curStatus == "Shipping") {
                 const status = "Delivered";
                 const response = await axios.put(
-                    `http://10.0.2.2:8000/updateOrderStatus/${orderId}`, {status}
+                    `http://10.0.2.2:8000/updateOrderStatus/${orderId}`, { status }
                 );
                 setCurrentPosition(2);
                 setCurStatus("Delivered");
                 Alert.alert("Order's status has been updated");
             }
-            else if (curStatus=="Pending") {
+            else if (curStatus == "Pending") {
                 const status = "Shipping";
                 const response = await axios.put(
-                    `http://10.0.2.2:8000/updateOrderStatus/${orderId}`, {status}
+                    `http://10.0.2.2:8000/updateOrderStatus/${orderId}`, { status }
                 );
                 setCurrentPosition(1);
                 Alert.alert("Order's status has been updated");
                 setCurStatus("Shipping");
-                console.log(response.data)
             }
 
-                
+
+
         } catch (error) {
             console.log("errror", error.response.data);
         }
@@ -223,7 +222,7 @@ const ViewOrderDetailScreen = () => {
                         <Text style={{ fontSize: 15, color: "#181818", marginVertical: 5 }}>
                             Order Status: {curStatus}
                         </Text>
-                        <View style={{ marginVertical: 10, width: 340, marginLeft: 15  }}>
+                        <View style={{ marginVertical: 10, width: 340, marginLeft: 19 }}>
                             <StepIndicator
                                 customStyles={customStyles}
                                 currentPosition={currentPosition}
@@ -232,23 +231,36 @@ const ViewOrderDetailScreen = () => {
                             />
                         </View>
                         <View>
-                            {curStatus != "Delivered" ? (<Pressable
-                                onPress={() => handleUpdateStatus()}
-                                style={{
-                                    backgroundColor: "#FFC72C",
-                                    borderRadius: 6,
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    height: 26,
-                                    width: 75,
-                                    right: -150
-                                }}
-                            >
-                                <Text style={{ fontWeight: "bold" }}>Update</Text>
-                            </Pressable>) :
-                                (<Text style={{ fontSize: 15, color: "green", marginVertical: 5, right: -30 }}>
-                                    This order has been successfully delivered
-                                </Text>)}
+                            {curStatus != "Confirmation" && curStatus != "Delivered" ? (
+                                <Pressable
+                                    onPress={() => handleUpdateStatus()}
+                                    style={{
+                                        backgroundColor: "#FFC72C",
+                                        borderRadius: 6,
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        height: 26,
+                                        width: 75,
+                                        right: -150
+                                    }}
+                                >
+                                    <Text style={{ fontWeight: "bold" }}>Update</Text>
+                                </Pressable>
+                            ) :
+                                (<Text />)}
+                            {curStatus == "Delivered" ? (
+                                <View>
+
+                                    <Text style={{ fontSize: 15, color: "orange", marginVertical: 5, right: -70 }}>
+                                        Waiting for the customer to respond
+                                    </Text>
+                                </View>) :
+                                (
+                                    <Text/>
+                                      
+                                )}
+
+                            
 
                         </View>
                     </View>

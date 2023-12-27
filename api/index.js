@@ -848,11 +848,12 @@ app.put("/updateOrderStatus/:id", async (req, res) => {
     //return res.status(201).json(updatedOrder);
     updatedOrder.status = status;
 
-    if (status == "Delivered") {
+    if (status == "Confirmation") {
       for (let index = 0; index < updatedOrder.products.length; index++) {
         const updatedProduct = await Product.findById(updatedOrder.products[index].productid.toString());
         console.log("before update:", updatedProduct)
         updatedProduct.sold = updatedProduct.sold + 1;
+        updatedProduct.storage = updatedProduct.storage - 1;
         console.log("after update:", updatedProduct)
         await updatedProduct.save();
       }

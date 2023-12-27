@@ -277,7 +277,7 @@ const HomeScreen = () => {
                     category: item?.category,
                     image: item?.image,
                     offer: item?.offer,
-
+                    storage: item?.storage,
                     sold: item?.sold,
                     item: item,
 
@@ -368,7 +368,7 @@ const HomeScreen = () => {
                     category: item?.category,
                     image: item?.image,
                     offer: item?.offer,
-
+                    storage: item?.storage,
                     sold: item?.sold,
                     item: item,
 
@@ -456,7 +456,7 @@ const HomeScreen = () => {
                     category: item?.category,
                     image: item?.image,
                     offer: item?.offer,
-
+                    storage: item?.storage,
                     sold: item?.sold,
                     item: item,
 

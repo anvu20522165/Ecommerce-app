@@ -14,7 +14,7 @@ import { AntDesign } from "@expo/vector-icons";
 import DropDownPicker from "react-native-dropdown-picker";
 import { UserType } from '../../UserContext';
 import axios from "axios";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import moment from "moment";
 const MyOrders = () => {
     const { userId, setUserId } = useContext(UserType);
@@ -26,22 +26,29 @@ const MyOrders = () => {
         { label: "Pending", value: "Pending" },
         { label: "Shipping", value: "Shipping" },
         { label: "Delivered", value: "Delivered" },
+        { label: "Confirmation", value: "Confirmation" },
     ]);
     const [orderData, setOrderData] = useState([]);
-    useEffect(() => {
-        const fetchOrders = async () => {
-            try {
-                const response = await axios.get(`http://10.0.2.2:8000/orders/${userId}`);
-                //const { orderData } = response.data;
-                //setOrderData(orderData);
-                setOrderData(response.data);
-                //console.log(response.data);
-            } catch (error) {
-                console.log("error message", error);
-            }
-        };
+    const fetchOrders = async () => {
+        try {
+            const response = await axios.get(`http://10.0.2.2:8000/orders/${userId}`);
+            //const { orderData } = response.data;
+            //setOrderData(orderData);
+            setOrderData(response.data);
+            //console.log(response.data);
+        } catch (error) {
+            console.log("error message", error);
+        }
+    };
+    useEffect(() => {       
         fetchOrders()
     }, []);
+
+    useFocusEffect(
+        useCallback(() => {
+          fetchOrders();
+        }, [])
+      );
 
     return ( 
 <View style={{ marginTop: 55, flex: 1, backgroundColor: "white" }}>

@@ -19,11 +19,10 @@ import { UserType } from '../../UserContext';
 import axios from "axios";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import moment from "moment";
-
 import StepIndicator from 'react-native-step-indicator';
 const labels = ["Pending", "Shipping", "Delivered", "Confirmation"];
 const MyOrdersDetails = () => {
-
+    const { userId, setUserId } = useContext(UserType);
     const route = useRoute();
     const [shippingAddress, setShippingAddress] = useState(route.params.shippingAddress);
     const [products, setProducts] = useState(route.params.products);
@@ -31,7 +30,8 @@ const MyOrdersDetails = () => {
     const [delivery, setDelivery] = useState(route.params.delivery);
     const [createdAt, setCreatedAt] = useState(route.params.createdAt);
     const [orderId, setOrderId] = useState(route.params._id);
-    const [status, setStatus] = useState(route.params.status);
+    // const [status, setStatus] = useState(route.params.status);
+    const [curStatus, setCurStatus] = useState(route.params.status);
     const [totalPrice, setTotalPrice] = useState(route.params.totalPrice);
     //   const onGenderOpen = useCallback(() => {
     //     setCompanyOpen(false);
@@ -40,7 +40,7 @@ const MyOrdersDetails = () => {
     const [currentPosition, setCurrentPosition] = useState(0);
     useEffect(() => {
         const checkStatus = () => {
-            switch (status) {
+            switch (curStatus) {
 
                 case 'Shipping':
                     setCurrentPosition(1);
@@ -93,6 +93,59 @@ const MyOrdersDetails = () => {
         labelSize: 13,
         currentStepLabelColor: '#fe7013',
     }
+    const navigation = useNavigation()
+    const handleConfirm = async () => {
+
+        const status = "Confirmation";
+        const response = await axios.put(
+            `http://10.0.2.2:8000/updateOrderStatus/${orderId}`, { status }
+        );
+        setCurrentPosition(3);
+        Alert.alert("The purchase is done", "Enjoy ^^");
+        setCurStatus("Confirmation");
+
+        setTimeout(() => {
+            Alert.alert("Mind giving a feedback", "We hope to see your satisfaction", [
+                {
+                    text: "Cancel",
+                    onPress: () => console.log("Cancel is pressed"),
+                },
+                {
+                    text: "Confirm",
+                    onPress: () => navigation.replace("Main"),
+                },
+            ]);
+
+        }, 2000);
+    }
+
+    const addProductIntoCart = async(productid) => {
+        console.log(productid)
+        try {
+            const response = await axios.get(`http://10.0.2.2:8000/products/${productid}`);          
+            console.log(response.data[0]);
+            const curProduct = response.data[0];
+            
+            const cart = {
+                productid: productid,
+                price: (curProduct.price - curProduct.price * curProduct?.offer / 100),
+                quantity: 1,
+                isChecked: true
+            }
+            console.log("cart api:", cart)
+            axios.post("http://10.0.2.2:8000/cart", { userId, cart }).then((response) => {
+                Alert.alert("Success", "Product added successfully");
+                console.log("my cart:", response.data)
+    
+            }).catch((error) => {
+                Alert.alert("Error", "Failed to add product")
+                console.log("error", error)
+            })
+        } catch (error) {
+            console.log("error message", error);
+        }        
+        
+    };
     return (
         <ScrollView style={{ marginTop: 55, flex: 1, backgroundColor: "white" }}>
             <View style={{ marginTop: 5, marginBottom: 20, flex: 1, backgroundColor: "white", marginHorizontal: 20 }}>
@@ -194,9 +247,9 @@ const MyOrdersDetails = () => {
                             Delivery: {delivery.option} - {delivery.fee.toLocaleString('vi', { style: 'currency', currency: 'VND' })}
                         </Text>
                         <Text style={{ fontSize: 15, color: "#181818", marginVertical: 5 }}>
-                            Order Status: {status}
+                            Order Status: {curStatus}
                         </Text>
-                        <View style={{ marginVertical: 10, width: 340, marginLeft: 15 }}>
+                        <View style={{ marginVertical: 10, width: 340, marginLeft: 19 }}>
                             <StepIndicator
                                 customStyles={customStyles}
                                 currentPosition={currentPosition}
@@ -205,12 +258,63 @@ const MyOrdersDetails = () => {
                             />
                         </View>
                         <View>
-                            {status != "Delivered" ? (<Text style={{ fontSize: 15, color: "orange", marginVertical: 5, right: -95 }}>
-                                Your order is comming soon
-                            </Text>) :
-                                (<Text style={{ fontSize: 15, color: "green", marginVertical: 5, right: -45 }}>
-                                    This order has been successfully delivered
-                                </Text>)}
+                            {curStatus == "Delivered" ? (
+                                <Pressable
+                                    onPress={() => {
+
+                                        Alert.alert("Confirm this order", "We hope you are enjoying the services", [
+                                            {
+                                                text: "Cancel",
+                                                onPress: () => console.log("Cancel is pressed"),
+                                            },
+                                            {
+                                                text: "Confirm",
+                                                onPress: () => handleConfirm(),
+                                            },
+                                        ]);
+                                    }}
+                                    style={{
+                                        backgroundColor: "#FFC72C",
+                                        borderRadius: 6,
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        height: 26,
+                                        width: 75,
+                                        right: -150
+                                    }}
+                                >
+                                    <Text style={{ fontWeight: "bold" }}>Confirm</Text>
+                                </Pressable>) :
+                                (
+                                    <View>
+                                        <Pressable
+                                            style={{
+                                                backgroundColor: "#fffacd",
+                                                borderRadius: 6,
+                                                justifyContent: "center",
+                                                alignItems: "center",
+                                                height: 26,
+                                                width: 75,
+                                                right: -150
+                                            }}
+                                        >
+                                            <Text style={{ fontWeight: "bold", color: "grey" }}>Confirm</Text>
+                                        </Pressable>
+                                    </View>
+                                )}
+
+                            {curStatus == "Confirmation" ? (
+                                <View>
+
+                                    <Text style={{ fontSize: 15, color: "green", marginVertical: 5, right: -60 }}>
+                                        Your order has been successfully done
+                                    </Text>
+                                </View>) :
+                                (
+                                    <Text style={{ fontSize: 15, color: "orange", marginVertical: 5, right: -95 }}>
+                                        Your order is comming soon
+                                    </Text>
+                                )}
 
                         </View>
                     </View>
@@ -287,17 +391,50 @@ const MyOrdersDetails = () => {
                                             >
                                                 x{product.quantity}
                                             </Text>
-                                            <Image
-                                                style={{ width: 30, height: 30, resizeMode: "contain" }}
-                                                source={{
-                                                    uri: "https://assets.stickpng.com/thumbs/5f4924cc68ecc70004ae7065.png",
-                                                }}
-                                            />
-
+                                            
+                                            
+                                            
 
                                         </View>
+                                        
                                     </Pressable>
+                                <View>
+                                    <View>
 
+                                    </View>
+                                    <View>
+                                    <Pressable
+                                                onPress={() => {
+
+                                                    Alert.alert("You're about to buy these products again", "Do you proceed ", [
+                                                        {
+                                                            text: "Cancel",
+                                                            onPress: () => console.log("Cancel is pressed"),
+                                                        },
+                                                        {
+                                                            text: "Confirm",
+                                                            onPress: () => addProductIntoCart(product?.productid),
+                                                        },
+                                                    ]);
+                                                }}
+                                                style={{
+                                                    backgroundColor: "#FFC72C",
+                                                    borderRadius: 6,
+                                                    justifyContent: "center",
+                                                    alignItems: "center",
+                                                    marginBottom: 10,
+                                                    width: 140,
+                                                    height: 30,
+                                                    borderRadius: 10,
+                                                    borderWidth: 1,
+                                                    borderColor: "#D0D0D0",
+                                                    right: -150
+                                                }}
+                                            >
+                                                <Text style={{ fontWeight: "bold" }}>Buy again</Text>
+                                            </Pressable>
+                                    </View>
+                                </View>
 
 
 
@@ -311,10 +448,11 @@ const MyOrdersDetails = () => {
                 </Pressable>
 
 
-                <View>
+                <View style={{ flexDirection: "row", marginBottom: 10 }}>
                     <Text style={{ padding: 10, fontSize: 18, fontWeight: "400" }}>
                         Total price: {totalPrice.toLocaleString('vi', { style: 'currency', currency: 'VND' })}
                     </Text>
+                   
 
                 </View>
 

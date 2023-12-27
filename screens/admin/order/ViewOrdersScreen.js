@@ -27,6 +27,7 @@ export default function ViewOrdersScreen() {
     { label: "Pending", value: "Pending" },
     { label: "Shipping", value: "Shipping" },
     { label: "Delivered", value: "Delivered" },
+    { label: "Confirmation", value: "Confirmation" },
   ]);
   const fetchOrders = async () => {
     try {
