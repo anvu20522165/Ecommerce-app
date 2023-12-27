@@ -531,6 +531,7 @@ app.get("/feedback", async (req, res) => {
 //notification
 app.get("/notification", async (req, res) => {
   try {
+    //const notification = await Notification.find();
     const notification = await Notification.find().populate('orderid');
     if (!notification) {
       throw "error";
@@ -540,16 +541,66 @@ app.get("/notification", async (req, res) => {
     return res.status(400).json({ error: error.message });
   }
 });
+
+app.get("/notification/range", async (req, res) => {
+  try {
+    //const notification = await Notification.find();
+    const notification = await Notification.find();
+    if (!notification) {
+      throw "error";
+    }
+    return res.status(201).json(notification.length);
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+});
+
+app.put("/updateClickNotification/:id", async (req, res) => {
+  try {
+    const updatedNoti = await Notification.findById({
+      _id: req.params.id,
+    });
+    if (!updatedNoti) {
+      return res.status(404).json({ error: "Noti not found." });
+    }
+    console.log(updatedNoti)
+    updatedNoti.isClicked = false;
+    await updatedNoti.save();
+    return res.status(200)
+    //return res.status(200).json({ message: "Delete Noti successfully", data: updatedNoti });
+  } catch (e) { res.status(400).json({ message: "Error" }); }
+});
+
+//notification
+app.get("/notification/:userid", async (req, res) => {
+  try {
+    const userId = req.params.userid;
+    const notification = await Notification.find().populate('orderid');
+    const final = notification.filter((item) => item.userid == userId.toString())
+    if (!final) {
+      throw "error";
+    }
+    return res.status(201).json(final);
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+});
 app.post("/notification", async (req, res) => {
   try {
-    const { orderId } = req.body;
+    const { orderId, userId } = req.body;
     const order = await Order.findById(orderId);
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
 
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
     const notification = new Notification({
       orderid: orderId,
+      userid: userId
     });
       
     console.log(notification)
@@ -558,6 +609,18 @@ app.post("/notification", async (req, res) => {
   } catch (error) {
     return res.status(400).json({ error: error.message });
   }
+});
+
+app.delete("/notification/:id", async (req, res) => {
+  try {
+    const deleteNoti = await Notification.findOneAndDelete({
+      _id: req.params.id,
+    });
+    if (!deleteNoti) {
+      return res.status(404).json({ error: "Noti not found." });
+    }
+    return res.status(200).json({ message: "Delete Noti successfully", data: deleteNoti });
+  } catch (e) { res.status(400).json({ message: "Error" }); }
 });
 
 // ------------cart methods
@@ -859,6 +922,17 @@ app.put("/updateOrderStatus/:id", async (req, res) => {
       }
     }
     await updatedOrder.save();
+
+    //when update => create a notification
+    //users dont get noti as they do the "Delivered status action to Confirmation"
+    if (status == "Delivered") {
+      const notification = new Notification({
+        orderid: updatedOrder._id,
+        userid: updatedOrder.user,
+        isClicked: true
+      });       
+      await notification.save();
+    }
     res.status(200).json({ message: "order's status updated successfully" });
   } catch (error) {
     return res.status(400).json({ error: error.message });

@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { useEffect, useContext, useState, useCallback } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import LoginScreen from "../screens/LoginScreen";
@@ -34,7 +34,26 @@ import AddCategoriesScreen from "../screens/admin/AddCategoriesScreen";
 import UpdateCategoriesScreen from "../screens/admin/UpdateCategoriesScreen";
 import UpdatePassword from "../screens/profileLinks/UpdatePassword";
 import MyFavorites from "../screens/profileLinks/MyFavorites";
+import Notification from "../screens/Notification";
+import axios from "axios";
+
 const StackNavigator = () => {
+  const [notiNumber, setNotiNumber] = useState();
+  const fetchNotiNumber = async () => {
+    try {
+      const response = await axios.get(
+        `http://10.0.2.2:8000/notification/range`
+      );
+      //const { userData } = response.data;
+      console.log(response.data)
+      setNotiNumber(response.data);
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+  useEffect(() => {
+    fetchNotiNumber();
+  }, []);
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
   function BottomTabs() {
@@ -73,11 +92,12 @@ const StackNavigator = () => {
 
         <Tab.Screen
           name="Notification"
-          component={CartScreen}
+          component={Notification}
           options={{
             tabBarLabel: "Notification",
             tabBarLabelStyle: { color: "#008E97", fontSize: 12 },
             headerShown: false,
+            tabBarBadge : notiNumber,
             tabBarIcon: ({ focused }) =>
               focused ? (
                 <Ionicons name="notifications-sharp" size={24} color="#008E97" />

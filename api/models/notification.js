@@ -5,6 +5,11 @@ const notificationSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: "Order",
           },
+          userid: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            require: true,
+          },
         isClicked: {
           type: Boolean,
           default: false,
