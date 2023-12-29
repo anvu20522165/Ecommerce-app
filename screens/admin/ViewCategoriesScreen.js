@@ -18,10 +18,13 @@ import {
   export default function ViewCategoriesScreen(){
     const navigation = useNavigation();
     const [categories, setCategories] = useState([]);
+    const [categoryList,setCategoryList] = useState([]);
+    const [input, setInput] = useState('');
     const fetchCategories = async () => {
         try {
           const response = await axios.get("http://10.0.2.2:8000/categories");
           setCategories(response.data);
+          setCategoryList(response.data);
           console.log("all data", response.data);
         } catch (error) {
           console.log("error message", error);
@@ -46,6 +49,16 @@ import {
         } catch (error) {
           console.log("error", error);
         }
+      }
+      const handleFilter=(text)=> {
+        if(text){
+          let filterList = categories.filter((category)=>category.name.toLowerCase().includes(text.toLowerCase()));
+          setCategoryList(filterList);
+        }
+        else {
+          setCategoryList(categories);
+        }
+    
       }
       return (
         <SafeAreaView style={styles.container}>
@@ -75,10 +88,15 @@ import {
                 size={18}
                 color="black"
               />
-              <TextInput placeholder="Find Categories" />
+              <TextInput placeholder="Find Categories"
+              onChangeText={(text)=>{
+                setInput(text);
+                handleFilter(text);
+              }}
+              />
             </Pressable>
-            {categories.length > 0 ? (
-            categories.map((item, index) => (
+            {categoryList.length > 0 ? (
+            categoryList.map((item, index) => (
               <View style={styles.productListView} key={index}>
                 <View style={{ flexDirection: "row" }}>
                   <View

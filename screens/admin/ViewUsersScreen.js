@@ -18,11 +18,14 @@ import { AntDesign } from "@expo/vector-icons";
 
 export default function ViewUsersScreen() {
   const navigation = useNavigation();
+  const [input,setInput] = useState('');
   const [users, setUsers] = useState([]);
+  const [userList, setUserList] = useState([]);
   const fetchUsers = async () => {
     try {
       const usersResponse = await axios.get("http://10.0.2.2:8000/users");
       setUsers(usersResponse.data);
+      setUserList(usersResponse.data);
       console.log("all data", usersResponse.data);
     } catch (error) {
       console.log("error message", error);
@@ -48,6 +51,17 @@ export default function ViewUsersScreen() {
       console.log("error",error)
   })
   };
+
+  const handleFilter=(text)=> {
+    if(text){
+      let filterList = users.filter((user)=>user.name.toLowerCase().includes(text.toLowerCase()));
+      setUserList(filterList);
+    }
+    else {
+      setUserList(users);
+    }
+
+  }
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
@@ -76,10 +90,13 @@ export default function ViewUsersScreen() {
             size={18}
             color="black"
           />
-          <TextInput placeholder="Find User" />
+          <TextInput placeholder="Find User" onChangeText={(text)=>{
+            setInput(text);
+            handleFilter(text);
+            }} />
         </Pressable>
-        {users.length > 0 ? (
-        users.map((item, index) => (
+        {userList.length > 0 ? (
+        userList.map((item, index) => (
           <View style={styles.productListView} key={index}>
            <View style={{flexDirection: "row", alignItems: "center"}}>
               <Image

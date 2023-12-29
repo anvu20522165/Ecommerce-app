@@ -19,7 +19,7 @@ import DropDownPicker from "react-native-dropdown-picker";
 
 export default function ViewOrdersScreen() {
   const [open, setOpen] = useState(false);
-
+  const [input, setInput] = useState('');
   const navigation = useNavigation();
   const [orders, setOrders] = useState([]);
   const [status, setStatus] = useState("Pending");
@@ -29,6 +29,7 @@ export default function ViewOrdersScreen() {
     { label: "Delivered", value: "Delivered" },
     { label: "Confirmation", value: "Confirmation" },
   ]);
+  const [filteredOrderList,setFilteredOrderList] = useState([]);
   const fetchOrders = async () => {
     try {
       const ordersResponse = await axios.get("http://10.0.2.2:8000/orders");
@@ -51,7 +52,18 @@ export default function ViewOrdersScreen() {
   let filteredOrders = orders.filter((item) => item.status === status);
   useEffect(() => {
     filteredOrders = orders.filter((item) => item.status === status);
+    setFilteredOrderList(filteredOrders);
   }, [orders, status]);
+  const handleFilter=(text)=> {
+    if(text){
+      let filteredList = filteredOrders.filter((order)=>order._id.toLowerCase().includes(text.toLowerCase()));
+      setFilteredOrderList(filteredList);
+    }
+    else {
+      setFilteredOrderList(filteredOrders);
+    }
+
+  }
   return (
     <SafeAreaView style={styles.container}>
 
@@ -79,7 +91,12 @@ export default function ViewOrdersScreen() {
           size={18}
           color="black"
         />
-        <TextInput placeholder="Find Order" />
+        <TextInput placeholder="Find Order"
+        onChangeText={(text)=>{
+          setInput(text);
+          handleFilter(text);
+        }}
+        />
       </Pressable>
       <View
         style={{
@@ -109,11 +126,11 @@ export default function ViewOrdersScreen() {
           zIndexInverse={1000}
         />
       </View>
-      {filteredOrders.length === 0 ? (
+      {filteredOrderList.length === 0 ? (
       <Text style={styles.noOrdersText}>No orders found</Text>
     ) : (
       <FlatList
-        data={orders.filter((item) => item.status === status)}
+        data={filteredOrderList}
         renderItem={({ item, index }) => {
           return (
             <View style={styles.productListView} key={index}>
@@ -210,5 +227,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+  },
+  noOrdersText:{
+    fontSize: 18,
+    paddingHorizontal: 15,
+    marginBottom: 10,
   },
 });

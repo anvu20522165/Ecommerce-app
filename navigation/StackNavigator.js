@@ -36,9 +36,25 @@ import UpdatePassword from "../screens/profileLinks/UpdatePassword";
 import MyFavorites from "../screens/profileLinks/MyFavorites";
 import Notification from "../screens/Notification";
 import axios from "axios";
+import { UserType } from "../UserContext";
 
 const StackNavigator = () => {
   const [notiNumber, setNotiNumber] = useState();
+  const [cartNumber, setCartNumber] =useState();
+  const { userId, setUserId } = useContext(UserType);
+  const fetchCartNumber = async () => {
+    try {
+      const response = await axios.get(
+        `http://10.0.2.2:8000/productsInCart/${userId}`
+      );
+
+      setCartNumber(response.data.length);
+      console.log("cart number",response.data.length);
+      console.log("cart", response.data);
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
   const fetchNotiNumber = async () => {
     try {
       const response = await axios.get(
@@ -53,6 +69,7 @@ const StackNavigator = () => {
   };
   useEffect(() => {
     fetchNotiNumber();
+    fetchCartNumber();
   }, []);
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
@@ -114,6 +131,7 @@ const StackNavigator = () => {
             tabBarLabel: "Cart",
             tabBarLabelStyle: { color: "#008E97", fontSize: 12 },
             headerShown: false,
+            tabBarBadge:cartNumber,
             tabBarIcon: ({ focused }) =>
               focused ? (
                 <Ionicons name="cart-sharp" size={24} color="#008E97" />

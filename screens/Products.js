@@ -152,8 +152,8 @@ export default function Products(){
         </ScrollView>
         </ScrollView>
         <View style = {{flexDirection: "row", justifyContent: "space-between"}}>
-          <Text style={{fontSize: 18, fontWeight: 'bold'}}>Price: High to Low</Text>
-          <Text style={{fontSize: 18, fontWeight: 'bold'}}>Price Filter</Text>
+          <Text style={{fontSize: 18, fontWeight: 'bold', marginLeft: 20}}>Price: High to Low</Text>
+          <Text style={{fontSize: 18, fontWeight: 'bold', marginRight: 20}}>Price Filter</Text>
         </View>
         <FlatList
           data={products}

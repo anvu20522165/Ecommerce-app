@@ -19,10 +19,13 @@ import UpdateProductsScreen from "./UpdateProductsScreen";
 export default function ViewProductsScreen() {
   const navigation = useNavigation();
   const [products, setProducts] = useState([]);
+  const [input,setInput] = useState('');
+  const [productList, setProductList] =useState([]);
   const fetchProducts = async () => {
     try {
       const response = await axios.get("http://10.0.2.2:8000/products");
       setProducts(response.data);
+      setProductList(response.data);
       console.log("all data", response.data);
     } catch (error) {
       console.log("error message", error);
@@ -48,6 +51,17 @@ export default function ViewProductsScreen() {
       fetchProducts();
     }, [])
   );
+  const handleFilter=(text)=> {
+    if(text){
+      let filterList = products.filter((product)=>product.title.toLowerCase().includes(text.toLowerCase()));
+      console.log("filter", filterList);
+      setProductList(filterList);
+    }
+    else {
+      setProductList(products);
+    }
+
+  }
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
@@ -76,10 +90,15 @@ export default function ViewProductsScreen() {
             size={18}
             color="black"
           />
-          <TextInput placeholder="Find Product" />
+          <TextInput placeholder="Find Product"
+          onChangeText={(text)=>{
+            setInput(text);
+            handleFilter(text);
+          }}
+          />
         </Pressable>
-        {products.length > 0 ? (
-        products.map((item, index) => (
+        {productList.length > 0 ? (
+        productList.map((item, index) => (
           <View style={styles.productListView} key={index}>
             <View style={{ flexDirection: "row" }}>
               <Image
