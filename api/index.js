@@ -925,7 +925,7 @@ app.put("/updateOrderStatus/:id", async (req, res) => {
 
     //when update => create a notification
     //users dont get noti as they do the "Delivered status action to Confirmation"
-    if (status == "Delivered") {
+    if (status != "Delivered") {
       const notification = new Notification({
         orderid: updatedOrder._id,
         userid: updatedOrder.user,
