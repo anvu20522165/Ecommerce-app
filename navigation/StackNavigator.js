@@ -40,8 +40,7 @@ import { UserType } from "../UserContext";
 
 const StackNavigator = () => {
   const [notiNumber, setNotiNumber] = useState();
-  const [cartNumber, setCartNumber] =useState();
-  const { userId, setUserId } = useContext(UserType);
+  const { userId, setUserId, cartNumber, setCartNumber } = useContext(UserType);
   const fetchCartNumber = async () => {
     try {
       const response = await axios.get(
@@ -131,7 +130,7 @@ const StackNavigator = () => {
             tabBarLabel: "Cart",
             tabBarLabelStyle: { color: "#008E97", fontSize: 12 },
             headerShown: false,
-            tabBarBadge:cartNumber,
+            tabBarBadge: cartNumber,
             tabBarIcon: ({ focused }) =>
               focused ? (
                 <Ionicons name="cart-sharp" size={24} color="#008E97" />

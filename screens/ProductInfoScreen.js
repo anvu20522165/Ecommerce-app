@@ -20,7 +20,7 @@ import { addToCart } from "../redux/CartReducer";
 import { UserType } from "../UserContext";
 import axios from "axios";
 const ProductInfoScreen = () => {
-    const { userId, setUserId } = useContext(UserType);
+    const { userId, setUserId, setCartNumber } = useContext(UserType);
     const route = useRoute();
     const { width } = Dimensions.get("window");
     const height = (width * 100) / 100;
@@ -107,8 +107,8 @@ const ProductInfoScreen = () => {
         console.log("cart api:", cart)
         axios.post("http://10.0.2.2:8000/cart", { userId, cart }).then((response) => {
             Alert.alert("Success", "Product added successfully");
-            console.log("my cart:", response.data)
-
+            console.log("my cart:", response.data);
+            setCartNumber(response.data.length);
         }).catch((error) => {
             Alert.alert("Error", "Failed to add product")
             console.log("error", error)

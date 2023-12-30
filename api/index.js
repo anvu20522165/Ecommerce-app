@@ -648,7 +648,7 @@ app.post("/cart", async (req, res) => {
     //save the updated user in te backend
     await user.save();
 
-    res.status(200).json({ message: "Product added to Cart Successfully" });
+    res.status(200).json(user.cart);
   } catch (error) {
     res.status(500).json({ message: "Error addding into cart" });
   }

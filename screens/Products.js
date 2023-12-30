@@ -33,6 +33,8 @@ export default function Products(){
     const [categories,setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState('');
     const [products,setProducts] = useState([]);
+    const [sortCriteria, setSortCriteria] = useState('recommended');
+    const [filteredProducts, setFilteredProducts] = useState([]);
     const fetchCategories = async () => {
         try {
           const response = await axios.get("http://10.0.2.2:8000/categories");
@@ -45,7 +47,8 @@ export default function Products(){
     const fetchCategory = async () => {
         try{
             const response = await axios.get(`http://10.0.2.2:8000/products/category/${selectedCategory}`)
-            setProducts(response.data);
+            // setProducts(response.data);
+            setFilteredProducts(response.data);
             console.log("category products: ", response.data);
         } 
         catch (error){
@@ -56,6 +59,7 @@ export default function Products(){
         try{
             const response = await axios.get(`http://10.0.2.2:8000/products`)
             setProducts(response.data);
+            setFilteredProducts(response.data);
             console.log("products: ", response.data);
         } 
         catch (error){
@@ -78,11 +82,30 @@ export default function Products(){
       };
       useEffect(() => {
         if (selectedCategory === '') {
-          fetchProducts();
+          // fetchProducts();
+          setFilteredProducts(products);
         } else {
           fetchCategory();
         }
       }, [selectedCategory]);
+
+      const handleSortCriteriaChange = (criteria) => {
+          setSortCriteria(criteria);
+          if(criteria === "recommended")
+          {
+            
+          }
+          else if(criteria === "rate")
+          {}
+          else
+          {
+            handlePriceSort();
+          }
+        
+      }
+      const handlePriceSort = () => {
+        
+      }
     return (
         <SafeAreaView style={styles.container}>
           <StatusBar barStyle="light-content"/>
@@ -151,12 +174,17 @@ export default function Products(){
         />
         </ScrollView>
         </ScrollView>
-        <View style = {{flexDirection: "row", justifyContent: "space-between"}}>
-          <Text style={{fontSize: 18, fontWeight: 'bold', marginLeft: 20}}>Price: High to Low</Text>
-          <Text style={{fontSize: 18, fontWeight: 'bold', marginRight: 20}}>Price Filter</Text>
+        <ScrollView style={{height: 90,}} horizontal={true} showsHorizontalScrollIndicator={false}>
+        {/* <View style = {{flexDirection: "row", justifyContent: "space-between"}}> */}
+        <View style = {{flexDirection: 'row',justifyContent: "space-between"}}>
+        <Text style={styles.filter}>Recommended</Text>
+        <Text style={styles.filter}>Top Rated</Text>
+          <Text style={styles.filter}>Top Sold</Text>
+          <Text style={styles.filter}>Price: High to Low</Text>
         </View>
+        </ScrollView>
         <FlatList
-          data={products}
+          data={/*products*/ filteredProducts}
           renderItem={({ item }) => (
             <View
             style={{
@@ -241,7 +269,6 @@ const styles = StyleSheet.create({
     //justifyContent: 'center',
         marginRight: 20,
     
-    
     },
     categories:{
         fontSize: 18,
@@ -254,7 +281,7 @@ const styles = StyleSheet.create({
     exception:{
         flexDirection: 'row',
         backgroundColor: "white",
-        height: 130,
+        height: 143,
     },
     imageThumbnail: {
         //justifyContent: "center",
@@ -282,9 +309,20 @@ const styles = StyleSheet.create({
       },
       selectedCategory: {
         borderBottomColor: "blue",
-        borderBottomWidth: 2,
+        borderBottomWidth: 3,
       },
       selectedText: {
         color: "blue",
+        marginBottom: 5
       },
+      filter: {
+        fontSize: 15, 
+        fontWeight: 'bold', 
+        marginVertical: 5,
+        marginTop:8,
+        padding: 10,
+        margin: 5,
+        backgroundColor: "white",
+        marginBottom: 10,
+      }
 });

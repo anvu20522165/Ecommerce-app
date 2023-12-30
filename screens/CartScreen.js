@@ -17,15 +17,14 @@ import {
   cleanCart,
   initCart
 } from "../redux/CartReducer";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
 import { UserType } from "../UserContext";
 import Checkbox from 'expo-checkbox'
 import axios from "axios";
 // import CheckBox from 'expo-checkbox';
 const CartScreen = () => {
   const [cartApi, setCartApi] = useState([]);
-  const { userId, setUserId } = useContext(UserType);
-
+  const { userId, setUserId, setCartNumber } = useContext(UserType);
   const cart = useSelector((state) => state.cart.cart);
   const total = cart
     ?.map((item) => item.price * item.quantity)
@@ -56,6 +55,7 @@ const CartScreen = () => {
           dispatch(addToCart(element))
         }
       });
+      setCartNumber(response.data.length);
     } catch (error) {
       console.log("error", error);
     }
