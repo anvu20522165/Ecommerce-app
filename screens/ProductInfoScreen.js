@@ -8,39 +8,82 @@ import {
     ImageBackground,
     Dimensions,
     Alert,
+    TouchableOpacity, Image,
 } from "react-native";
 
 import React, { useEffect, useState, useContext, useCallback } from "react";
 import { AntDesign, Feather } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation, useRoute, useFocusEffect, } from "@react-navigation/native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useDispatch, useSelector } from "react-redux";
-import { addToCart } from "../redux/CartReducer";
+import { useRoute, useFocusEffect, } from "@react-navigation/native";
+
 import { UserType } from "../UserContext";
 import axios from "axios";
 const ProductInfoScreen = () => {
-    const { userId, setUserId } = useContext(UserType);
     const route = useRoute();
+    const [productId, setProductId] = useState(route.params._id);
+    const [rate, setRate] = useState(0);
+    const { userId, setUserId } = useContext(UserType);
+
     const { width } = Dimensions.get("window");
     const height = (width * 100) / 100;
     const [total, setTotal] = useState(false);
     const [addedToCart, setAddedToCart] = useState(false);
     const [addedToFavorites, setAddedToFavorites] = useState(false);
     const [favorites, setFavorites] = useState([]);
-    const dispatch = useDispatch();
+    const [maxRating, setMaxRating] = useState([1, 2, 3, 4, 5]);
+    const starImgFilled = 'https://github.com/tranhonghan/images/blob/main/star_filled.png?raw=true'
+    const starImgCorner = 'https://github.com/tranhonghan/images/blob/main/star_corner.png?raw=true'
+
+    const CustomRatingBar = () => {
+        return (
+            <View style={{ justifyContent: "center", flexDirection: "row"}}>
+                {
+                    maxRating.map((item, key) => {
+                        return (
+                            <TouchableOpacity
+                                activeOpacity={0.7}
+                                key={item}
+                            >
+                                <Image
+                                    style={{ width: 20, height: 20, resizeMode: "cover" }}
+                                    source={
+                                        item <= rate
+                                            ? { uri: starImgFilled }
+                                            :
+                                            { uri: starImgCorner }
+                                    }
+                                />
+                            </TouchableOpacity>
+                        )
+                    })
+                }
+            </View>
+        )
+    }
+
+    const fetchRank = async () => {
+        try {
+            const response = await axios.get(`http://10.0.2.2:8000/rank/${productId}`);
+            
+            if (response.data!=null) {
+                setRate(Math.round(response.data.sum / response.data.size))
+            }
+        } catch (error) {
+            console.log("error message", error);
+        }
+    };
     const fetchFavorites = () => {
         axios
             .get(`http://10.0.2.2:8000/favorites/${userId}`)
             .then((response) => {
                 setFavorites(response.data);
-                console.log(response.data);
+                //console.log(response.data);
 
                 const isAddedToFavorites = response.data.some(
                     (favorite) => favorite.productid._id === route.params.item._id
                 );
                 if (isAddedToFavorites) {
-                    console.log(isAddedToFavorites);
+                    //console.log(isAddedToFavorites);
                     setAddedToFavorites(true);
                 }
             })
@@ -53,18 +96,19 @@ const ProductInfoScreen = () => {
     useFocusEffect(
         useCallback(() => {
             fetchFavorites();
+            fetchRank();
+            caculateTotal();
         }, [])
     );
 
     const caculateTotal = (x, y) => {
         setTotal(route.params.price - (route.params.price * route?.params?.offer / 100))
-        console.log(total);
+        //console.log(total);
     };
 
     useEffect(() => {
         caculateTotal();
-        // fetchFavorites();
-        //checkAddedToFavorites();
+        fetchRank();
     }, []);
 
     const addToFavorites = (item) => {
@@ -74,7 +118,7 @@ const ProductInfoScreen = () => {
                 .delete(`http://10.0.2.2:8000/favorites/${userId}/${item._id}`)
                 .then((response) => {
                     Alert.alert("Success", "Product removed from favorites");
-                    console.log("my favorites:", response.data);
+                    //console.log("my favorites:", response.data);
                     setAddedToFavorites(false);
                 })
                 .catch((error) => {
@@ -88,7 +132,7 @@ const ProductInfoScreen = () => {
             }
             axios.post("http://10.0.2.2:8000/favorites", { userId, favorite }).then((response) => {
                 Alert.alert("Success", "Product added successfully");
-                console.log("my favorites:", response.data);
+                //console.log("my favorites:", response.data);
                 setAddedToFavorites(true);
             }).catch((error) => {
                 Alert.alert("Error", "Failed to add product to favorites");
@@ -104,7 +148,7 @@ const ProductInfoScreen = () => {
             price: (item.price - item.price * item?.offer / 100),
             quantity: 1
         }
-        console.log("cart api:", cart)
+        //console.log("cart api:", cart)
         axios.post("http://10.0.2.2:8000/cart", { userId, cart }).then((response) => {
             Alert.alert("Success", "Product added successfully");
             console.log("my cart:", response.data)
@@ -181,10 +225,10 @@ const ProductInfoScreen = () => {
                             </Text>
                         )
                     }
-
-                    <Text style={{ color: "black", fontWeight: "500", fontSize: 15 }}>
+                    <CustomRatingBar item={rate}/>
+                    {/* <Text style={{ color: "black", fontWeight: "500", fontSize: 15 }}>
                         {route?.params?.storage} left
-                    </Text>
+                    </Text> */}
                     <Text style={{ color: "black", fontWeight: "500", fontSize: 15 }}>
                         {route?.params?.sold} have been sold
                     </Text>
@@ -201,7 +245,7 @@ const ProductInfoScreen = () => {
                 <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginHorizontal: 10 }}>
                     <View style={{}}>
                         <Text style={{ fontSize: 18, fontWeight: "normal", color: "grey", }}>
-                            Price
+                            Price {rate}
                         </Text>
                         {route?.params?.offer != 0 ? (
                             <Text style={{ fontSize: 18, fontWeight: "bold", textDecorationLine: 'line-through', textDecorationStyle: 'solid', color: '#555555' }}>

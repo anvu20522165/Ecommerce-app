@@ -112,7 +112,10 @@ const MyOrdersDetails = () => {
                 },
                 {
                     text: "Confirm",
-                    onPress: () => navigation.replace("Main"),
+                    onPress: () => navigation.navigate("Feedback", {
+                        _id: orderId,
+                        userId: userId,                       
+                    })
                 },
             ]);
 
