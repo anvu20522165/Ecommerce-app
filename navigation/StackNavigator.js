@@ -37,6 +37,7 @@ import MyFavorites from "../screens/profileLinks/MyFavorites";
 import Notification from "../screens/Notification";
 import axios from "axios";
 import { UserType } from "../UserContext";
+import FeedbackScreen from "../screens/FeedbackScreen";
 
 const StackNavigator = () => {
   const [notiNumber, setNotiNumber] = useState();
@@ -286,6 +287,11 @@ const StackNavigator = () => {
         <Stack.Screen
           name="Wishlist"
           component={MyFavorites}
+          option={{ headerShown: true }}
+        />
+        <Stack.Screen
+          name="Feedback"
+          component={FeedbackScreen}
           option={{ headerShown: true }}
         />
       </Stack.Navigator>

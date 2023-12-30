@@ -10,7 +10,6 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 
 import { cleanCart } from "../redux/CartReducer";
 
-import RazorpayCheckout from "react-native-razorpay";
 
 const ConfirmationScreen = () => {
 

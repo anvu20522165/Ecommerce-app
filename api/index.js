@@ -41,6 +41,7 @@ const Product = require("./models/product");
 const Category = require("./models/category");
 const Feedback = require("./models/feedback");
 const Notification = require("./models/notification");
+const Rank = require("./models/rank");
 
 
 // ------------users methods
@@ -491,26 +492,34 @@ app.delete("/products/:id", async (req, res) => {
 });
 
 //feedack
- 
+
 //create a feedback
 app.post("/feedback", async (req, res) => {
   try {
-    const { userId, productId, comment, rate } = req.body;
-    const product = await Product.findById(productId);
-    if (!product) {
-      return res.status(404).json({ message: "Product not found" });
-    }
+    const { orderId, userId, comment, rate } = req.body;
+    
 
-    const feedback = new Feedback({
+    const newFeedback = new Feedback({
       userid: userId,
-      productid: productId,
+      orderid: orderId,
       rate: rate,
       comment: comment
     });
-      
-    console.log(feedback)
-    await feedback.save();
-    return res.json(feedback); 
+    console.log("feedback after insert:", newFeedback)
+    await newFeedback.save();
+
+    const order = await Order.findById(orderId); 
+
+    for (let index = 0; index < order.products.length; index++) {   
+      const rank = new Rank({
+        productid: order.products[index].productid,
+        rate: rate,
+      });
+      console.log(rank)
+      await rank.save();
+    }
+    res.status(200).json({ message: "Feedback added Successfully" });
+
   } catch (error) {
     return res.status(400).json({ error: error.message });
   }
@@ -518,11 +527,26 @@ app.post("/feedback", async (req, res) => {
 
 app.get("/feedback", async (req, res) => {
   try {
-    const feedback = await Feedback.find().populate('productid');
+    const feedback = await Feedback.find();
     if (!feedback) {
       throw "error";
     }
     return res.status(201).json(feedback);
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+});
+
+app.get("/rank/:productid", async (req, res) => {
+  try {
+    const productid = req.params.productid;
+    const ranks = await Rank.find(); 
+    const specificRank = ranks.filter((item) => item.productid == productid)
+    const information = {
+      size: specificRank.length,
+      sum: (specificRank.reduce((a, v) => a = a + v.rate, 0))
+    }
+    return res.status(201).json(information);
   } catch (error) {
     return res.status(400).json({ error: error.message });
   }
@@ -602,10 +626,10 @@ app.post("/notification", async (req, res) => {
       orderid: orderId,
       userid: userId
     });
-      
+
     console.log(notification)
     await notification.save();
-    return res.json(notification); 
+    return res.json(notification);
   } catch (error) {
     return res.status(400).json({ error: error.message });
   }
@@ -925,12 +949,12 @@ app.put("/updateOrderStatus/:id", async (req, res) => {
 
     //when update => create a notification
     //users dont get noti as they do the "Delivered status action to Confirmation"
-    if (status == "Delivered") {
+    if (status != "Delivered") {
       const notification = new Notification({
         orderid: updatedOrder._id,
         userid: updatedOrder.user,
         isClicked: true
-      });       
+      });
       await notification.save();
     }
     res.status(200).json({ message: "order's status updated successfully" });
