@@ -552,6 +552,16 @@ app.get("/rank/:productid", async (req, res) => {
   }
 });
 
+app.get("/rank", async (req,res) => {
+  try{
+    const ranks = await Rank.find();
+    return res.status(201).json(ranks);
+  }catch(error){
+    return res.status(400).json({error: error.message });
+  }
+}
+);
+
 //notification
 app.get("/notification", async (req, res) => {
   try {
