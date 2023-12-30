@@ -269,7 +269,7 @@ const HomeScreen = () => {
               <Pressable
                 onPress={() =>
                   navigation.navigate("Info", {
-
+                    _id: item._id,
                     title: item.title,
                     price: item?.price,
 
@@ -360,7 +360,7 @@ const HomeScreen = () => {
               <Pressable
                 onPress={() =>
                   navigation.navigate("Info", {
-
+                    _id: item._id,
                     title: item.title,
                     price: item?.price,
 
@@ -448,7 +448,7 @@ const HomeScreen = () => {
               <Pressable
                 onPress={() =>
                   navigation.navigate("Info", {
-
+                    _id: item._id,
                     title: item.title,
                     price: item?.price,
 

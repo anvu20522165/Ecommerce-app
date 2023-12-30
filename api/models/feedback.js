@@ -5,9 +5,9 @@ const feedbackSchema = new mongoose.Schema({
           type: mongoose.Schema.Types.ObjectId,
           ref: "User",
         },
-        productid: {
+        orderid: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Product",
+            ref: "Order",
           },
         rate: {
           type: Number,
