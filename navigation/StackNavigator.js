@@ -38,10 +38,18 @@ import Notification from "../screens/Notification";
 import axios from "axios";
 import { UserType } from "../UserContext";
 import FeedbackScreen from "../screens/FeedbackScreen";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import jwt_decode from "jwt-decode";
 
 const StackNavigator = () => {
   const [notiNumber, setNotiNumber] = useState();
   const { userId, setUserId, cartNumber, setCartNumber } = useContext(UserType);
+  const fetchUser = async () => {
+    const token = await AsyncStorage.getItem("authToken");
+    const decodedToken = jwt_decode(token);
+    const userId = decodedToken.userId;
+    setUserId(userId);
+  };
   const fetchCartNumber = async () => {
     try {
       const response = await axios.get(
@@ -68,8 +76,14 @@ const StackNavigator = () => {
     }
   };
   useEffect(() => {
+    if(userId)
+    {
+      fetchCartNumber();
+    }
+  },[userId]);
+  useEffect(() => {
+    fetchUser();
     fetchNotiNumber();
-    fetchCartNumber();
   }, []);
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
