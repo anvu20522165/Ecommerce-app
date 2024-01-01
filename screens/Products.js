@@ -15,7 +15,7 @@ import {
   StatusBar,
   TextInput,
 } from "react-native";
-import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import { useNavigation, useFocusEffect, useRoute } from "@react-navigation/native";
 import { AntDesign, Feather } from "@expo/vector-icons";
 import axios from "axios";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5.js";
@@ -27,9 +27,12 @@ export default function Products() {
     "https://m.media-amazon.com/images/G/31/img20/Events/Jup21dealsgrid/blockbuster.jpg",
     "https://images-eu.ssl-images-amazon.com/images/I/31dXEvtxidL._AC_SX368_.jpg",
     "https://m.media-amazon.com/images/G/31/img20/Events/Jup21dealsgrid/All_Icons_Template_1_icons_01.jpg",
+    "https://th.bing.com/th/id/OIP.oQ9gioHYyztzuhHEVAu9OQHaHa?rs=1&pid=ImgDetMain",
+    "https://i5.walmartimages.com/asr/618a647e-36db-47da-85d9-d449f283271b.734ddc164b4b2d29f9eb3d6ba8085450.jpeg",
   ];
+  const route = useRoute();
   const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
   const [products, setProducts] = useState([]);
   const [sortCriteria, setSortCriteria] = useState("recommended");
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -84,16 +87,21 @@ export default function Products() {
     fetchCategories();
     fetchRanks();
   }, []);
-
+  useEffect(() => {
+    if (route.params.category) {
+      console.log(route.params.category);
+      setSelectedCategory(route.params.category);
+    }
+  }, [route.params.category]);
   const handleCategorySelect = (category) => {
-    if (category === "") {
+    if (category === "all") {
       setSelectedCategory(category);
     } else {
       setSelectedCategory(category);
     }
   };
   useEffect(() => {
-    if (selectedCategory === "") {
+    if (selectedCategory === "all") {
       // fetchProducts();
       setFilteredProducts(products);
       setOriginalFiltered(products);
@@ -146,8 +154,15 @@ export default function Products() {
   };
   useFocusEffect(
     useCallback(() => {
-      setSelectedCategory("");
+    //   fetchProducts();
+    // fetchCategories();
+    // fetchRanks();
+    if (!route.params.category) {
+      setSelectedCategory("all");
       setFilteredProducts(originalFiltered);
+    }
+      //setSelectedCategory("all");
+      //setFilteredProducts(originalFiltered);
       setPriceSortName("Price: Low to High");
       setSortCriteria("recommended");
     }, [])
@@ -181,10 +196,10 @@ export default function Products() {
             size={22}
             color="black"
           />
-          <TextInput placeholder="Search Amazon.in" />
+          <TextInput placeholder="Search in Shein" />
         </Pressable>
 
-        <Feather name="mic" size={24} color="black" />
+        {/* <Feather name="mic" size={24} color="black" /> */}
       </View>
       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
         <ScrollView
@@ -192,19 +207,19 @@ export default function Products() {
           style={styles.exception}
           showsHorizontalScrollIndicator={false}
         >
-          <Pressable onPress={() => handleCategorySelect("")}>
+          <Pressable onPress={() => handleCategorySelect("all")}>
             <View
               style={[
                 styles.flatlist,
                 { marginLeft: 20 },
-                selectedCategory === "" && styles.selectedCategory,
+                selectedCategory === "all" && styles.selectedCategory,
               ]}
             >
               <Image source={{ uri: images[0] }} style={styles.categoryImage} />
               <Text
                 style={[
                   styles.categories,
-                  selectedCategory === "" && styles.selectedText,
+                  selectedCategory === "all" && styles.selectedText,
                 ]}
               >
                 All

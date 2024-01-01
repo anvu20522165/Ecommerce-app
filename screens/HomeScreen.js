@@ -8,7 +8,8 @@ import {
   Pressable,
   TextInput,
   Image,
-  StatusBar
+  StatusBar,
+  FlatList,
 } from "react-native";
 import React, { useEffect, useContext, useState, useCallback } from "react";
 import { Feather } from "@expo/vector-icons";
@@ -33,12 +34,12 @@ const HomeScreen = () => {
     },
     {
       id: "1",
-      image: "https://th.bing.com/th/id/OIP.5U_tIKHGTL_Vk5GrCtrXCQHaLH?w=740&h=1110&rs=1&pid=ImgDetMain",
+      image: "https://m.media-amazon.com/images/I/51dZ19miAbL._AC_SY350_.jpg",
       name: "Men",
     },
     {
       id: "2",
-      image: "https://m.media-amazon.com/images/I/51dZ19miAbL._AC_SY350_.jpg",
+      image: "https://th.bing.com/th/id/OIP.5U_tIKHGTL_Vk5GrCtrXCQHaLH?w=740&h=1110&rs=1&pid=ImgDetMain",
       name: "Women",
     },
     
@@ -75,7 +76,18 @@ const HomeScreen = () => {
   const { userId, setUserId } = useContext(UserType);
   const [selectedAddress, setSelectedAdress] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
   console.log(selectedAddress)
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get("http://10.0.2.2:8000/categories");
+      setCategories(response.data);
+      console.log("categories: ", response.data);
+    } catch (error) {
+      console.log("error message", error);
+    }
+  };
   const fetchTrendingData = async () => {
     try {
       const response = await axios.get("http://10.0.2.2:8000/trendingproducts");
@@ -110,13 +122,15 @@ const HomeScreen = () => {
   useEffect(() => {
     fetchTrendingData();
     fetchOffers();
-    fetchNewData()
+    fetchNewData();
+    fetchCategories();
   }, []);
 
   useFocusEffect(
-    useCallback(() => {
-      fetchNewData()
-    }, [])
+    useCallback(() => {[
+      fetchNewData(),
+      fetchCategories(),
+    ]}, [])
   );
 
   useEffect(() => {
@@ -147,6 +161,12 @@ const HomeScreen = () => {
   useEffect(() => {
     fetchUser();
   }, []);
+
+  const handleCategorySelect = (category) => {
+    navigation.navigate("Products",{
+      category: category,
+    });
+  };
   return (
     <>
       <SafeAreaView
@@ -230,7 +250,7 @@ const HomeScreen = () => {
           />
 
 
-    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+    {/* <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {list.map((item, index) => (
               <Pressable
                 key={index}
@@ -259,7 +279,65 @@ const HomeScreen = () => {
                 </Text>
               </Pressable>
             ))}
-          </ScrollView>
+          </ScrollView> */}
+
+          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+        <ScrollView
+          horizontal={true}
+          style={styles.exception}
+          showsHorizontalScrollIndicator={false}
+        >
+          <Pressable onPress={() => handleCategorySelect("all")}>
+            <View
+              style={[
+                styles.flatlist,
+                /*{ marginLeft: 20 },*/
+                /*selectedCategory === "all" && styles.selectedCategory,*/
+              ]}
+            >
+              <Image source={{ uri: list[0].image }} style={styles.categoryImage} />
+              <Text
+                style={[
+                  styles.categories,
+                  /*selectedCategory === "all" && styles.selectedText,*/
+                ]}
+              >
+                All
+              </Text>
+            </View>
+          </Pressable>
+          <FlatList
+            data={categories}
+            renderItem={({ item, index }) => (
+              <Pressable onPress={() => handleCategorySelect(item.name)}>
+                <View
+                  style={[
+                    styles.flatlist,
+                    /*selectedCategory === item.name && styles.selectedCategory,*/
+                  ]}
+                >
+                  <Image
+                    source={{ uri: list[index + 1].image }}
+                    style={styles.categoryImage}
+                    resizeMode="contain"
+                  />
+                  <Text
+                    style={[
+                      styles.categories,
+                      /*selectedCategory === item.name && styles.selectedText,*/
+                    ]}
+                  >
+                    {item.name}
+                  </Text>
+                </View>
+              </Pressable>
+            )}
+            keyExtractor={(item, index) => index.toString()}
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+          />
+        </ScrollView>
+      </ScrollView>
           <Text style={{ padding: 10, fontSize: 18, fontWeight: "bold" }}>
             Most Sold Products
           </Text>
@@ -638,4 +716,19 @@ const HomeScreen = () => {
 
 export default HomeScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  flatlist:{
+    margin: 10,
+                  justifyContent: "center",
+                  alignItems: "center",
+  },
+  categoryImage:{
+    width: 65, height: 65, resizeMode: "contain" 
+  },
+  categories:{
+    textAlign: "center",
+                    fontSize: 12,
+                    fontWeight: "500",
+                    marginTop: 5,
+  }
+});

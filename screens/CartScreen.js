@@ -170,6 +170,11 @@ const CartScreen = () => {
       console.log("error", error);
     }
   }
+  const handleCategorySelect = (category) => {
+    navigation.navigate("Products",{
+      category: category,
+    });
+  };
   return (
     <ScrollView style={{ flex: 1, backgroundColor: "white" }}>
       <View
@@ -462,6 +467,7 @@ const CartScreen = () => {
                   borderColor: "#C0C0C0",
                   borderWidth: 0.6,
                 }}
+                onPress={()=>handleCategorySelect(item.productid.category)}
               >
                 <Text>See More Like this</Text>
               </Pressable>
