@@ -40,6 +40,8 @@ import { UserType } from "../UserContext";
 import FeedbackScreen from "../screens/FeedbackScreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import jwt_decode from "jwt-decode";
+import ProductsSearch from "../screens/ProductsSearch";
+import ViewLowStockScreen from "../screens/admin/ViewLowStockScreen";
 
 const StackNavigator = () => {
   const [notiNumber, setNotiNumber] = useState();
@@ -118,6 +120,7 @@ const StackNavigator = () => {
               ) : (
                 <Ionicons name="shirt-outline" size={24} color="black" />
               ),
+              //unmountOnBlur: true
           }}
         />
 
@@ -276,37 +279,47 @@ const StackNavigator = () => {
         <Stack.Screen
           name="UpdateProductsScreen"
           component={UpdateProductsScreen}
-          option={{ headerShown: true }}
+          options={{ headerShown: true }}
         />
         <Stack.Screen
           name="ViewCategoriesScreen"
           component={ViewCategoriesScreen}
-          option={{ headerShown: true }}
+          options={{ headerShown: true }}
         />
         <Stack.Screen
           name="AddCategoriesScreen"
           component={AddCategoriesScreen}
-          option={{ headerShown: true }}
+          options={{ headerShown: true }}
         />
         <Stack.Screen
           name="UpdateCategoriesScreen"
           component={UpdateCategoriesScreen}
-          option={{ headerShown: true }}
+          options={{ headerShown: true }}
         />
         <Stack.Screen
           name="UpdatePassword"
           component={UpdatePassword}
-          option={{ headerShown: true }}
+          options={{ headerShown: true }}
         />
         <Stack.Screen
           name="Wishlist"
           component={MyFavorites}
-          option={{ headerShown: true }}
+          options={{ headerShown: true }}
         />
         <Stack.Screen
           name="Feedback"
           component={FeedbackScreen}
-          option={{ headerShown: true }}
+          options={{ headerShown: true }}
+        />
+      <Stack.Screen
+          name="ProductsSearch"
+          component={ProductsSearch}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Low Stock"
+          component={ViewLowStockScreen}
+          options={{ headerShown: true }}
         />
       </Stack.Navigator>
     </NavigationContainer>

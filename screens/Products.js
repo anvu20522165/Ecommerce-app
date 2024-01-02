@@ -19,6 +19,7 @@ import { useNavigation, useFocusEffect, useRoute } from "@react-navigation/nativ
 import { AntDesign, Feather } from "@expo/vector-icons";
 import axios from "axios";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5.js";
+import ProductsSearch from "./ProductsSearch";
 
 export default function Products() {
   const navigation = useNavigation();
@@ -88,11 +89,9 @@ export default function Products() {
     fetchRanks();
   }, []);
   useEffect(() => {
-    if (route.params.category) {
-      console.log(route.params.category);
-      setSelectedCategory(route.params.category);
-    }
-  }, [route.params.category]);
+    if(route.params?.category){
+      setSelectedCategory(route.params?.category);}
+  }, [route.params?.category]);
   const handleCategorySelect = (category) => {
     if (category === "all") {
       setSelectedCategory(category);
@@ -154,18 +153,13 @@ export default function Products() {
   };
   useFocusEffect(
     useCallback(() => {
-    //   fetchProducts();
-    // fetchCategories();
-    // fetchRanks();
-    if (!route.params.category) {
-      setSelectedCategory("all");
-      setFilteredProducts(originalFiltered);
-    }
-      //setSelectedCategory("all");
-      //setFilteredProducts(originalFiltered);
+      // fetchProducts();
+      // fetchCategories();
+      // fetchRanks();
+    // setSelectedCategory("all");
       setPriceSortName("Price: Low to High");
       setSortCriteria("recommended");
-    }, [])
+    },[])
   );
   return (
     <SafeAreaView style={styles.container}>
@@ -189,6 +183,7 @@ export default function Products() {
             height: 38,
             flex: 1,
           }}
+          onPress={()=>navigation.navigate("ProductsSearch")}
         >
           <AntDesign
             style={{ paddingLeft: 10 }}
@@ -196,7 +191,7 @@ export default function Products() {
             size={22}
             color="black"
           />
-          <TextInput placeholder="Search in Shein" />
+          <TextInput placeholder="Search in Shein" editable={false} />
         </Pressable>
 
         {/* <Feather name="mic" size={24} color="black" /> */}

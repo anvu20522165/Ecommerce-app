@@ -24,40 +24,48 @@ const AdminDashboard = () => {
   const [ordersCount, setOrdersCount] = useState(0);
   const [productsCount, setProductsCount] = useState(0);
   const [categoriesCount, setCategoriesCount] = useState(0);
+  const [lowStock, setLowStock] =useState(0);
+  const fetchCounts = async () => {
+    try {
+      // Lấy số lượng Users
+      const usersResponse = await axios.get("http://10.0.2.2:8000/users");
+      const usersCount = usersResponse.data.length;
+      setUsersCount(usersCount);
+
+      // Lấy số lượng Orders
+      const ordersResponse = await axios.get("http://10.0.2.2:8000/orders");
+      const ordersCount = ordersResponse.data.length;
+      setOrdersCount(ordersCount);
+
+      // Lấy số lượng Products
+      const productsResponse = await axios.get(
+        "http://10.0.2.2:8000/products"
+      );
+      const lowStockCount = productsResponse.data.filter((product) => product.storage <= 5).length;
+      const productsCount = productsResponse.data.length;
+      setProductsCount(productsCount);
+      setLowStock(lowStockCount);
+
+      // Lấy số lượng Categories
+      const categoriesResponse = await axios.get(
+        "http://10.0.2.2:8000/categories"
+      );
+      const categoriesCount = categoriesResponse.data.length;
+      setCategoriesCount(categoriesCount);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
 
   useEffect(() => {
-    const fetchCounts = async () => {
-      try {
-        // Lấy số lượng Users
-        const usersResponse = await axios.get("http://10.0.2.2:8000/users");
-        const usersCount = usersResponse.data.length;
-        setUsersCount(usersCount);
-
-        // Lấy số lượng Orders
-        const ordersResponse = await axios.get("http://10.0.2.2:8000/orders");
-        const ordersCount = ordersResponse.data.length;
-        setOrdersCount(ordersCount);
-
-        // Lấy số lượng Products
-        const productsResponse = await axios.get(
-          "http://10.0.2.2:8000/products"
-        );
-        const productsCount = productsResponse.data.length;
-        setProductsCount(productsCount);
-
-        // Lấy số lượng Categories
-        const categoriesResponse = await axios.get(
-          "http://10.0.2.2:8000/categories"
-        );
-        const categoriesCount = categoriesResponse.data.length;
-        setCategoriesCount(categoriesCount);
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    };
-
     fetchCounts();
   }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchCounts();
+    }, [])
+  );
   return (
     <SafeAreaView>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -65,12 +73,16 @@ const AdminDashboard = () => {
           <View style={styles.statisticsSection}>
             <Text style={styles.contentTitle}>Welcome Admin</Text>
             <View style={styles.statisticsContainer}>
+            
               <View
                 style={[
                   styles.statisticsContent,
                   { backgroundColor: "orange" },
                 ]}
               >
+                <Pressable
+                      onPress={() => navigation.navigate("ViewUsersScreen")}
+                    >
                 <FontAwesome5
                   name="user"
                   size={17}
@@ -81,10 +93,15 @@ const AdminDashboard = () => {
                   <Text style={styles.statisticsValue}>{usersCount}</Text>
                   <Text style={styles.statisticsTitle}>Users</Text>
                 </View>
+                </Pressable>
               </View>
+              
               <View
                 style={[styles.statisticsContent, { backgroundColor: "blue" }]}
               >
+                <Pressable
+                      onPress={() => navigation.navigate("ViewOrdersScreen")}
+                    >
                 <FontAwesome5
                   name="shopping-cart"
                   size={17}
@@ -95,13 +112,17 @@ const AdminDashboard = () => {
                   <Text style={styles.statisticsValue}>{ordersCount}</Text>
                   <Text style={styles.statisticsTitle}>Orders</Text>
                 </View>
+                </Pressable>
               </View>
               <View
                 style={[
                   styles.statisticsContent,
-                  { backgroundColor: "yellow" },
+                  { backgroundColor: "green" },
                 ]}
               >
+                <Pressable
+                      onPress={() => navigation.navigate("ViewProductsScreen")}
+                    >
                 <FontAwesome5
                   name="boxes"
                   size={19}
@@ -112,11 +133,15 @@ const AdminDashboard = () => {
                   <Text style={styles.statisticsValue}>{productsCount}</Text>
                   <Text style={styles.statisticsTitle}>Products</Text>
                 </View>
+                </Pressable>
               </View>
               <View
                 style={[styles.statisticsContent, { backgroundColor: "grey" }]}
               >
-                <FontAwesome
+                <Pressable
+                      onPress={() => navigation.navigate("ViewCategoriesScreen")}
+                    >
+                                      <FontAwesome
                   name="list"
                   size={19}
                   color="#fff"
@@ -126,6 +151,29 @@ const AdminDashboard = () => {
                   <Text style={styles.statisticsValue}>{categoriesCount}</Text>
                   <Text style={styles.statisticsTitle}>Categories</Text>
                 </View>
+                </Pressable>
+              </View>
+              <View
+                style={[/*styles.statisticsContent,*/ { backgroundColor: "brown", width: '100%',
+                borderRadius: 10,
+                height: 110,
+                padding: 15,
+                marginBottom: 15, }]}
+              >
+                <Pressable
+                      onPress={() => navigation.navigate("Low Stock")}
+                    >
+                <FontAwesome
+                  name="exclamation"
+                  size={19}
+                  color="#fff"
+                  style={styles.statisticsIcon}
+                />
+                <View style={styles.statisticsCounter}>
+                  <Text style={styles.statisticsValue}>{lowStock}</Text>
+                  <Text style={styles.statisticsTitle}>Low in Stock</Text>
+                </View>
+                </Pressable>
               </View>
             </View>
           </View>

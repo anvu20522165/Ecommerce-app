@@ -187,7 +187,7 @@ const HomeScreen = () => {
             }}
           >
             <Pressable
-            onPress={() => navigation.navigate("Products")}
+            onPress={() => navigation.navigate("ProductsSearch")}
               style={{
                 flexDirection: "row",
                 alignItems: "center",

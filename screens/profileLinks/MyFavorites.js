@@ -13,7 +13,7 @@ import {
   ScrollView,
   Pressable,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import axios from "axios";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5.js";
 import { UserType } from "../../UserContext";
@@ -22,22 +22,27 @@ export default function MyFavorites() {
   const navigation = useNavigation();
   const { userId } = useContext(UserType);
   const [favorites, setFavorites] = useState([]);
+  const fetchFavorites = async () => {
+    try {
+      const response = await axios.get(
+        `http://10.0.2.2:8000/favorites/${userId}`
+      );
+      //const { orderData } = response.data;
+      //setOrderData(orderData);
+      setFavorites(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.log("error message", error);
+    }
+  };
   useEffect(() => {
-    const fetchFavorites = async () => {
-      try {
-        const response = await axios.get(
-          `http://10.0.2.2:8000/favorites/${userId}`
-        );
-        //const { orderData } = response.data;
-        //setOrderData(orderData);
-        setFavorites(response.data);
-        console.log(response.data);
-      } catch (error) {
-        console.log("error message", error);
-      }
-    };
     fetchFavorites();
   }, []);
+  useFocusEffect(
+    useCallback(() => {
+    fetchFavorites();
+    },[])
+  );
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
