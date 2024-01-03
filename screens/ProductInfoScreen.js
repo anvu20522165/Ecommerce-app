@@ -96,9 +96,12 @@ const ProductInfoScreen = () => {
             const response = await axios.get(`http://10.0.2.2:8000/rank/${productId}`);
             
             if (response.data!=null) {
+                console.log("sum",(response.data.sum));
+                console.log("size",(response.data.size));
+                console.log("result",(response.data.sum / response.data.size));
                 setRate(Math.round(response.data.sum / response.data.size))
             }
-            console.log("productid",productId);
+            
         } catch (error) {
             console.log("error message", error);
         }

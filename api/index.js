@@ -542,6 +542,7 @@ app.get("/feedback/:productid", async (req, res)=>{
     const productid= req.params.productid;
     const orders = await Order.find({ 'products.productid': productid }, '_id');
     const feedbacks = await Feedback.find({ orderid: { $in: orders } });
+    console.log(feedbacks)
     return res.status(201).json(feedbacks);
   }
   catch(error){
@@ -588,6 +589,7 @@ app.get("/rank/:productid", async (req, res) => {
       size: specificRank.length,
       sum: (specificRank.reduce((a, v) => a = a + v.rate, 0))
     }
+    console.log(information)
     return res.status(201).json(information);
   } catch (error) {
     return res.status(400).json({ error: error.message });
