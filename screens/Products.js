@@ -90,7 +90,10 @@ export default function Products() {
   }, []);
   useEffect(() => {
     if(route.params?.category){
-      setSelectedCategory(route.params?.category);}
+      
+      setSelectedCategory(route.params?.category);
+      console.log("useeff",selectedCategory);
+    }
   }, [route.params?.category]);
   const handleCategorySelect = (category) => {
     if (category === "all") {
@@ -104,6 +107,7 @@ export default function Products() {
       //fetchProducts();
       setFilteredProducts(products);
       setOriginalFiltered(products);
+      setSortCriteria("recommended");
     } else {
       fetchCategory();
     }
@@ -163,12 +167,18 @@ export default function Products() {
   };
   useFocusEffect(
     useCallback(() => {
-      // fetchProducts();
-      // fetchCategories();
-      // fetchRanks();
-    // setSelectedCategory("all");
-      setPriceSortName("Price: Low to High");
-      //setSortCriteria("recommended");
+      
+      // setPriceSortName("Price: Low to High");
+      // if (selectedCategory === "all") {
+      //   setFilteredProducts(products);
+      //   setOriginalFiltered(products);
+      //   setSortCriteria("recommended");
+      // } else {
+      //   console.log("callbackcate",selectedCategory);
+      //   setSelectedCategory(selectedCategory);
+      //   fetchCategory();
+        
+      // }
 
     },[])
   );

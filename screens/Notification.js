@@ -40,6 +40,18 @@ const Notification = () => {
       console.log("error", error);
     }
   };
+  const fetchNotiNumber = async () => {
+    try {
+      const response = await axios.get(
+        `http://10.0.2.2:8000/notification/range/${userId}`
+      );
+      //const { userData } = response.data;
+      console.log("noti",response.data)
+      setNotiNumber(response.data);
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
 
   const fetchNotification = async () => {
     try {
@@ -49,8 +61,7 @@ const Notification = () => {
       //const { userData } = response.data;
       //console.log(response.data)
       setNoti(response.data);
-      setNotiNumber(response.data.length);
-      console.log("notiNum",response.data.length);
+      console.log(response.data);
     } catch (error) {
       console.log("error", error);
     }
@@ -62,6 +73,7 @@ const Notification = () => {
         `http://10.0.2.2:8000/notification/${notiId}`
       );
       fetchNotification();
+      fetchNotiNumber();
     } catch (error) {
       console.log("error", error);
     }
@@ -73,6 +85,7 @@ const Notification = () => {
         `http://10.0.2.2:8000/updateClickNotification/${id}`
       );
       fetchNotification();
+      fetchNotiNumber();
     } catch (error) {
       console.log("error", error);
     }
@@ -108,6 +121,7 @@ const Notification = () => {
     useCallback(() => {
       fetchUser();
       fetchNotification();
+      fetchNotiNumber();
     }, [])
   );
   return (

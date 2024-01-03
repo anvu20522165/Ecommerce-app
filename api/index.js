@@ -625,7 +625,7 @@ app.get("/notification/range/:userId", async (req, res) => {
     
     const notification = await Notification.find();
     const userId = req.params.userId;
-    const final = notification.filter((item) => item.userid == userId.toString())
+    const final = notification.filter((item) => item.userid == userId.toString() && item.isClicked === true)
     if (!notification) {
       throw "error";
     }
@@ -680,7 +680,7 @@ app.post("/notification", async (req, res) => {
 
     const notification = new Notification({
       orderid: orderId,
-      userid: userId
+      userid: userId,
     });
 
     console.log(notification)

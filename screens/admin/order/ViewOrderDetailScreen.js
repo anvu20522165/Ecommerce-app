@@ -72,12 +72,12 @@ const ViewOrderDetailScreen = () => {
     const fetchNotiNumber = async () => {
         try {
           const response = await axios.get(
-            `http://10.0.2.2:8000/notification/${userId}`
+            `http://10.0.2.2:8000/notification/range/${userId}`
           );
           //const { userData } = response.data;
           //console.log(response.data)
-          setNotiNumber(response.data.length);
-          console.log("notiNum",response.data.length);
+          setNotiNumber(response.data);
+          console.log("notiNum",response);
         } catch (error) {
           console.log("error", error);
         }
