@@ -356,7 +356,7 @@ const ViewProductFeedbackScreen = () => {
                 </View>
 
         </ScrollView>
-         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginHorizontal: 14,  }}>
+         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginHorizontal: 14, marginVertical: 5  }}>
          <View>
              <Text style={{ fontSize: 18, fontWeight: "normal", color: "grey" }}>
                  Total

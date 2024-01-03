@@ -122,9 +122,12 @@ export default function Products() {
         const rankB = ranks.find(
           (rank) => rank.productid.toString() === b._id.toString()
         );
-
-        // So sánh rank và sắp xếp theo thứ tự giảm dần
-        return rankB.rate - rankA.rate;
+        if (rankA && rankB) {
+          return rankB.rate - rankA.rate;
+        }
+      
+        // Nếu không tồn tại rank tương ứng, giữ nguyên thứ tự của a và b
+        return 0;
       });
 
       setFilteredProducts(sortedProducts);

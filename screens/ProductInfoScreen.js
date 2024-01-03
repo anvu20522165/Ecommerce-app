@@ -223,9 +223,9 @@ const ProductInfoScreen = () => {
                         size={22}
                         color="black"
                     />
-                    <TextInput placeholder="Search Amazon.in" />
+                    <TextInput placeholder="Search in Shein" editable={false} />
                 </Pressable>
-                <Pressable><Feather name="mic" size={24} color="black" /></Pressable>
+                
 
             </View>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
