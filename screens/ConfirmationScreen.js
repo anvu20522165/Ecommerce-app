@@ -54,8 +54,7 @@ const ConfirmationScreen = () => {
       );
 
       setCartNumber(response.data.length);
-      console.log("cart number",response.data.length);
-      console.log("cart", response.data);
+
     } catch (error) {
       console.log("error", error);
     }
@@ -72,9 +71,7 @@ const ConfirmationScreen = () => {
       const response = await axios.delete(
         `http://10.0.2.2:8000/addresses/${userId}/${addressId}`, 
       );
-      console.log("delete", response);
-      //const { addresses } = response.data;
-      //setAddresses(addresses);
+
       fetchAddresses();
     } catch (error) {
       console.log("error", error);
@@ -102,8 +99,7 @@ const ConfirmationScreen = () => {
         finalCost: totalCost,
       };
 
-      console.log("my products in cart: ", cart);
-      console.log("my products in order: ", orderData);
+
       const response = await axios.post(
         "http://10.0.2.2:8000/orders",
         orderData
@@ -112,8 +108,7 @@ const ConfirmationScreen = () => {
         navigation.navigate("Order");
         dispatch(cleanCart());
         fetchCartNumber();
-        console.log("order created successfully", response.data);
-        console.log(JSON.stringify(response.data, undefined, 4));
+
         //setCurrentStep(0)
       } else {
         console.log("error creating order", response.data);
