@@ -336,9 +336,9 @@ export default function Products() {
             <Pressable
               onPress={() =>
                 navigation.navigate("Info", {
+                  _id: item._id,
                   title: item.title,
                   price: item?.price,
-
                   description: item?.description,
                   category: item?.category,
                   image: item?.image,
@@ -385,7 +385,7 @@ export default function Products() {
         )}
         //Setting the number of column
         numColumns={2}
-        keyExtractor={(item, index) => index}
+        keyExtractor={(item, index) => index.toString()}
       />
     </SafeAreaView>
   );

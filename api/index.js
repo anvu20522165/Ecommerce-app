@@ -537,6 +537,48 @@ app.get("/feedback", async (req, res) => {
   }
 });
 
+app.get("/feedback/:productid", async (req, res)=>{
+  try{
+    const productid= req.params.productid;
+    const orders = await Order.find({ 'products.productid': productid }, '_id');
+    const feedbacks = await Feedback.find({ orderid: { $in: orders } });
+    return res.status(201).json(feedbacks);
+  }
+  catch(error){
+    return res.status(400).json({error: error.message});
+  }
+});
+
+app.put("/feedback/:orderId", async(req,res)=>{
+  try {
+    const { rate, comment } = req.body;
+    //find the feedback by the feedbackid
+    const feedback = await Feedback.findOne({ orderid: req.params.orderId });
+    if (!feedback) {
+      return res.status(404).json({ message: "Feedback not found" });
+    }
+    feedback.rate = rate;
+    feedback.comment = comment;
+    await feedback.save();
+    res.status(200).json(feedback);
+  } catch (e) { res.status(400).json({ message: "Error" }); }
+});
+
+app.delete("/feedback/:orderId", async (req, res) => {
+  try {
+    console.debug("Deleting this feedback...");
+    const deletetFeedback = await Feedback.findOneAndDelete({
+      orderid: req.params.orderId,
+    });
+    if (!deleteFeedback) {
+      return res.status(404).json({ error: "Feedback not found." });
+    }
+    return res.json(deleteFeedback);
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+});
+
 app.get("/rank/:productid", async (req, res) => {
   try {
     const productid = req.params.productid;

@@ -42,6 +42,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import jwt_decode from "jwt-decode";
 import ProductsSearch from "../screens/ProductsSearch";
 import ViewLowStockScreen from "../screens/admin/ViewLowStockScreen";
+import UpdateFeedBackScreen from "../screens/UpdateFeedbackScreen";
+import ViewProductFeedbackScreen from "../screens/admin/ViewProductFeedbackScreen";
 
 const StackNavigator = () => {
   const [notiNumber, setNotiNumber] = useState();
@@ -319,6 +321,16 @@ const StackNavigator = () => {
         <Stack.Screen
           name="Low Stock"
           component={ViewLowStockScreen}
+          options={{ headerShown: true }}
+        />
+        <Stack.Screen
+          name="Update Feedback"
+          component={UpdateFeedBackScreen}
+          options={{ headerShown: true }}
+        />
+        <Stack.Screen
+          name="View Product Feedback"
+          component={ViewProductFeedbackScreen}
           options={{ headerShown: true }}
         />
       </Stack.Navigator>

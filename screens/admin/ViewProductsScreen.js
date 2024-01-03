@@ -101,6 +101,23 @@ export default function ViewProductsScreen() {
         productList.map((item, index) => (
           <View style={styles.productListView} key={index}>
             <View style={{ flexDirection: "row" }}>
+              <Pressable
+              onPress={()=>navigation.navigate("View Product Feedback",{
+                item: item,
+                _id: item._id,
+            
+                    title: item.title,
+                    price: item?.price,
+
+                    description: item?.description,
+                    category: item?.category,
+                    image: item?.image,
+                    offer: item?.offer,
+                    storage: item?.storage,
+                    sold: item?.sold,
+                  
+              })}
+              >
               <Image
                 style={{
                   width: 120,
@@ -109,7 +126,7 @@ export default function ViewProductsScreen() {
                   marginRight: 15,
                 }}
                 source={{ uri: item?.image }}
-              />
+              /></Pressable>
               <View
                 style={{ flexDirection: "column", alignItems: "flex-start" }}
               >

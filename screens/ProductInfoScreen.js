@@ -8,19 +8,19 @@ import {
     ImageBackground,
     Dimensions,
     Alert,
-    TouchableOpacity, Image,
+    TouchableOpacity, Image, FlatList,
 } from "react-native";
 
 import React, { useEffect, useState, useContext, useCallback } from "react";
 import { AntDesign, Feather } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
-import { useRoute, useFocusEffect, } from "@react-navigation/native";
+import { useRoute, useFocusEffect, useNavigation } from "@react-navigation/native";
 
 import { UserType } from "../UserContext";
 import axios from "axios";
 const ProductInfoScreen = () => {
     const { userId, setUserId, setCartNumber } = useContext(UserType);
-
+    const navigation = useNavigation();
     const route = useRoute();
     const [productId, setProductId] = useState(route.params._id);
     const [rate, setRate] = useState(0);
@@ -32,10 +32,11 @@ const ProductInfoScreen = () => {
     const [addedToFavorites, setAddedToFavorites] = useState(false);
     const [favorites, setFavorites] = useState([]);
     const [maxRating, setMaxRating] = useState([1, 2, 3, 4, 5]);
+    const [feedbacksWithUserNames,setFeedbacksWithUserNames] =useState([]);
     const starImgFilled = 'https://github.com/tranhonghan/images/blob/main/star_filled.png?raw=true'
     const starImgCorner = 'https://github.com/tranhonghan/images/blob/main/star_corner.png?raw=true'
 
-    const CustomRatingBar = () => {
+    const CustomRatingBar = ({rate}) => {
         return (
             <View style={{ justifyContent: "center", flexDirection: "row"}}>
                 {
@@ -61,6 +62,34 @@ const ProductInfoScreen = () => {
             </View>
         )
     }
+    
+
+    const fetchFeedbacksWithUserNames = async () => {
+        try {
+          const usersResponse = await axios.get("http://10.0.2.2:8000/users");
+          const feedbackResponse = await axios.get(`http://10.0.2.2:8000/feedback/${productId}`);
+          
+          const users = usersResponse.data;
+          const feedback = feedbackResponse.data;
+          
+          const feedbacksWithUserNames = feedback.map(feedback => {
+            const user = users.find(user => user._id === feedback.userid);
+            const userName = user ? user.name : "Unknown User";
+            return {
+              ...feedback,
+              userName
+            };
+          });
+    
+          setFeedbacksWithUserNames(feedbacksWithUserNames);
+          console.log("named",feedbacksWithUserNames);
+        } catch (error) {
+          console.log("error message", error);
+        }
+      };
+    
+      
+     
 
     const fetchRank = async () => {
         try {
@@ -69,6 +98,7 @@ const ProductInfoScreen = () => {
             if (response.data!=null) {
                 setRate(Math.round(response.data.sum / response.data.size))
             }
+            console.log("productid",productId);
         } catch (error) {
             console.log("error message", error);
         }
@@ -99,6 +129,7 @@ const ProductInfoScreen = () => {
             fetchFavorites();
             fetchRank();
             caculateTotal();
+            fetchFeedbacksWithUserNames();
         }, [])
     );
 
@@ -160,6 +191,7 @@ const ProductInfoScreen = () => {
         })
     };
     return (
+        <View style={{flex:1}}>
         <ScrollView
             style={{ marginTop: 0, flex: 1, backgroundColor: "white" }}
             showsVerticalScrollIndicator={false}
@@ -183,6 +215,7 @@ const ProductInfoScreen = () => {
                         height: 38,
                         flex: 1,
                     }}
+                    onPress = {()=> navigation.navigate("ProductsSearch")}
                 >
                     <AntDesign
                         style={{ paddingLeft: 10 }}
@@ -226,7 +259,7 @@ const ProductInfoScreen = () => {
                             </Text>
                         )
                     }
-                    <CustomRatingBar item={rate}/>
+                    <CustomRatingBar rate={rate}/>
                     {/* <Text style={{ color: "black", fontWeight: "500", fontSize: 15 }}>
                         {route?.params?.storage} left
                     </Text> */}
@@ -240,13 +273,13 @@ const ProductInfoScreen = () => {
 
 
 
-            <Text style={{ height: 1, borderColor: "#D0D0D0", borderWidth: 1, marginHorizontal: 100 }} />
+            <Text style={{ height: 1, borderColor: "#D0D0D0", borderWidth: 1, marginHorizontal: 100, marginVertical: 10 }} />
 
             <View style={{ marginHorizontal: 11 }}>
                 <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginHorizontal: 10 }}>
                     <View style={{}}>
                         <Text style={{ fontSize: 18, fontWeight: "normal", color: "grey", }}>
-                            Price {rate}
+                            Price 
                         </Text>
                         {route?.params?.offer != 0 ? (
                             <Text style={{ fontSize: 18, fontWeight: "bold", textDecorationLine: 'line-through', textDecorationStyle: 'solid', color: '#555555' }}>
@@ -284,7 +317,7 @@ const ProductInfoScreen = () => {
                     {route?.params?.description}
                 </Text>
             </View>
-            <Text style={{ height: 1, borderColor: "#D0D0D0", borderWidth: 1, marginHorizontal: 100 }} />
+            <Text style={{ height: 1, borderColor: "#D0D0D0", borderWidth: 1, marginHorizontal: 100, marginVertical: 10 }} />
 
             <View
                 style={{
@@ -296,69 +329,87 @@ const ProductInfoScreen = () => {
             >
                 <Ionicons name="location" size={24} color="#00CED1" />
 
-                <Text style={{ fontSize: 15, fontWeight: "500", color: "#00CED1" }}>
+                <Text style={{ fontSize: 15, fontWeight: "500", color: "#00CED1", }}>
                     Deliver In Vietnam regions
                 </Text>
             </View>
-
-            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginHorizontal: 14 }}>
-                <View>
-                    <Text style={{ fontSize: 18, fontWeight: "normal", color: "grey" }}>
-                        Total
-                    </Text>
-                    <Text style={{ fontSize: 18, fontWeight: "bold" }} >{total.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</Text>
-
+            {/* <Text style={{ height: 1, borderColor: "#D0D0D0", borderWidth: 1, marginHorizontal: 100, marginVertical: 10 }} /> */}
+            <View style={{marginLeft: 15, marginTop: 10, marginBottom: 20}}>
+                <Text style={{fontSize: 18, fontWeight: "500", marginBottom: 10 }}>Customers Feedback</Text>
+                <FlatList
+        data={feedbacksWithUserNames}
+        renderItem={({item}) =>(
+            <View style={{marginLeft: 10, alignContent: "flex-start", marginBottom: 10, borderBottomWidth: 1, borderBottomColor: "#D0D0D0", paddingBottom: 10, marginRight: 30}}>
+                <View style={{flexDirection: "row", alignItems: "center", marginBottom: 5 }}>
+                <Text style={{fontSize: 18, fontWeight: "500", marginRight: 15}}>{item.userName}</Text>
+                <CustomRatingBar rate={item.rate}/>
                 </View>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Pressable
-                        onPress={() => addToFavorites(route?.params?.item)}
-                    >
-                        <AntDesign name={addedToFavorites ? 'heart' : 'hearto'} size={32} color={addedToFavorites ? 'red' : 'black'} />
-                    </Pressable>
-                    {route?.params?.storage != 0 ? (
-                        <Pressable
-                            onPress={() => addProductIntoCart(route?.params?.item)}
-                            style={{
-                                backgroundColor: "#FFC72C",
-                                padding: 10,
-                                borderRadius: 20,
-                                justifyContent: "center",
-                                alignItems: "center",
-                                marginHorizontal: 10,
-                                marginVertical: 10,
-                            }}
-                        >
-                            {addedToCart ? (
-                                <View>
-                                    <Text>Added to Cart</Text>
-                                </View>
-                            ) : (
-                                <Text>Add to Cart</Text>
-                            )}
-                        </Pressable>
-                    ) : (
-                        <Pressable
+                <Text style ={{fontSize: 15}}>{item.comment}</Text>                
 
-                            style={{
-                                //backgroundColor: "#FFC72C",
-                                padding: 10,
-                                borderRadius: 10,
-                                borderWidth: 1,
-                                borderColor: "#D0D0D0",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                marginHorizontal: 10,
-                                marginVertical: 10,
-                            }}
-                        >
-                            <Text style={{ fontWeight: "bold" }}>Out of stock</Text>
-                        </Pressable>
-                    )}
-
-                </View>
             </View>
+    )}
+        keyExtractor={(item, index) => index}
+      />
+                </View>
 
         </ScrollView>
+         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginHorizontal: 14,  }}>
+         <View>
+             <Text style={{ fontSize: 18, fontWeight: "normal", color: "grey" }}>
+                 Total
+             </Text>
+             <Text style={{ fontSize: 18, fontWeight: "bold" }} >{total.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</Text>
+
+         </View>
+         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+             <Pressable
+                 onPress={() => addToFavorites(route?.params?.item)}
+             >
+                 <AntDesign name={addedToFavorites ? 'heart' : 'hearto'} size={32} color={addedToFavorites ? 'red' : 'black'} />
+             </Pressable>
+             {route?.params?.storage != 0 ? (
+                 <Pressable
+                     onPress={() => addProductIntoCart(route?.params?.item)}
+                     style={{
+                         backgroundColor: "#FFC72C",
+                         padding: 10,
+                         borderRadius: 20,
+                         justifyContent: "center",
+                         alignItems: "center",
+                         marginHorizontal: 10,
+                         marginVertical: 10,
+                     }}
+                 >
+                     {addedToCart ? (
+                         <View>
+                             <Text>Added to Cart</Text>
+                         </View>
+                     ) : (
+                         <Text>Add to Cart</Text>
+                     )}
+                 </Pressable>
+             ) : (
+                 <Pressable
+
+                     style={{
+                         //backgroundColor: "#FFC72C",
+                         padding: 10,
+                         borderRadius: 10,
+                         borderWidth: 1,
+                         borderColor: "#D0D0D0",
+                         justifyContent: "center",
+                         alignItems: "center",
+                         marginHorizontal: 10,
+                         marginVertical: 10,
+                     }}
+                 >
+                     <Text style={{ fontWeight: "bold" }}>Out of stock</Text>
+                 </Pressable>
+             )}
+
+         </View>
+     </View>
+     </View>
     )
 }
 

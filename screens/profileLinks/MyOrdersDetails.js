@@ -7,6 +7,7 @@ import {
     TextInput,
     Image,
     Alert,
+    TouchableOpacity
 } from "react-native";
 import React, { useEffect, useContext, useState, useCallback } from "react";
 import { Feather } from "@expo/vector-icons";
@@ -17,7 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import DropDownPicker from "react-native-dropdown-picker";
 import { UserType } from '../../UserContext';
 import axios from "axios";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute, useFocusEffect } from "@react-navigation/native";
 import moment from "moment";
 import StepIndicator from 'react-native-step-indicator';
 const labels = ["Pending", "Shipping", "Delivered", "Confirmation"];
@@ -33,9 +34,41 @@ const MyOrdersDetails = () => {
     // const [status, setStatus] = useState(route.params.status);
     const [curStatus, setCurStatus] = useState(route.params.status);
     const [totalPrice, setTotalPrice] = useState(route.params.totalPrice);
+    const [feedback, setFeedback] = useState(null);
+    const [maxRating, setMaxRating] = useState([1, 2, 3, 4, 5]);
+    const starImgFilled = 'https://github.com/tranhonghan/images/blob/main/star_filled.png?raw=true'
+    const starImgCorner = 'https://github.com/tranhonghan/images/blob/main/star_corner.png?raw=true'
     //   const onGenderOpen = useCallback(() => {
     //     setCompanyOpen(false);
     //   }, []);
+
+    const CustomRatingBar = ({rate}) => {
+        return (
+            <View style={{ justifyContent: "center", flexDirection: "row"}}>
+                {
+                    maxRating.map((item, key) => {
+                        return (
+                            <TouchableOpacity
+                                activeOpacity={0.7}
+                                key={item}
+                            >
+                                <Image
+                                    style={{ width: 20, height: 20, resizeMode: "cover" }}
+                                    source={
+                                        item <= rate
+                                            ? { uri: starImgFilled }
+                                            :
+                                            { uri: starImgCorner }
+                                    }
+                                />
+                            </TouchableOpacity>
+                        )
+                    })
+                }
+            </View>
+        )
+    }
+    
 
     const [currentPosition, setCurrentPosition] = useState(0);
     useEffect(() => {
@@ -150,6 +183,28 @@ const MyOrdersDetails = () => {
         }        
         
     };
+
+    const fetchFeedback = async () => {
+        try {
+            const response = await axios.get(`http://10.0.2.2:8000/feedback`);
+
+    // Lọc các phản hồi theo orderid
+    const feedbackByOrderId = response.data.find((feedback) => feedback.orderid === orderId);
+
+    // Lưu các phản hồi vào state feedback
+    setFeedback(feedbackByOrderId);
+    console.log("feedback",feedback);
+        
+          } catch (error) {
+            console.log("error message", error);
+          }
+    };
+    useFocusEffect(
+        useCallback(() => {
+            fetchFeedback();
+        }, [])
+    );
+
     return (
         <ScrollView style={{ marginTop: 55, flex: 1, backgroundColor: "white" }}>
             <View style={{ marginTop: 5, marginBottom: 20, flex: 1, backgroundColor: "white", marginHorizontal: 20 }}>
@@ -450,7 +505,52 @@ const MyOrdersDetails = () => {
                     </View>
 
                 </Pressable>
-
+                                {curStatus == "Confirmation" ? (
+                <View>                    
+                <Text style={{ fontSize: 20, fontWeight: "bold", marginHorizontal: 20 }}>
+                    Your Feedback
+                </Text>
+                <Pressable
+                    style={{
+                        borderWidth: 1,
+                        borderColor: "#D0D0D0",
+                        padding: 10,
+                        //flexDirection: "row",
+                        //alignItems: "center",
+                        gap: 5,
+                        paddingBottom: 17,
+                        marginVertical: 7,
+                        borderRadius: 6,
+                        marginHorizontal: 10
+                    }}
+                >
+                    <View style={{flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
+                    <View style={{marginLeft: 10, alignContent: "flex-start", borderBottomColor: "#D0D0D0", marginRight: 30}}>
+                <View style={{flexDirection: "row", alignItems: "center", marginBottom: 5 }}>
+                <CustomRatingBar rate ={feedback?.rate}/>
+                </View>
+                <Text style ={{fontSize: 15}}>{feedback?.comment}</Text>                
+                </View>
+                <Pressable style={{flexDirection: "row", alignContent: "center"}}
+                onPress = {()=>navigation.navigate("Update Feedback", {
+                    _id: orderId,
+                    userId: userId,
+                    rate: feedback?.rate,
+                    comment: feedback?.comment,                       
+                })}
+                >
+                <FontAwesome5
+                name="pen"
+                size={16}
+                color="blue"
+                style={{
+                }}
+              />
+              <Text style={{marginHorizontal: 10, color: "blue", fontSize: 15}}>Edit</Text>
+              </Pressable>
+            </View>
+                </Pressable></View>):<View></View>}                        
+                
 
                 <View style={{ flexDirection: "row", marginBottom: 10 }}>
                     <Text style={{ padding: 10, fontSize: 18, fontWeight: "400" }}>

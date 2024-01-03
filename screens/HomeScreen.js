@@ -176,8 +176,6 @@ const HomeScreen = () => {
           backgroundColor: "white",
         }}
       >
-        <StatusBar barStyle="light-content"/>
-        <ScrollView>
           <View
             style={{
               backgroundColor: "#00CED1",
@@ -237,6 +235,9 @@ const HomeScreen = () => {
 
             <MaterialIcons name="keyboard-arrow-down" size={24} color="black" />
           </Pressable>
+        <StatusBar barStyle="light-content"/>
+        <ScrollView>
+        
 
 
 
