@@ -42,10 +42,9 @@ const FeedBackScreen = () => {
     const rate = defaultRating
     axios.post("http://10.0.2.2:8000/feedback",{orderId, userId, comment, rate}).then((response) => {
         Alert.alert("Success","Feedback added successfully");
-        console.log(response.data)
-        // setTimeout(() => {
-        //   navigation.goBack();
-        // },1000)
+        setTimeout(() => {
+          navigation.goBack();
+        },1400)
     }).catch((error) => {
         console.log("error",error)
     })

@@ -77,13 +77,13 @@ const HomeScreen = () => {
   const [selectedAddress, setSelectedAdress] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("");
+
   console.log(selectedAddress)
   const fetchCategories = async () => {
     try {
       const response = await axios.get("http://10.0.2.2:8000/categories");
       setCategories(response.data);
-      console.log("categories: ", response.data);
+     
     } catch (error) {
       console.log("error message", error);
     }
@@ -93,7 +93,6 @@ const HomeScreen = () => {
       const response = await axios.get("http://10.0.2.2:8000/trendingproducts");
 
       setDeals(response.data);
-      //console.log("trending data", response.data);
     } catch (error) {
       console.log("error message", error);
     }
@@ -135,7 +134,7 @@ const HomeScreen = () => {
 
   useEffect(() => {
     if (userId) {
-      console.log("user id:", userId)
+
       fetchAddresses();
     }
 
@@ -146,7 +145,6 @@ const HomeScreen = () => {
         `http://10.0.2.2:8000/addresses/${userId}`
       );
       const { addresses } = response.data;
-      console.log(response.data)
       setAddresses(addresses);
     } catch (error) {
       console.log("error", error);
@@ -250,37 +248,6 @@ const HomeScreen = () => {
             ImageComponentStyle={{ width: "100%" }}
           />
 
-
-    {/* <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {list.map((item, index) => (
-              <Pressable
-                key={index}
-                style={{
-                  margin: 10,
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <Image
-                  style={{ width: 65, height: 65, resizeMode: "contain" }}
-                  source={{ uri: item.image }}
-                />
-
-
-
-                <Text
-                  style={{
-                    textAlign: "center",
-                    fontSize: 12,
-                    fontWeight: "500",
-                    marginTop: 5,
-                  }}
-                >
-                  {item?.name}
-                </Text>
-              </Pressable>
-            ))}
-          </ScrollView> */}
 
           <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
         <ScrollView

@@ -20,10 +20,8 @@ import { UserType } from '../UserContext';
 import axios from "axios";
 const ProfileScreen = () => {
   
-  //const [appUserConfig, setAppUserConfig] = useContext(UserType);
   const navigation = useNavigation();
   const logOut = async () => {
-    //setAppUserConfig({ accessToken: null, accessTokenName: null });
     AsyncStorage.removeItem("authToken")
       .then(() => {
         navigation.replace("Login");
@@ -40,8 +38,7 @@ const ProfileScreen = () => {
       const response = await axios.get(
         `http://10.0.2.2:8000/user/${userId}`
       );
-      //const { userData } = response.data;
-      console.log(response.data)
+
       setUser(response.data);
     } catch (error) {
       console.log("error", error);
@@ -49,7 +46,7 @@ const ProfileScreen = () => {
   };
   useEffect(() => {
     if (userId) {
-      console.log("user id:", userId)
+
       fetchUser();
 
     }

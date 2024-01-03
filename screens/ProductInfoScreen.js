@@ -82,7 +82,6 @@ const ProductInfoScreen = () => {
           });
     
           setFeedbacksWithUserNames(feedbacksWithUserNames);
-          console.log("named",feedbacksWithUserNames);
         } catch (error) {
           console.log("error message", error);
         }
@@ -96,9 +95,6 @@ const ProductInfoScreen = () => {
             const response = await axios.get(`http://10.0.2.2:8000/rank/${productId}`);
             
             if (response.data!=null) {
-                console.log("sum",(response.data.sum));
-                console.log("size",(response.data.size));
-                console.log("result",(response.data.sum / response.data.size));
                 setRate(Math.round(response.data.sum / response.data.size))
             }
             
@@ -186,7 +182,6 @@ const ProductInfoScreen = () => {
         //console.log("cart api:", cart)
         axios.post("http://10.0.2.2:8000/cart", { userId, cart }).then((response) => {
             Alert.alert("Success", "Product added successfully");
-            console.log("my cart:", response.data);
             setCartNumber(response.data.length);
         }).catch((error) => {
             Alert.alert("Error", "Failed to add product")
