@@ -25,7 +25,7 @@ const Notification = () => {
   const navigation = useNavigation();
 
 
-  const { userId, setUserId } = useContext(UserType);
+  const { userId, setUserId, setNotiNumber } = useContext(UserType);
   const [user, setUser] = useState([]);
   const [noti, setNoti] = useState([]);
   const fetchUser = async () => {
@@ -49,6 +49,8 @@ const Notification = () => {
       //const { userData } = response.data;
       //console.log(response.data)
       setNoti(response.data);
+      setNotiNumber(response.data.length);
+      console.log("notiNum",response.data.length);
     } catch (error) {
       console.log("error", error);
     }
@@ -191,7 +193,7 @@ const Notification = () => {
                         >
 
                           <Pressable
-                            style={{ left: 350 }}
+                            style={{ left: 325, marginTop: 10 }}
                             onPress={() => deleteNoti(item._id)}
                           >
                             <MaterialIcons name="delete" size={26} color="black" />
@@ -268,7 +270,7 @@ const Notification = () => {
                             }}
                           >
                             <Pressable
-                              style={{ left: 350 }}
+                              style={{left: 325, marginTop: 10}}
                               onPress={() => deleteNoti(item._id)}
                             >
                               <MaterialIcons name="delete" size={26} color="black" />

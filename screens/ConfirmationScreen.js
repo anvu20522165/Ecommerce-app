@@ -23,7 +23,7 @@ const ConfirmationScreen = () => {
   const navigation = useNavigation();
   const [currentStep, setCurrentStep] = useState(0);
   const [addresses, setAddresses] = useState([]);
-  const { userId, setUserId } = useContext(UserType);
+  const { userId, setUserId, setCartNumber } = useContext(UserType);
   const cart = useSelector((state) => state.cart.cart);
   const total = cart
     ?.map((item) => item.price * item.quantity)
@@ -46,6 +46,20 @@ const ConfirmationScreen = () => {
     }
   };
   const dispatch = useDispatch();
+
+  const fetchCartNumber = async () => {
+    try {
+      const response = await axios.get(
+        `http://10.0.2.2:8000/productsInCart/${userId}`
+      );
+
+      setCartNumber(response.data.length);
+      console.log("cart number",response.data.length);
+      console.log("cart", response.data);
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
 
   const handleAfterPayment = async () => {
     setCurrentStep(3);
@@ -97,6 +111,7 @@ const ConfirmationScreen = () => {
       if (response.status === 200) {
         navigation.navigate("Order");
         dispatch(cleanCart());
+        fetchCartNumber();
         console.log("order created successfully", response.data);
         console.log(JSON.stringify(response.data, undefined, 4));
         //setCurrentStep(0)

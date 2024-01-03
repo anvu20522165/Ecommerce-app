@@ -22,8 +22,9 @@ import moment from "moment";
 
 import StepIndicator from 'react-native-step-indicator';
 const labels = ["Pending", "Shipping", "Delivered", "Confirmation"];
-const ViewOrderDetailScreen = () => {
-
+const ViewOrderDetailScreen = () => {    
+    
+    const { userId, setUserId, setNotiNumber } = useContext(UserType);
     const route = useRoute();
     const [shippingAddress, setShippingAddress] = useState(route.params.shippingAddress);
     const [products, setProducts] = useState(route.params.products);
@@ -68,6 +69,19 @@ const ViewOrderDetailScreen = () => {
 
     })
 
+    const fetchNotiNumber = async () => {
+        try {
+          const response = await axios.get(
+            `http://10.0.2.2:8000/notification/${userId}`
+          );
+          //const { userData } = response.data;
+          //console.log(response.data)
+          setNotiNumber(response.data.length);
+          console.log("notiNum",response.data.length);
+        } catch (error) {
+          console.log("error", error);
+        }
+      }
     const handleUpdateStatus = async () => {
         try {
             if (curStatus == "Shipping") {
@@ -87,8 +101,8 @@ const ViewOrderDetailScreen = () => {
                 setCurrentPosition(1);
                 Alert.alert("Order's status has been updated");
                 setCurStatus("Shipping");
-            }
-
+            };
+            fetchNotiNumber();
 
 
         } catch (error) {

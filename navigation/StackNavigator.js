@@ -46,8 +46,7 @@ import UpdateFeedBackScreen from "../screens/UpdateFeedbackScreen";
 import ViewProductFeedbackScreen from "../screens/admin/ViewProductFeedbackScreen";
 
 const StackNavigator = () => {
-  const [notiNumber, setNotiNumber] = useState();
-  const { userId, setUserId, cartNumber, setCartNumber } = useContext(UserType);
+  const { userId, setUserId, cartNumber, setCartNumber, setNotiNumber, notiNumber } = useContext(UserType);
   const fetchUser = async () => {
     const token = await AsyncStorage.getItem("authToken");
     const decodedToken = jwt_decode(token);
@@ -70,10 +69,10 @@ const StackNavigator = () => {
   const fetchNotiNumber = async () => {
     try {
       const response = await axios.get(
-        `http://10.0.2.2:8000/notification/range`
+        `http://10.0.2.2:8000/notification/range/${userId}`
       );
       //const { userData } = response.data;
-      console.log(response.data)
+      console.log("noti",response.data)
       setNotiNumber(response.data);
     } catch (error) {
       console.log("error", error);
@@ -82,6 +81,7 @@ const StackNavigator = () => {
   useEffect(() => {
     if(userId)
     {
+      fetchNotiNumber();
       fetchCartNumber();
     }
   },[userId]);

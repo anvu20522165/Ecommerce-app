@@ -196,6 +196,7 @@ const CartScreen = () => {
             height: 38,
             flex: 1,
           }}
+          onPress={()=>navigation.navigate("ProductsSearch")}
         >
           <AntDesign
             style={{ paddingLeft: 10 }}
@@ -203,10 +204,9 @@ const CartScreen = () => {
             size={22}
             color="black"
           />
-          <TextInput placeholder="Search Amazon.in" />
+          <TextInput placeholder="Search in Shein" editable={false} />
         </Pressable>
 
-        <Feather name="mic" size={24} color="black" />
       </View>
 
       <View style={{ padding: 10, flexDirection: "row", alignItems: "center" }}>

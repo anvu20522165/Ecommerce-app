@@ -620,14 +620,16 @@ app.get("/notification", async (req, res) => {
   }
 });
 
-app.get("/notification/range", async (req, res) => {
+app.get("/notification/range/:userId", async (req, res) => {
   try {
-    //const notification = await Notification.find();
+    
     const notification = await Notification.find();
+    const userId = req.params.userId;
+    const final = notification.filter((item) => item.userid == userId.toString())
     if (!notification) {
       throw "error";
     }
-    return res.status(201).json(notification.length);
+    return res.status(201).json(final.length);
   } catch (error) {
     return res.status(400).json({ error: error.message });
   }

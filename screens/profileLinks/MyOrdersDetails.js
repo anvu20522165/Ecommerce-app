@@ -206,7 +206,7 @@ const MyOrdersDetails = () => {
     );
 
     return (
-        <ScrollView style={{ marginTop: 55, flex: 1, backgroundColor: "white" }}>
+        <ScrollView style={{paddingTop:40, flex: 1, backgroundColor: "white" }}>
             <View style={{ marginTop: 5, marginBottom: 20, flex: 1, backgroundColor: "white", marginHorizontal: 20 }}>
 
                 <Text style={{ fontSize: 24, fontWeight: "bold" }}>
@@ -531,7 +531,7 @@ const MyOrdersDetails = () => {
                 </View>
                 <Text style ={{fontSize: 15}}>{feedback?.comment}</Text>                
                 </View>
-                <Pressable style={{flexDirection: "row", alignContent: "center"}}
+                {/* <Pressable style={{flexDirection: "row", alignContent: "center"}}
                 onPress = {()=>navigation.navigate("Update Feedback", {
                     _id: orderId,
                     userId: userId,
@@ -547,7 +547,7 @@ const MyOrdersDetails = () => {
                 }}
               />
               <Text style={{marginHorizontal: 10, color: "blue", fontSize: 15}}>Edit</Text>
-              </Pressable>
+              </Pressable> */}
             </View>
                 </Pressable></View>):<View></View>}                        
                 

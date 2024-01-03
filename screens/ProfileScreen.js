@@ -210,40 +210,9 @@ const ProfileScreen = () => {
 
                 </View>
               </Pressable>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 3,
-                  marginVertical: 10
-                }}
-              >
+              
 
-                <Ionicons name="stats-chart" size={24} style={{ marginHorizontal: 10 }} />
-                <Text style={{ fontSize: 15, fontWeight: "bold" }}>
-                  My Stats
-                </Text>
-
-              </View>
-
-              <Pressable
-                onPress={() => navigation.navigate("Feedback")}>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    gap: 3,
-                    marginVertical: 10
-                  }}
-                >
-
-                  <Ionicons name="settings" size={24} style={{ marginHorizontal: 10 }} />
-                  <Text style={{ fontSize: 15, fontWeight: "bold" }}>
-                    Settings
-                  </Text>
-
-                </View>
-              </Pressable>
+              
               <Pressable
                 onPress={() => navigation.navigate("AdminDashboard")}>
                 <View

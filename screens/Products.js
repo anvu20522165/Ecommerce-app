@@ -101,7 +101,7 @@ export default function Products() {
   };
   useEffect(() => {
     if (selectedCategory === "all") {
-      // fetchProducts();
+      //fetchProducts();
       setFilteredProducts(products);
       setOriginalFiltered(products);
     } else {
@@ -123,11 +123,18 @@ export default function Products() {
           (rank) => rank.productid.toString() === b._id.toString()
         );
         if (rankA && rankB) {
+          // So sánh rank và sắp xếp theo thứ tự giảm dần
           return rankB.rate - rankA.rate;
+        } else if (rankA) {
+          // Nếu chỉ có rank của a, đặt a trước b
+          return -1;
+        } else if (rankB) {
+          // Nếu chỉ có rank của b, đặt b trước a
+          return 1;
+        } else {
+          // Nếu không có rank cho cả a và b, giữ nguyên thứ tự
+          return 0;
         }
-      
-        // Nếu không tồn tại rank tương ứng, giữ nguyên thứ tự của a và b
-        return 0;
       });
 
       setFilteredProducts(sortedProducts);
@@ -161,7 +168,8 @@ export default function Products() {
       // fetchRanks();
     // setSelectedCategory("all");
       setPriceSortName("Price: Low to High");
-      setSortCriteria("recommended");
+      //setSortCriteria("recommended");
+
     },[])
   );
   return (
