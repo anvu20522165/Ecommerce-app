@@ -189,7 +189,7 @@ const RegisterScreen = () => {
           </Text>
         </View>
 
-        <View style={{ marginTop: 80 }} />
+        <View style={{ marginTop: 30 }} />
 
         <Pressable
           onPress={handleRegister}
@@ -214,14 +214,20 @@ const RegisterScreen = () => {
           </Text>
         </Pressable>
 
-        <Pressable
+        {/* <Pressable
           onPress={() => navigation.navigate("Login")}
           style={{ marginTop: 15 }}
         >
           <Text style={{ textAlign: "center", color: "gray", fontSize: 16 }}>
             Already have an account? Sign In
           </Text>
-        </Pressable>
+        </Pressable> */}
+        <View style={{ flexDirection: "row", justifyContent: "center", marginTop: 10 }}>
+          <Text style={{ fontSize: 16 }}>Already have an account?</Text>
+          <Pressable onPress={() => navigation.navigate("Login")}>
+            <Text style={{ fontSize: 16, color: "#007FFF" }}> Sign in</Text>
+          </Pressable>
+        </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
     )

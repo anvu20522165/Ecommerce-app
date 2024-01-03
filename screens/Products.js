@@ -15,7 +15,11 @@ import {
   StatusBar,
   TextInput,
 } from "react-native";
-import { useNavigation, useFocusEffect, useRoute } from "@react-navigation/native";
+import {
+  useNavigation,
+  useFocusEffect,
+  useRoute,
+} from "@react-navigation/native";
 import { AntDesign, Feather } from "@expo/vector-icons";
 import axios from "axios";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5.js";
@@ -89,10 +93,9 @@ export default function Products() {
     fetchRanks();
   }, []);
   useEffect(() => {
-    if(route.params?.category){
-      
+    if (route.params?.category) {
       setSelectedCategory(route.params?.category);
-      console.log("useeff",selectedCategory);
+      console.log("useeff", selectedCategory);
     }
   }, [route.params?.category]);
   const handleCategorySelect = (category) => {
@@ -144,7 +147,9 @@ export default function Products() {
       setFilteredProducts(sortedProducts);
     } else if (criteria === "sold") {
       // High to low
-      const sortedProducts = [...filteredProducts].sort((a, b) => b.sold - a.sold);
+      const sortedProducts = [...filteredProducts].sort(
+        (a, b) => b.sold - a.sold
+      );
       setFilteredProducts(sortedProducts);
     } else {
       handlePriceSort();
@@ -153,21 +158,24 @@ export default function Products() {
   const handlePriceSort = () => {
     if (priceSortValue) {
       // low to high
-      const sortedProducts = [...filteredProducts].sort((a, b) => a.price - b.price);
+      const sortedProducts = [...filteredProducts].sort(
+        (a, b) => a.price - b.price
+      );
       setFilteredProducts(sortedProducts);
       setPriceSortValue(!priceSortValue);
-      setPriceSortName('Price: Low to High');
+      setPriceSortName("Price: Low to High");
     } else {
       // High to low
-      const sortedProducts = [...filteredProducts].sort((a, b) => b.price - a.price);
+      const sortedProducts = [...filteredProducts].sort(
+        (a, b) => b.price - a.price
+      );
       setFilteredProducts(sortedProducts);
       setPriceSortValue(!priceSortValue);
-      setPriceSortName('Price: High to Low');
+      setPriceSortName("Price: High to Low");
     }
   };
   useFocusEffect(
     useCallback(() => {
-      
       // setPriceSortName("Price: Low to High");
       // if (selectedCategory === "all") {
       //   setFilteredProducts(products);
@@ -177,10 +185,8 @@ export default function Products() {
       //   console.log("callbackcate",selectedCategory);
       //   setSelectedCategory(selectedCategory);
       //   fetchCategory();
-        
       // }
-
-    },[])
+    }, [])
   );
   return (
     <SafeAreaView style={styles.container}>
@@ -204,7 +210,7 @@ export default function Products() {
             height: 38,
             flex: 1,
           }}
-          onPress={()=>navigation.navigate("ProductsSearch")}
+          onPress={() => navigation.navigate("ProductsSearch")}
         >
           <AntDesign
             style={{ paddingLeft: 10 }}
@@ -280,7 +286,7 @@ export default function Products() {
         showsHorizontalScrollIndicator={false}
       >
         {/* <View style = {{flexDirection: "row", justifyContent: "space-between"}}> */}
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
           {/* <Text style={styles.filter}>Recommended</Text>
         <Text style={styles.filter}>Top Rated</Text>
           <Text style={styles.filter}>Top Sold</Text>
@@ -339,75 +345,81 @@ export default function Products() {
           </Pressable>
         </View>
       </ScrollView>
-      <FlatList
-        data={/*products*/ filteredProducts}
-        renderItem={({ item }) => (
-          <View
-            style={{
-              flexDirection: "column",
-              margin: 3,
-              paddingVertical: 10,
-              flex: 0.5,
-              backgroundColor: "white",
-              borderRadius: 5,
-              alignItems: "center",
-              //marginBottom: 20,
-            }}
-          >
-            <Pressable
-              onPress={() =>
-                navigation.navigate("Info", {
-                  _id: item._id,
-                  title: item.title,
-                  price: item?.price,
-                  description: item?.description,
-                  category: item?.category,
-                  image: item?.image,
-                  offer: item?.offer,
-
-                  sold: item?.sold,
-                  item: item,
-                })
-              }
+      {filteredProducts.length > 0 ? (
+        <FlatList
+          data={/*products*/ filteredProducts}
+          renderItem={({ item }) => (
+            <View
+              style={{
+                flexDirection: "column",
+                margin: 3,
+                paddingVertical: 10,
+                flex: 0.5,
+                backgroundColor: "white",
+                borderRadius: 5,
+                alignItems: "center",
+                //marginBottom: 20,
+              }}
             >
-              <Image
-                style={styles.imageThumbnail}
-                source={{ uri: item.image }}
-                resizeMode="contain"
-              />
+              <Pressable
+                onPress={() =>
+                  navigation.navigate("Info", {
+                    _id: item._id,
+                    title: item.title,
+                    price: item?.price,
+                    description: item?.description,
+                    category: item?.category,
+                    image: item?.image,
+                    offer: item?.offer,
 
-              <View style={{ alignItems: "flex-start", marginTop: 10 }}>
-                <Text style={styles.itemTitle}>
-                  {item.title.length > 38
-                    ? item.title.slice(0, 38)
-                    : item.title}
-                </Text>
-                <View style={{ width: "100%" }}>
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      paddingHorizontal: 5,
-                    }}
-                  >
-                    <Text style={[styles.itemPrice, { color: "black" }]}>
-                      {item?.price.toLocaleString("vi", {
-                        style: "currency",
-                        currency: "VND",
-                      })}
-                    </Text>
-                    <Text style={styles.itemPrice}>{item?.sold} sold</Text>
+                    sold: item?.sold,
+                    item: item,
+                  })
+                }
+              >
+                <Image
+                  style={styles.imageThumbnail}
+                  source={{ uri: item.image }}
+                  resizeMode="contain"
+                />
+
+                <View style={{ alignItems: "flex-start", marginTop: 10 }}>
+                  <Text style={styles.itemTitle}>
+                    {item.title.length > 38
+                      ? item.title.slice(0, 38)
+                      : item.title}
+                  </Text>
+                  <View style={{ width: "100%" }}>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        paddingHorizontal: 5,
+                      }}
+                    >
+                      <Text style={[styles.itemPrice, { color: "black" }]}>
+                        {item?.price.toLocaleString("vi", {
+                          style: "currency",
+                          currency: "VND",
+                        })}
+                      </Text>
+                      <Text style={styles.itemPrice}>{item?.sold} sold</Text>
+                    </View>
                   </View>
                 </View>
-              </View>
-            </Pressable>
-          </View>
-        )}
-        //Setting the number of column
-        numColumns={2}
-        keyExtractor={(item, index) => index.toString()}
-      />
+              </Pressable>
+            </View>
+          )}
+          //Setting the number of column
+          numColumns={2}
+          keyExtractor={(item, index) => index.toString()}
+        />
+      ) : (
+        <View>
+          <Text style={styles.description}>No products found</Text>
+        </View>
+      )}
     </SafeAreaView>
   );
 }
@@ -415,8 +427,8 @@ export default function Products() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    //alignItems: 'center',
     //backgroundColor: "grey"
+    justifyContent: "flex-start"
   },
   title: {
     fontSize: 20,
@@ -480,6 +492,7 @@ const styles = StyleSheet.create({
     margin: 3,
     backgroundColor: "white",
     marginBottom: 10,
+    alignSelf: "flex-start"
   },
   filterText: {
     fontSize: 15,
@@ -488,5 +501,10 @@ const styles = StyleSheet.create({
   },
   selectedFilter: {
     color: "blue",
+  },
+  description: {
+    fontSize: 18,
+    paddingHorizontal: 15,
+    marginBottom: 10,
   },
 });

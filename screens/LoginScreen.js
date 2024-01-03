@@ -194,14 +194,20 @@ const LoginScreen = () => {
           </Text>
         </Pressable>
 
-        <Pressable
+        {/* <Pressable
           onPress={() => navigation.navigate("Register")}
           style={{ marginTop: 15 }}
         >
           <Text style={{ textAlign: "center", color: "gray", fontSize: 16 }}>
             Don't have an account? Sign Up
           </Text>
-        </Pressable>
+        </Pressable> */}
+        <View style={{ flexDirection: "row", justifyContent: "center", marginTop: 10 }}>
+          <Text style={{ fontSize: 16 }}>Don't have an account?</Text>
+          <Pressable onPress={() => navigation.navigate("Register")}>
+            <Text style={{ fontSize: 16, color: "#007FFF" }}> Sign up here!</Text>
+          </Pressable>
+        </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   )
